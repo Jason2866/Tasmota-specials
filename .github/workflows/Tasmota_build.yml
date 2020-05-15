@@ -1,0 +1,162 @@
+name: Build_firmware
+
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: '* 4 * * *'  
+
+jobs:
+  tasmota_bin_upload:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+      with:
+        repo-token: ${{ secrets.GITHUB_TOKEN }}  
+    - name: Use latest Tasmota development
+      run: | 
+        git config --local user.name "Platformio BUILD"
+        git switch -c master
+        git remote add -f Tasmota "https://github.com/arendst/Tasmota.git"
+        git merge Tasmota/development --allow-unrelated-histories          
+    - name: Set up Python
+      uses: actions/setup-python@v1
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -U platformio
+        platformio upgrade --dev
+        platformio update
+    - name: Run PlatformIO
+      run: | 
+        mv platformio_override.ini platformio_override.ini.off
+        mv platformio_tasmota_env32.ini platformio_tasmota_env32.ini.off
+        mv platformio_tasmota_cenv.ini platformio_tasmota_cenv.ini.off     
+        platformio run   
+    - name: Commit files  # transfer the new binaries back into the repository
+      run: |
+        git config --local user.name "Platformio BUILD"
+        #mkdir ./Tasmota_firmware
+        #mv -v ./build_output/firmware/* ./Tasmota_firmware/      
+        #git add -f ./Tasmota_firmware/*.*
+        git add -f ./build_output/firmware/*
+        git commit -m "Updating ESP8266 compiled Binaries"
+        git pull "https://github.com/Jason2866/Merge.git"
+    - name: Push changes
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        branch: 'master'
+        force: true
+
+  tasmota32_bin1_upload:
+    needs: tasmota_bin_upload
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set up Python
+      uses: actions/setup-python@v1
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -U platformio
+        platformio upgrade --dev
+        platformio update
+    - name: Run PlatformIO       
+      run: | 
+        mv platformio_tasmota_env.ini platformio_tasmota_env.ini.off
+        mv platformio_tasmota_env32.ini platformio_tasmota_env32.ini.off
+        platformio run
+    - name: Commit files  # transfer the new binaries back into the repository
+      run: |
+        git config --local user.name "Platformio BUILD"
+        #mkdir ./Tasmota_firmware
+        #mv -v ./build_output/firmware/* ./Tasmota_firmware/
+        git config --local user.name "Platformio BUILD"
+        #git add -f ./Tasmota_firmware/*.*
+        git add -f ./build_output/firmware/*
+        git commit -m "Updating ESP32 compiled Binaries Part 1"
+        git pull "https://github.com/Jason2866/Merge.git"
+    - name: Push changes  # push the output folder to the repo
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        branch: 'master'
+        force: true
+
+  tasmota32_bin_upload:
+    needs: tasmota32_bin1_upload
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set up Python
+      uses: actions/setup-python@v1
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -U platformio
+        platformio upgrade --dev
+        platformio update
+    - name: Run PlatformIO       
+      run: | 
+        mv platformio_tasmota_env.ini platformio_tasmota_env.ini.off
+        mv platformio_tasmota_env32.ini platformio_tasmota_env32.ini.off
+        mv platformio_tasmota_cenv1.ini platformio_tasmota_cenv.ini
+        platformio run
+    - name: Commit files  # transfer the new binaries back into the repository
+      run: |
+        git config --local user.name "Platformio BUILD"
+        #mkdir ./Tasmota_firmware
+        #mv -v ./build_output/firmware/* ./Tasmota_firmware/
+        git config --local user.name "Platformio BUILD"
+        #git add -f ./Tasmota_firmware/*.*
+        git add -f ./build_output/firmware/*
+        git commit -m "Updating ESP32 compiled Binaries Part 2"
+        git pull "https://github.com/Jason2866/Merge.git"
+    - name: Push changes  # push the output folder to the repo
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        branch: 'master'
+        force: true
+
+  tasmota_special_bin_upload:
+    needs: tasmota32_bin_upload
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+      with:
+        repo-token: ${{ secrets.GITHUB_TOKEN }}  
+    - name: Use latest Tasmota development and use settings from branch Jason2866/Tasmota/special_binaries
+      run: | 
+        git config --local user.name "Platformio BUILD"  
+        git remote add -f Jasmota "https://github.com/Jason2866/Tasmota.git"
+        git merge Jasmota/special_binaries --allow-unrelated-histories
+    - name: Set up Python
+      uses: actions/setup-python@v1
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -U platformio
+        platformio upgrade --dev
+        platformio update
+    - name: Run PlatformIO
+      run: | 
+        mv platformio_override.special platformio_override.ini  
+        platformio run    
+    - name: Commit files  # transfer the new binaries back into the repository
+      run: |
+        git config --local user.name "Platformio BUILD"
+        #mkdir ./Tasmota_firmware
+        #mv -v ./build_output/firmware/* ./Tasmota_firmware/
+        git config --local user.name "Platformio BUILD"
+        #git add -f ./Tasmota_firmware/*.*
+        git add -f ./build_output/firmware/*
+        git commit -m "Updating compiled Special Binaries"
+        git pull "https://github.com/Jason2866/Merge.git"
+    - name: Push changes
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        branch: 'master'
+        force: true
