@@ -63,8 +63,7 @@ jobs:
         platformio upgrade --dev
         platformio update
     - name: Run PlatformIO       
-      run: | 
-        mv platformio_override_sample.ini platformio_override.ini
+      run: |
         mv platformio_tasmota_env.ini platformio_tasmota_env.ini.off
         mv platformio_tasmota_env32.ini platformio_tasmota_env32.ini.off
         platformio run
@@ -99,8 +98,7 @@ jobs:
         platformio upgrade --dev
         platformio update
     - name: Run PlatformIO       
-      run: | 
-        mv platformio_override_sample.ini platformio_override.ini
+      run: |
         mv platformio_tasmota_env.ini platformio_tasmota_env.ini.off
         mv platformio_tasmota_env32.ini platformio_tasmota_env32.ini.off
         mv platformio_tasmota_cenv1.ini platformio_tasmota_cenv.ini
