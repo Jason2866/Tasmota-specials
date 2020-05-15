@@ -1,0 +1,52 @@
+[platformio]
+
+; *** Build/upload environment
+default_envs =
+; *** Uncomment the line(s) below to select version(s)
+                ; tasmota
+                tasmota-zigbee
+                tasmota-battery
+                tasmota-scripting
+                tasmota-mega
+                tasmota-platinum
+                tasmota-fullrules
+                ; tasmota-debug
+                ; tasmota-ircustom
+                ; tasmota-minimal
+                ; tasmota-lite
+                ; tasmota-knx
+                ; tasmota-sensors
+                ; tasmota-display
+                ; tasmota-ir
+
+
+[common]
+platform                  = ${core_active.platform}
+platform_packages         = ${core_active.platform_packages}
+build_flags               = ${core_active.build_flags}
+; *** Use settings from file user_config_override.h
+                          -DUSE_CONFIG_OVERRIDE
+
+extra_scripts             = ${scripts_defaults.extra_scripts}
+                            pio/gzip-firmware.py
+                            ;pio/obj-dump.py
+
+
+[env:tasmota-zigbee]
+build_flags = ${common.build_flags} -DCUSTOM_CONFIG_ZIGBEE=true -DCUSTOM_CONFIG_REMOVALS=true
+                            
+[env:tasmota-battery]
+build_flags = ${common.build_flags} -DCUSTOM_CONFIG_BATTERY=true -DCUSTOM_CONFIG_REMOVALS=true
+
+[env:tasmota-scripting]
+build_flags = ${common.build_flags} -DCUSTOM_CONFIG_SCRIPTING=true -DCUSTOM_CONFIG_REMOVALS=true
+
+[env:tasmota-mega]
+build_flags = ${common.build_flags} -DCUSTOM_CONFIG_MEGA=true -DCUSTOM_CONFIG_REMOVALS=true
+
+[env:tasmota-fullrules]
+build_flags = ${common.build_flags} -DCUSTOM_CONFIG_FULLRULES=true -DCUSTOM_CONFIG_REMOVALS=true
+
+[env:tasmota-platinum]
+build_flags = ${common.build_flags} ${irremoteesp_full.build_flags} -DCUSTOM_CONFIG_PLATINUM=true -DCUSTOM_CONFIG_REMOVALS=true
+board_build.f_cpu         = 160000000L
