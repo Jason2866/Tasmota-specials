@@ -1,8 +1,8 @@
 name: Build_firmware
 
 on:
-  push:
-  pull_request:
+  #push:
+  #pull_request:
   schedule:
     - cron: '* 4 * * *'  
 
