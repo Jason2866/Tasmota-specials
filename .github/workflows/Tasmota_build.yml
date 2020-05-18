@@ -10,9 +10,7 @@ jobs:
   tasmota_bin_upload:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v1
-      with:
-        repo-token: ${{ secrets.GITHUB_TOKEN }}  
+    - uses: actions/checkout@v1 
     - name: Use latest Tasmota development
       run: | 
         git config --local user.name "Platformio BUILD"
