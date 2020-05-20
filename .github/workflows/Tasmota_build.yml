@@ -1,8 +1,8 @@
 name: Build_firmware
 
 on:
-  #push:
-  #pull_request:
+  push:
+  pull_request:
   schedule:
     - cron: '0 4 * * *'  
 
@@ -34,7 +34,11 @@ jobs:
         mv platformio_override.ini platformio_override.ini.off
         mv platformio_tasmota_env32.ini platformio_tasmota_env32.ini.off
         mv platformio_tasmota_cenv.ini platformio_tasmota_cenv.ini.off     
-        platformio run   
+        platformio run
+    - uses: actions/upload-artifact@v2
+      with:
+        name: firmware
+        path: ./build_output/firmware
     - name: Commit files  # transfer the new binaries back into the repository
       run: |
         git config --local user.name "Platformio BUILD"
