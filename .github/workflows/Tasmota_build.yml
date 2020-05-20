@@ -1,8 +1,8 @@
 name: Build_firmware
 
 on:
-  #push:
-  #pull_request:
+  push:
+  pull_request:
   schedule:
     - cron: '0 4 * * *'  
 
@@ -26,6 +26,9 @@ jobs:
         pip install -U platformio
         platformio upgrade --dev
         platformio update
+    - name: Clean temp directory
+      run: rm -rf *
+      working-directory: ./temp
     - name: Run PlatformIO
       run: | 
         mv platformio_override.ini platformio_override.ini.off
@@ -62,6 +65,9 @@ jobs:
         pip install -U platformio
         platformio upgrade --dev
         platformio update
+    - name: Clean temp directory
+      run: rm -rf *
+      working-directory: ./temp
     - name: Run PlatformIO       
       run: |
         mv platformio_tasmota_env.ini platformio_tasmota_env.ini.off
@@ -98,6 +104,9 @@ jobs:
         pip install -U platformio
         platformio upgrade --dev
         platformio update
+    - name: Clean temp directory
+      run: rm -rf *
+      working-directory: ./temp
     - name: Run PlatformIO       
       run: |
         mv platformio_tasmota_env.ini platformio_tasmota_env.ini.off
@@ -135,6 +144,9 @@ jobs:
         pip install -U platformio
         platformio upgrade --dev
         platformio update
+    - name: Clean temp directory
+      run: rm -rf *
+      working-directory: ./temp
     - name: Run PlatformIO
       run: | 
         mv user_config_override.special tasmota/user_config_override.h
