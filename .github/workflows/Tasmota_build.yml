@@ -9,6 +9,7 @@ on:
 jobs:
   tasmota_bin_upload:
     runs-on: ubuntu-latest
+    continue-on-error: true
     steps:
     - uses: actions/checkout@v1 
     - name: Use latest Tasmota development
@@ -50,6 +51,7 @@ jobs:
   tasmota32_bin1_upload:
     needs: tasmota_bin_upload
     runs-on: ubuntu-latest
+    continue-on-error: true
     steps:
     - uses: actions/checkout@v1
     - name: Set up Python
@@ -85,6 +87,7 @@ jobs:
   tasmota32_bin_upload:
     needs: tasmota32_bin1_upload
     runs-on: ubuntu-latest
+    continue-on-error: true
     steps:
     - uses: actions/checkout@v1
     - name: Set up Python
@@ -121,6 +124,7 @@ jobs:
   tasmota_special_bin_upload:
     needs: tasmota32_bin_upload
     runs-on: ubuntu-latest
+    continue-on-error: true
     steps:
     - uses: actions/checkout@v1
     - name: Set up Python
