@@ -567,7 +567,7 @@ oo     .d8P `88b    ooo   888  `88b.   888   888              888       888   8 
 
  #define SUPPORT_MQTT_EVENT                     // Support trigger event with MQTT subscriptions (+3k5 code)
 
-#undef  USE_RULES_COMPRESSION
+//#undef  USE_RULES_COMPRESSION
 #define USE_SCRIPT                               // Add support for script
   #define USE_SCRIPT_JSON_EXPORT
   #define USE_SCRIPT_WEB_DISPLAY
