@@ -71,6 +71,10 @@ jobs:
         mv platformio_tasmota_env.ini platformio_tasmota_env.ini.off
         mv platformio_tasmota_env32.ini platformio_tasmota_env32.ini.off
         platformio run
+    - uses: actions/upload-artifact@v2
+      with:
+        name: firmware
+        path: ./build_output/firmware
     - name: Commit files  # transfer the new binaries back into the repository
       run: |
         git config --local user.name "Platformio BUILD"
@@ -108,6 +112,10 @@ jobs:
         mv platformio_tasmota_env32.ini platformio_tasmota_env32.ini.off
         mv platformio_tasmota_cenv1.ini platformio_tasmota_cenv.ini
         platformio run
+    - uses: actions/upload-artifact@v2
+      with:
+        name: firmware
+        path: ./build_output/firmware
     - name: Commit files  # transfer the new binaries back into the repository
       run: |
         git config --local user.name "Platformio BUILD"
@@ -144,6 +152,17 @@ jobs:
         mv user_config_override.special tasmota/user_config_override.h
         mv platformio_override.special platformio_override.ini
         platformio run    
+    - uses: actions/upload-artifact@v2
+      with:
+        name: firmware
+        path: ./build_output/firmware   
+    - uses: actions/download-artifact@v2
+      with:
+        name: firmware
+        path: ./build_output/firmware  
+    - name: Display structure of downloaded files
+      run: ls -R
+      working-directory: ./build_output/firmware    
     - name: Commit files  # transfer the new binaries back into the repository
       run: |
         git config --local user.name "Platformio BUILD"
