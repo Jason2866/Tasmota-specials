@@ -1584,7 +1584,9 @@ jobs:
     runs-on: ubuntu-latest
     continue-on-error: true
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
+    - run: |
+        git fetch --no-tags --prune --depth=1 origin +refs/heads/*:refs/remotes/origin/*
     - uses: actions/download-artifact@v2
       with:
         name: firmware
@@ -1604,4 +1606,3 @@ jobs:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         branch: 'master'
         force: true
-        
