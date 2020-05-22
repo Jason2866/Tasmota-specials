@@ -1092,8 +1092,8 @@ jobs:
         path: ./build_output/firmware
     - uses: actions/download-artifact@v2
       with:
-      name: firmware
-      path: ./build_output/firmware
+        name: firmware
+        path: ./build_output/firmware
     - name: Display structure of downloaded files
       run: ls -R
       working-directory: ./build_output/firmware
