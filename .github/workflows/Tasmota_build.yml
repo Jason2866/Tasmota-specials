@@ -7,7 +7,7 @@ on:
     - cron: '0 4 * * *'  
 
 jobs:
-  tasmota_bin_upload:
+  tasmota_pull:
     runs-on: ubuntu-latest
     continue-on-error: true
     steps:
@@ -18,6 +18,21 @@ jobs:
         git switch -c master
         git remote add -f Tasmota "https://github.com/arendst/Tasmota.git"
         git merge Tasmota/development --allow-unrelated-histories          
+  
+  tasmota:
+    needs: tasmota_pull
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set up Python
+      uses: actions/setup-python@v1
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -U platformio
+        platformio upgrade --dev
+        platformio update  
     - name: Set up Python
       uses: actions/setup-python@v1
     - name: Install dependencies
@@ -31,29 +46,1003 @@ jobs:
         mv platformio_override.ini platformio_override.ini.off
         mv platformio_tasmota_env32.ini platformio_tasmota_env32.ini.off
         mv platformio_tasmota_cenv.ini platformio_tasmota_cenv.ini.off     
-        platformio run
+        platformio run -e tasmota
     - uses: actions/upload-artifact@v2
       with:
         name: firmware
         path: ./build_output/firmware
-    - name: Commit files  # transfer the new binaries back into the repository
-      run: |
-        git config --local user.name "Platformio BUILD"
-        #mkdir ./Tasmota_firmware
-        #mv -v ./build_output/firmware/* ./Tasmota_firmware/      
-        #git add -f ./Tasmota_firmware/*.*
-        git add -f ./build_output/firmware/*
-        git commit -m "ESP8266 / ESP8285 Binaries"
-        git pull "https://github.com/Jason2866/Merge.git"
-    - name: Push changes
-      uses: ad-m/github-push-action@master
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        branch: 'master'
-        force: true
 
-  tasmota32_bin1_upload:
-    needs: tasmota_bin_upload
+  
+  tasmota-minimal:
+    needs: tasmota_pull
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set up Python
+      uses: actions/setup-python@v1
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -U platformio
+        platformio upgrade --dev
+        platformio update  
+    - name: Set up Python
+      uses: actions/setup-python@v1
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -U platformio
+        platformio upgrade --dev
+        platformio update
+    - name: Run PlatformIO
+      run: | 
+        mv platformio_override.ini platformio_override.ini.off
+        mv platformio_tasmota_env32.ini platformio_tasmota_env32.ini.off
+        mv platformio_tasmota_cenv.ini platformio_tasmota_cenv.ini.off     
+        platformio run -e tasmota-minimal
+    - uses: actions/upload-artifact@v2
+      with:
+        name: firmware
+        path: ./build_output/firmware
+
+  
+  tasmota-lite:
+    needs: tasmota_pull
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set up Python
+      uses: actions/setup-python@v1
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -U platformio
+        platformio upgrade --dev
+        platformio update  
+    - name: Set up Python
+      uses: actions/setup-python@v1
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -U platformio
+        platformio upgrade --dev
+        platformio update
+    - name: Run PlatformIO
+      run: | 
+        mv platformio_override.ini platformio_override.ini.off
+        mv platformio_tasmota_env32.ini platformio_tasmota_env32.ini.off
+        mv platformio_tasmota_cenv.ini platformio_tasmota_cenv.ini.off     
+        platformio run -e tasmota-lite
+    - uses: actions/upload-artifact@v2
+      with:
+        name: firmware
+        path: ./build_output/firmware
+
+  
+  tasmota-knx:
+    needs: tasmota_pull
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set up Python
+      uses: actions/setup-python@v1
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -U platformio
+        platformio upgrade --dev
+        platformio update  
+    - name: Set up Python
+      uses: actions/setup-python@v1
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -U platformio
+        platformio upgrade --dev
+        platformio update
+    - name: Run PlatformIO
+      run: | 
+        mv platformio_override.ini platformio_override.ini.off
+        mv platformio_tasmota_env32.ini platformio_tasmota_env32.ini.off
+        mv platformio_tasmota_cenv.ini platformio_tasmota_cenv.ini.off     
+        platformio tasmota-knx
+    - uses: actions/upload-artifact@v2
+      with:
+        name: firmware
+        path: ./build_output/firmware
+
+  
+  tasmota-sensors:
+    needs: tasmota_pull
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set up Python
+      uses: actions/setup-python@v1
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -U platformio
+        platformio upgrade --dev
+        platformio update  
+    - name: Set up Python
+      uses: actions/setup-python@v1
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -U platformio
+        platformio upgrade --dev
+        platformio update
+    - name: Run PlatformIO
+      run: | 
+        mv platformio_override.ini platformio_override.ini.off
+        mv platformio_tasmota_env32.ini platformio_tasmota_env32.ini.off
+        mv platformio_tasmota_cenv.ini platformio_tasmota_cenv.ini.off     
+        platformio run -e tasmota-sensors
+    - uses: actions/upload-artifact@v2
+      with:
+        name: firmware
+        path: ./build_output/firmware
+
+  
+  tasmota-display:
+    needs: tasmota_pull
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set up Python
+      uses: actions/setup-python@v1
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -U platformio
+        platformio upgrade --dev
+        platformio update  
+    - name: Set up Python
+      uses: actions/setup-python@v1
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -U platformio
+        platformio upgrade --dev
+        platformio update
+    - name: Run PlatformIO
+      run: | 
+        mv platformio_override.ini platformio_override.ini.off
+        mv platformio_tasmota_env32.ini platformio_tasmota_env32.ini.off
+        mv platformio_tasmota_cenv.ini platformio_tasmota_cenv.ini.off     
+        platformio run -e tasmota-display
+    - uses: actions/upload-artifact@v2
+      with:
+        name: firmware
+        path: ./build_output/firmware
+
+  
+  tasmota-ir:
+    needs: tasmota_pull
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set up Python
+      uses: actions/setup-python@v1
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -U platformio
+        platformio upgrade --dev
+        platformio update  
+    - name: Set up Python
+      uses: actions/setup-python@v1
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -U platformio
+        platformio upgrade --dev
+        platformio update
+    - name: Run PlatformIO
+      run: | 
+        mv platformio_override.ini platformio_override.ini.off
+        mv platformio_tasmota_env32.ini platformio_tasmota_env32.ini.off
+        mv platformio_tasmota_cenv.ini platformio_tasmota_cenv.ini.off     
+        platformio run -e tasmota-ir
+    - uses: actions/upload-artifact@v2
+      with:
+        name: firmware
+        path: ./build_output/firmware
+
+  
+  tasmota-ircustom:
+    needs: tasmota_pull
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set up Python
+      uses: actions/setup-python@v1
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -U platformio
+        platformio upgrade --dev
+        platformio update  
+    - name: Set up Python
+      uses: actions/setup-python@v1
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -U platformio
+        platformio upgrade --dev
+        platformio update
+    - name: Run PlatformIO
+      run: | 
+        mv platformio_override.ini platformio_override.ini.off
+        mv platformio_tasmota_env32.ini platformio_tasmota_env32.ini.off
+        mv platformio_tasmota_cenv.ini platformio_tasmota_cenv.ini.off     
+        platformio run -e tasmota-ircustom
+    - uses: actions/upload-artifact@v2
+      with:
+        name: firmware
+        path: ./build_output/firmware
+
+  
+  tasmota-BG:
+    needs: tasmota_pull
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set up Python
+      uses: actions/setup-python@v1
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -U platformio
+        platformio upgrade --dev
+        platformio update  
+    - name: Set up Python
+      uses: actions/setup-python@v1
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -U platformio
+        platformio upgrade --dev
+        platformio update
+    - name: Run PlatformIO
+      run: | 
+        mv platformio_override.ini platformio_override.ini.off
+        mv platformio_tasmota_env32.ini platformio_tasmota_env32.ini.off
+        mv platformio_tasmota_cenv.ini platformio_tasmota_cenv.ini.off     
+        platformio run -e tasmota-BG
+    - uses: actions/upload-artifact@v2
+      with:
+        name: firmware
+        path: ./build_output/firmware
+
+  
+  tasmota-BR:
+    needs: tasmota_pull
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set up Python
+      uses: actions/setup-python@v1
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -U platformio
+        platformio upgrade --dev
+        platformio update  
+    - name: Set up Python
+      uses: actions/setup-python@v1
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -U platformio
+        platformio upgrade --dev
+        platformio update
+    - name: Run PlatformIO
+      run: | 
+        mv platformio_override.ini platformio_override.ini.off
+        mv platformio_tasmota_env32.ini platformio_tasmota_env32.ini.off
+        mv platformio_tasmota_cenv.ini platformio_tasmota_cenv.ini.off     
+        platformio run -e tasmota-BR
+    - uses: actions/upload-artifact@v2
+      with:
+        name: firmware
+        path: ./build_output/firmware
+
+  
+  tasmota-CN:
+    needs: tasmota_pull
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set up Python
+      uses: actions/setup-python@v1
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -U platformio
+        platformio upgrade --dev
+        platformio update  
+    - name: Set up Python
+      uses: actions/setup-python@v1
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -U platformio
+        platformio upgrade --dev
+        platformio update
+    - name: Run PlatformIO
+      run: | 
+        mv platformio_override.ini platformio_override.ini.off
+        mv platformio_tasmota_env32.ini platformio_tasmota_env32.ini.off
+        mv platformio_tasmota_cenv.ini platformio_tasmota_cenv.ini.off     
+        platformio run -e tasmota-CN
+    - uses: actions/upload-artifact@v2
+      with:
+        name: firmware
+        path: ./build_output/firmware
+
+  
+  tasmota-CZ:
+    needs: tasmota_pull
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set up Python
+      uses: actions/setup-python@v1
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -U platformio
+        platformio upgrade --dev
+        platformio update  
+    - name: Set up Python
+      uses: actions/setup-python@v1
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -U platformio
+        platformio upgrade --dev
+        platformio update
+    - name: Run PlatformIO
+      run: | 
+        mv platformio_override.ini platformio_override.ini.off
+        mv platformio_tasmota_env32.ini platformio_tasmota_env32.ini.off
+        mv platformio_tasmota_cenv.ini platformio_tasmota_cenv.ini.off     
+        platformio run -e tasmota-CZ
+    - uses: actions/upload-artifact@v2
+      with:
+        name: firmware
+        path: ./build_output/firmware
+
+  
+  tasmota-DE:
+    needs: tasmota_pull
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set up Python
+      uses: actions/setup-python@v1
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -U platformio
+        platformio upgrade --dev
+        platformio update  
+    - name: Set up Python
+      uses: actions/setup-python@v1
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -U platformio
+        platformio upgrade --dev
+        platformio update
+    - name: Run PlatformIO
+      run: | 
+        mv platformio_override.ini platformio_override.ini.off
+        mv platformio_tasmota_env32.ini platformio_tasmota_env32.ini.off
+        mv platformio_tasmota_cenv.ini platformio_tasmota_cenv.ini.off     
+        platformio run -e tasmota-DE
+    - uses: actions/upload-artifact@v2
+      with:
+        name: firmware
+        path: ./build_output/firmware
+
+  
+  tasmota-ES:
+    needs: tasmota_pull
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set up Python
+      uses: actions/setup-python@v1
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -U platformio
+        platformio upgrade --dev
+        platformio update  
+    - name: Set up Python
+      uses: actions/setup-python@v1
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -U platformio
+        platformio upgrade --dev
+        platformio update
+    - name: Run PlatformIO
+      run: | 
+        mv platformio_override.ini platformio_override.ini.off
+        mv platformio_tasmota_env32.ini platformio_tasmota_env32.ini.off
+        mv platformio_tasmota_cenv.ini platformio_tasmota_cenv.ini.off     
+        platformio run -e tasmota-ES
+    - uses: actions/upload-artifact@v2
+      with:
+        name: firmware
+        path: ./build_output/firmware
+
+  
+  tasmota-FR:
+    needs: tasmota_pull
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set up Python
+      uses: actions/setup-python@v1
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -U platformio
+        platformio upgrade --dev
+        platformio update  
+    - name: Set up Python
+      uses: actions/setup-python@v1
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -U platformio
+        platformio upgrade --dev
+        platformio update
+    - name: Run PlatformIO
+      run: | 
+        mv platformio_override.ini platformio_override.ini.off
+        mv platformio_tasmota_env32.ini platformio_tasmota_env32.ini.off
+        mv platformio_tasmota_cenv.ini platformio_tasmota_cenv.ini.off     
+        platformio run -e tasmota-FR
+    - uses: actions/upload-artifact@v2
+      with:
+        name: firmware
+        path: ./build_output/firmware
+
+  
+  tasmota-GR:
+    needs: tasmota_pull
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set up Python
+      uses: actions/setup-python@v1
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -U platformio
+        platformio upgrade --dev
+        platformio update  
+    - name: Set up Python
+      uses: actions/setup-python@v1
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -U platformio
+        platformio upgrade --dev
+        platformio update
+    - name: Run PlatformIO
+      run: | 
+        mv platformio_override.ini platformio_override.ini.off
+        mv platformio_tasmota_env32.ini platformio_tasmota_env32.ini.off
+        mv platformio_tasmota_cenv.ini platformio_tasmota_cenv.ini.off     
+        platformio run -e tasmota-GR
+    - uses: actions/upload-artifact@v2
+      with:
+        name: firmware
+        path: ./build_output/firmware
+
+  
+  tasmota-HE:
+    needs: tasmota_pull
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set up Python
+      uses: actions/setup-python@v1
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -U platformio
+        platformio upgrade --dev
+        platformio update  
+    - name: Set up Python
+      uses: actions/setup-python@v1
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -U platformio
+        platformio upgrade --dev
+        platformio update
+    - name: Run PlatformIO
+      run: | 
+        mv platformio_override.ini platformio_override.ini.off
+        mv platformio_tasmota_env32.ini platformio_tasmota_env32.ini.off
+        mv platformio_tasmota_cenv.ini platformio_tasmota_cenv.ini.off     
+        platformio run -e tasmota-HE
+    - uses: actions/upload-artifact@v2
+      with:
+        name: firmware
+        path: ./build_output/firmware
+
+  
+  tasmota-HU:
+    needs: tasmota_pull
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set up Python
+      uses: actions/setup-python@v1
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -U platformio
+        platformio upgrade --dev
+        platformio update  
+    - name: Set up Python
+      uses: actions/setup-python@v1
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -U platformio
+        platformio upgrade --dev
+        platformio update
+    - name: Run PlatformIO
+      run: | 
+        mv platformio_override.ini platformio_override.ini.off
+        mv platformio_tasmota_env32.ini platformio_tasmota_env32.ini.off
+        mv platformio_tasmota_cenv.ini platformio_tasmota_cenv.ini.off     
+        platformio run -e tasmota-HU
+    - uses: actions/upload-artifact@v2
+      with:
+        name: firmware
+        path: ./build_output/firmware
+
+  
+  tasmota-IT:
+    needs: tasmota_pull
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set up Python
+      uses: actions/setup-python@v1
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -U platformio
+        platformio upgrade --dev
+        platformio update  
+    - name: Set up Python
+      uses: actions/setup-python@v1
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -U platformio
+        platformio upgrade --dev
+        platformio update
+    - name: Run PlatformIO
+      run: | 
+        mv platformio_override.ini platformio_override.ini.off
+        mv platformio_tasmota_env32.ini platformio_tasmota_env32.ini.off
+        mv platformio_tasmota_cenv.ini platformio_tasmota_cenv.ini.off     
+        platformio run -e tasmota-IT
+    - uses: actions/upload-artifact@v2
+      with:
+        name: firmware
+        path: ./build_output/firmware
+
+  
+  tasmota-KO:
+    needs: tasmota_pull
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set up Python
+      uses: actions/setup-python@v1
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -U platformio
+        platformio upgrade --dev
+        platformio update  
+    - name: Set up Python
+      uses: actions/setup-python@v1
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -U platformio
+        platformio upgrade --dev
+        platformio update
+    - name: Run PlatformIO
+      run: | 
+        mv platformio_override.ini platformio_override.ini.off
+        mv platformio_tasmota_env32.ini platformio_tasmota_env32.ini.off
+        mv platformio_tasmota_cenv.ini platformio_tasmota_cenv.ini.off     
+        platformio run -e tasmota-KO
+    - uses: actions/upload-artifact@v2
+      with:
+        name: firmware
+        path: ./build_output/firmware
+
+  
+  tasmota-NL:
+    needs: tasmota_pull
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set up Python
+      uses: actions/setup-python@v1
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -U platformio
+        platformio upgrade --dev
+        platformio update  
+    - name: Set up Python
+      uses: actions/setup-python@v1
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -U platformio
+        platformio upgrade --dev
+        platformio update
+    - name: Run PlatformIO
+      run: | 
+        mv platformio_override.ini platformio_override.ini.off
+        mv platformio_tasmota_env32.ini platformio_tasmota_env32.ini.off
+        mv platformio_tasmota_cenv.ini platformio_tasmota_cenv.ini.off     
+        platformio run -e tasmota-NL
+    - uses: actions/upload-artifact@v2
+      with:
+        name: firmware
+        path: ./build_output/firmware
+
+  
+  tasmota-PL:
+    needs: tasmota_pull
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set up Python
+      uses: actions/setup-python@v1
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -U platformio
+        platformio upgrade --dev
+        platformio update  
+    - name: Set up Python
+      uses: actions/setup-python@v1
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -U platformio
+        platformio upgrade --dev
+        platformio update
+    - name: Run PlatformIO
+      run: | 
+        mv platformio_override.ini platformio_override.ini.off
+        mv platformio_tasmota_env32.ini platformio_tasmota_env32.ini.off
+        mv platformio_tasmota_cenv.ini platformio_tasmota_cenv.ini.off     
+        platformio run -e tasmota-PL
+    - uses: actions/upload-artifact@v2
+      with:
+        name: firmware
+        path: ./build_output/firmware
+
+  
+  tasmota-PT:
+    needs: tasmota_pull
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set up Python
+      uses: actions/setup-python@v1
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -U platformio
+        platformio upgrade --dev
+        platformio update  
+    - name: Set up Python
+      uses: actions/setup-python@v1
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -U platformio
+        platformio upgrade --dev
+        platformio update
+    - name: Run PlatformIO
+      run: | 
+        mv platformio_override.ini platformio_override.ini.off
+        mv platformio_tasmota_env32.ini platformio_tasmota_env32.ini.off
+        mv platformio_tasmota_cenv.ini platformio_tasmota_cenv.ini.off     
+        platformio run -e tasmota-PT
+    - uses: actions/upload-artifact@v2
+      with:
+        name: firmware
+        path: ./build_output/firmware
+
+  
+  tasmota-RO:
+    needs: tasmota_pull
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set up Python
+      uses: actions/setup-python@v1
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -U platformio
+        platformio upgrade --dev
+        platformio update  
+    - name: Set up Python
+      uses: actions/setup-python@v1
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -U platformio
+        platformio upgrade --dev
+        platformio update
+    - name: Run PlatformIO
+      run: | 
+        mv platformio_override.ini platformio_override.ini.off
+        mv platformio_tasmota_env32.ini platformio_tasmota_env32.ini.off
+        mv platformio_tasmota_cenv.ini platformio_tasmota_cenv.ini.off     
+        platformio run -e tasmota-RO
+    - uses: actions/upload-artifact@v2
+      with:
+        name: firmware
+        path: ./build_output/firmware
+
+  
+  tasmota-RU:
+    needs: tasmota_pull
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set up Python
+      uses: actions/setup-python@v1
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -U platformio
+        platformio upgrade --dev
+        platformio update  
+    - name: Set up Python
+      uses: actions/setup-python@v1
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -U platformio
+        platformio upgrade --dev
+        platformio update
+    - name: Run PlatformIO
+      run: | 
+        mv platformio_override.ini platformio_override.ini.off
+        mv platformio_tasmota_env32.ini platformio_tasmota_env32.ini.off
+        mv platformio_tasmota_cenv.ini platformio_tasmota_cenv.ini.off     
+        platformio run -e tasmota-RU
+    - uses: actions/upload-artifact@v2
+      with:
+        name: firmware
+        path: ./build_output/firmware
+
+  
+  tasmota-SE:
+    needs: tasmota_pull
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set up Python
+      uses: actions/setup-python@v1
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -U platformio
+        platformio upgrade --dev
+        platformio update  
+    - name: Set up Python
+      uses: actions/setup-python@v1
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -U platformio
+        platformio upgrade --dev
+        platformio update
+    - name: Run PlatformIO
+      run: | 
+        mv platformio_override.ini platformio_override.ini.off
+        mv platformio_tasmota_env32.ini platformio_tasmota_env32.ini.off
+        mv platformio_tasmota_cenv.ini platformio_tasmota_cenv.ini.off     
+        platformio run -e tamota
+    - uses: actions/upload-artifact@v2
+      with:
+        name: firmware
+        path: ./build_output/firmware
+
+  
+  tasmota-SK:
+    needs: tasmota_pull
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set up Python
+      uses: actions/setup-python@v1
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -U platformio
+        platformio upgrade --dev
+        platformio update  
+    - name: Set up Python
+      uses: actions/setup-python@v1
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -U platformio
+        platformio upgrade --dev
+        platformio update
+    - name: Run PlatformIO
+      run: | 
+        mv platformio_override.ini platformio_override.ini.off
+        mv platformio_tasmota_env32.ini platformio_tasmota_env32.ini.off
+        mv platformio_tasmota_cenv.ini platformio_tasmota_cenv.ini.off     
+        platformio run -e tasmota-SK
+    - uses: actions/upload-artifact@v2
+      with:
+        name: firmware
+        path: ./build_output/firmware
+
+  
+  tasmota-TR:
+    needs: tasmota_pull
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set up Python
+      uses: actions/setup-python@v1
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -U platformio
+        platformio upgrade --dev
+        platformio update  
+    - name: Set up Python
+      uses: actions/setup-python@v1
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -U platformio
+        platformio upgrade --dev
+        platformio update
+    - name: Run PlatformIO
+      run: | 
+        mv platformio_override.ini platformio_override.ini.off
+        mv platformio_tasmota_env32.ini platformio_tasmota_env32.ini.off
+        mv platformio_tasmota_cenv.ini platformio_tasmota_cenv.ini.off     
+        platformio run -e tasmota-TR
+    - uses: actions/upload-artifact@v2
+      with:
+        name: firmware
+        path: ./build_output/firmware
+
+  
+  tasmota-TW:
+    needs: tasmota_pull
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set up Python
+      uses: actions/setup-python@v1
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -U platformio
+        platformio upgrade --dev
+        platformio update  
+    - name: Set up Python
+      uses: actions/setup-python@v1
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -U platformio
+        platformio upgrade --dev
+        platformio update
+    - name: Run PlatformIO
+      run: | 
+        mv platformio_override.ini platformio_override.ini.off
+        mv platformio_tasmota_env32.ini platformio_tasmota_env32.ini.off
+        mv platformio_tasmota_cenv.ini platformio_tasmota_cenv.ini.off     
+        platformio run -e tasmota-TW
+    - uses: actions/upload-artifact@v2
+      with:
+        name: firmware
+        path: ./build_output/firmware
+
+  
+  tasmota-UK:
+    needs: tasmota_pull
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set up Python
+      uses: actions/setup-python@v1
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -U platformio
+        platformio upgrade --dev
+        platformio update  
+    - name: Set up Python
+      uses: actions/setup-python@v1
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -U platformio
+        platformio upgrade --dev
+        platformio update
+    - name: Run PlatformIO
+      run: | 
+        mv platformio_override.ini platformio_override.ini.off
+        mv platformio_tasmota_env32.ini platformio_tasmota_env32.ini.off
+        mv platformio_tasmota_cenv.ini platformio_tasmota_cenv.ini.off     
+        platformio run -e tasmota-UK
+    - uses: actions/upload-artifact@v2
+      with:
+        name: firmware
+        path: ./build_output/firmware
+
+
+
+
+  tasmota32:
+    needs: tasmota_pull
     runs-on: ubuntu-latest
     continue-on-error: true
     steps:
@@ -70,30 +1059,15 @@ jobs:
       run: |
         mv platformio_tasmota_env.ini platformio_tasmota_env.ini.off
         mv platformio_tasmota_env32.ini platformio_tasmota_env32.ini.off
-        platformio run
+        platformio run -e tasmota32
     - uses: actions/upload-artifact@v2
       with:
         name: firmware
         path: ./build_output/firmware
-    - name: Commit files  # transfer the new binaries back into the repository
-      run: |
-        git config --local user.name "Platformio BUILD"
-        #mkdir ./Tasmota_firmware
-        #mv -v ./build_output/firmware/* ./Tasmota_firmware/
-        git config --local user.name "Platformio BUILD"
-        #git add -f ./Tasmota_firmware/*.*
-        git add -f ./build_output/firmware/*
-        git commit -m "ESP32 Binaries Part 1"
-        git pull "https://github.com/Jason2866/Merge.git"
-    - name: Push changes  # push the output folder to the repo
-      uses: ad-m/github-push-action@master
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        branch: 'master'
-        force: true
 
-  tasmota32_bin_upload:
-    needs: tasmota32_bin1_upload
+
+  tasmota32-GR:
+    needs: tasmota32
     runs-on: ubuntu-latest
     continue-on-error: true
     steps:
@@ -111,7 +1085,7 @@ jobs:
         mv platformio_tasmota_env.ini platformio_tasmota_env.ini.off
         mv platformio_tasmota_env32.ini platformio_tasmota_env32.ini.off
         mv platformio_tasmota_cenv1.ini platformio_tasmota_cenv.ini
-        platformio run
+        platformio run -e tasmota32-GR
     - uses: actions/upload-artifact@v2
       with:
         name: firmware
@@ -133,8 +1107,8 @@ jobs:
         branch: 'master'
         force: true
 
-  tasmota_special_bin_upload:
-    needs: tasmota32_bin_upload
+  tasmota-zigbee:
+    needs: tasmota_pull
     runs-on: ubuntu-latest
     continue-on-error: true
     steps:
@@ -151,7 +1125,7 @@ jobs:
       run: | 
         mv user_config_override.special tasmota/user_config_override.h
         mv platformio_override.special platformio_override.ini
-        platformio run    
+        platformio run -e tasmota-zigbee
     - uses: actions/upload-artifact@v2
       with:
         name: firmware
@@ -163,19 +1137,3 @@ jobs:
     - name: Display structure of downloaded files
       run: ls -R
       working-directory: ./build_output/firmware    
-    - name: Commit files  # transfer the new binaries back into the repository
-      run: |
-        git config --local user.name "Platformio BUILD"
-        #mkdir ./Tasmota_firmware
-        #mv -v ./build_output/firmware/* ./Tasmota_firmware/
-        git config --local user.name "Platformio BUILD"
-        #git add -f ./Tasmota_firmware/*.*
-        git add -f ./build_output/firmware/*
-        git commit -m "Special Binaries"
-        git pull "https://github.com/Jason2866/Merge.git"
-    - name: Push changes
-      uses: ad-m/github-push-action@master
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        branch: 'master'
-        force: true
