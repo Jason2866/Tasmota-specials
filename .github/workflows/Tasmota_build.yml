@@ -1576,8 +1576,6 @@ jobs:
       with:
         name: firmware
         path: ./build_output/firmware
-  
-      
 
   Upload:
     needs: [tasmota-UK, tasmota32-ircustom, tasmota32-UK, tasmota-zigbee, tasmota-fullrules, tasmota-platinum]    
