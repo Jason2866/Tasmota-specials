@@ -1067,7 +1067,7 @@ jobs:
 
 
   tasmota32-GR:
-    needs: tasmota32
+    needs: tasmota_pull
     runs-on: ubuntu-latest
     continue-on-error: true
     steps:
@@ -1090,29 +1090,7 @@ jobs:
       with:
         name: firmware
         path: ./build_output/firmware
-    - uses: actions/download-artifact@v2
-      with:
-        name: firmware
-        path: ./build_output/firmware
-    - name: Display structure of downloaded files
-      run: ls -R
-      working-directory: ./build_output/firmware
-    - name: Commit files  # transfer the new binaries back into the repository
-      run: |
-        git config --local user.name "Platformio BUILD"
-        #mkdir ./Tasmota_firmware
-        #mv -v ./build_output/firmware/* ./Tasmota_firmware/
-        git config --local user.name "Platformio BUILD"
-        #git add -f ./Tasmota_firmware/*.*
-        git add -f ./build_output/firmware/*
-        git commit -m "ESP32 Binaries Part 2"
-        git pull "https://github.com/Jason2866/Merge.git"
-    - name: Push changes  # push the output folder to the repo
-      uses: ad-m/github-push-action@master
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        branch: 'master'
-        force: true
+
 
   tasmota-zigbee:
     needs: tasmota_pull
@@ -1138,3 +1116,33 @@ jobs:
         name: firmware
         path: ./build_output/firmware
   
+
+  Upload-firmwares:
+    needs: [tasmota, tasmota-zigbeee, tasmota32, tasmota32-GR]
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+    - uses: actions/checkout@v1
+    - uses: actions/download-artifact@v2
+      with:
+        name: firmware
+        path: ./build_output/firmware
+    - name: Display structure of downloaded files
+      run: ls -R
+      working-directory: ./build_output/firmware
+    - name: Commit files  # transfer the new binaries back into the repository
+      run: |
+        git config --local user.name "Platformio BUILD"
+        #mkdir ./Tasmota_firmware
+        #mv -v ./build_output/firmware/* ./Tasmota_firmware/
+        git config --local user.name "Platformio BUILD"
+        #git add -f ./Tasmota_firmware/*.*
+        git add -f ./build_output/firmware/*
+        git commit -m "ESP Binaries"
+        git pull "https://github.com/Jason2866/Merge.git"
+    - name: Push changes  # push the output folder to the repo
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        branch: 'master'
+        force: true
