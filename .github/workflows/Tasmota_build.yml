@@ -24,7 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     continue-on-error: true
     steps:
-    - uses: actions/checkout@v1
+    #- uses: actions/checkout@v1
     - name: Set up Python
       uses: actions/setup-python@v1
     - name: Install dependencies
@@ -58,7 +58,7 @@ jobs:
     runs-on: ubuntu-latest
     continue-on-error: true
     steps:
-    - uses: actions/checkout@v1
+    #- uses: actions/checkout@v1
     - name: Set up Python
       uses: actions/setup-python@v1
     - name: Install dependencies
