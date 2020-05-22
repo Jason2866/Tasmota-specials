@@ -1118,7 +1118,7 @@ jobs:
   
 
   Upload-firmwares:
-    needs: [tasmota, tasmota-zigbeee, tasmota32, tasmota32-GR]
+    needs: [tasmota, tasmota-zigbee, tasmota32, tasmota32-GR]    
     runs-on: ubuntu-latest
     continue-on-error: true
     steps:
