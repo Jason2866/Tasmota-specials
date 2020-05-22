@@ -148,7 +148,7 @@ jobs:
         mv platformio_override.ini platformio_override.ini.off
         mv platformio_tasmota_env32.ini platformio_tasmota_env32.ini.off
         mv platformio_tasmota_cenv.ini platformio_tasmota_cenv.ini.off     
-        platformio tasmota-knx
+        platformio -e tasmota-knx
     - uses: actions/upload-artifact@v2
       with:
         name: firmware
@@ -896,7 +896,7 @@ jobs:
         mv platformio_override.ini platformio_override.ini.off
         mv platformio_tasmota_env32.ini platformio_tasmota_env32.ini.off
         mv platformio_tasmota_cenv.ini platformio_tasmota_cenv.ini.off     
-        platformio run -e tamota
+        platformio run -e tasmota-SE
     - uses: actions/upload-artifact@v2
       with:
         name: firmware
