@@ -1620,9 +1620,9 @@ jobs:
     - name: Commit files  # transfer the new binaries back into the repository
       run: |
         git config --local user.name "Platformio BUILD"
-        #git clone --branch=firmware --depth=1 "https://github.com/Jason2866/Merge.git" bin 
+        git rm -r --cached .
         git add -f ./Tasmota_firmware/*.*
-        git commit --allow-empty -m "ESP Binaries"
+        git commit -m "ESP Binaries"
     - name: Push changes  # push the firmware files to branch firmware
       uses: ad-m/github-push-action@master
       with:
