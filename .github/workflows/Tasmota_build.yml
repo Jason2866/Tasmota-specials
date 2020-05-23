@@ -1602,3 +1602,30 @@ jobs:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         branch: 'master'
         force: true
+
+
+  Upload-firmware:
+    needs: Upload    
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+    - uses: actions/checkout@v1
+    - uses: actions/download-artifact@v2
+      with:
+        name: firmware
+        path: ./Tasmota_firmware
+    - name: Display structure of downloaded files
+      run: ls -R
+      working-directory: ./Tasmota_firmware
+    - name: Commit files  # transfer the new binaries back into the repository
+      run: |
+        git config --local user.name "Platformio BUILD"
+        #git clone --branch=firmware --depth=1 "https://github.com/Jason2866/Merge.git" bin 
+        git add -f ./Tasmota_firmware/*.*
+        git commit --allow-empty -m "ESP Binaries"
+    - name: Push changes  # push the firmware files to branch firmware
+      uses: ad-m/github-push-action@firmware
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        branch: 'firmware'
+        force: true
