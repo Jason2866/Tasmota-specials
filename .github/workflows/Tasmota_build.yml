@@ -1624,7 +1624,7 @@ jobs:
         git add -f ./Tasmota_firmware/*.*
         git commit --allow-empty -m "ESP Binaries"
     - name: Push changes  # push the firmware files to branch firmware
-      uses: ad-m/github-push-action@firmware
+      uses: ad-m/github-push-action@master
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         branch: 'firmware'
