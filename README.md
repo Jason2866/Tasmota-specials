@@ -1,4 +1,4 @@
-# These [Tasmota](https://github.com/arendst/Tasmota) binaries are not official stable releases and are built daily at 4.00h UTC from the latest development branch! 
+# These [Tasmota](https://github.com/arendst/Tasmota) binaries are not official stable releases and are built hourly from the latest development branch! 
 
 ## :warning: No support/warranty with these binaries! :warning:
 
