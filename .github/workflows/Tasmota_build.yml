@@ -1621,6 +1621,7 @@ jobs:
       run: |
         git config --local user.name "Platformio BUILD"
         git rm -r --cached .
+        git add ./README.md
         git add -f ./Tasmota_firmware/*.*
         git commit -m "ESP Binaries"
     - name: Push changes  # push the firmware files to branch firmware
