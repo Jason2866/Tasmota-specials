@@ -31,6 +31,18 @@ extra_scripts             = ${scripts_defaults.extra_scripts}
                             pio/gzip-firmware.py
                             ;pio/obj-dump.py
 
+[core_active]
+; Override the standard core defined in platformio.ini !!!
+
+platform                  = ${tasmota_stage.platform}
+platform_packages         = ${tasmota_stage.platform_packages}
+build_flags               = ${tasmota_stage.build_flags}
+
+[tasmota_stage]
+; *** Esp8266 core for Arduino version Tasmota stage
+extends                   = tasmota_core
+platform_packages         = framework-arduinoespressif8266 @ https://github.com/Jason2866/platform-espressif8266/releases/download/2.7.1/esp8266-2.7.1.zip
+
 
 [env:tasmota-zigbee]
 build_flags = ${common.build_flags} -DCUSTOM_CONFIG_ZIGBEE=true -DCUSTOM_CONFIG_REMOVALS=true
