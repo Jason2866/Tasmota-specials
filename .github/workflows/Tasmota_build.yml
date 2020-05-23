@@ -1594,7 +1594,7 @@ jobs:
       run: |
         git config --local user.name "Platformio BUILD"
         git add -f ./build_output/firmware/*
-        git commit -m "ESP Binaries"
+        git commit -m "Tasmota ESP Binaries http://tasmota.com"
         git pull "https://github.com/Jason2866/Merge.git"
     - name: Push changes  # push the output folder to the repo
       uses: ad-m/github-push-action@master
@@ -1623,7 +1623,7 @@ jobs:
         git rm -r --cached .
         git add ./README.md
         git add -f ./Tasmota_firmware/*.*
-        git commit -m "ESP Binaries"
+        git commit -m "Tasmota ESP Binaries http://tasmota.com"
     - name: Push changes  # push the firmware files to branch firmware
       uses: ad-m/github-push-action@master
       with:
