@@ -234,6 +234,7 @@ ooooo     ooo ooooo      ooo oooooooooo.   oooooooooooo oooooooooooo ooooo ooooo
 //#undef DEBUG_TASMOTA_TRACE                      // Disable trace debug messages
 
 #endif  // CUSTOM_CONFIG_REMOVALS *******************************************************************
+
 /*
  oooooooooooo ooooo   .oooooo.    oooooooooo.  oooooooooooo oooooooooooo 
 d'""""""d888' `888'  d8P'  `Y8b   `888'   `Y8b `888'     `8 `888'     `8 
@@ -488,7 +489,7 @@ d'""""""d888' `888'  d8P'  `Y8b   `888'   `Y8b `888'     `8 `888'     `8
 
 //#define USE_TASMOTA_SLAVE                        // Add support for Arduino Uno/Pro Mini via serial interface including flashing (+2k3 code, 44 mem)
 
-#endif  // CUSTOM_CONFIG_ZIGBEE ******************************************************************
+
 /*
 oooooooooo.        .o.       ooooooooooooo ooooooooooooo oooooooooooo ooooooooo.   oooooo   oooo 
 `888'   `Y8b      .888.      8'   888   `8 8'   888   `8 `888'     `8 `888   `Y88.  `888.   .8'  
@@ -503,7 +504,9 @@ o888bood8P'  o88o     o8888o     o888o         o888o     o888ooooood8 o888o  o88
 #undef CODE_IMAGE_STR
 #define CODE_IMAGE_STR "battery"
 
+#ifdef ESP8266
 #define MODULE                 TUYA_DIMMER      // [Module] Defined TuyaMCU (54) as default
+#endif
 
 #undef WIFI_SCAN_AT_RESTART                
 #define WIFI_SCAN_AT_RESTART   false             // [SetOption56] Scan wifi network at restart for configured AP's
@@ -567,7 +570,7 @@ oo     .d8P `88b    ooo   888  `88b.   888   888              888       888   8 
 
  #define SUPPORT_MQTT_EVENT                     // Support trigger event with MQTT subscriptions (+3k5 code)
 
-//#undef  USE_RULES_COMPRESSION
+#undef  USE_RULES
 #define USE_SCRIPT                               // Add support for script
   #define USE_SCRIPT_JSON_EXPORT
   #define USE_SCRIPT_WEB_DISPLAY
@@ -860,9 +863,7 @@ o888o           `YbodP'    o888ooooood8 o888ooooood8 o888o  o888o    `YbodP'    
 // -- Rules or Script  ----------------------------
 // Select none or only one of the below defines
 #define USE_RULES                                // Add support for rules (+8k code)
-//#define USE_SCRIPT                               // Add support for script (+17k code)
-  //#define USE_SCRIPT_FATFS 4                     // Script: Add FAT FileSystem Support
-
+#define USE_RULES_COMPRESSION                  // Compresses rules in Flash at about ~50% (+3.8k code)
  #define USE_EXPRESSION                         // Add support for expression evaluation in rules (+3k2 code, +64 bytes mem)
    #define SUPPORT_IF_STATEMENT                 // Add support for IF statement in rules (+4k2 code, -332 bytes mem)
  #define SUPPORT_MQTT_EVENT                     // Support trigger event with MQTT subscriptions (+3k5 code)
@@ -1154,6 +1155,7 @@ o8o        o888o o888ooooood8  `Y8bood8P'   o88o     o8888o
   #define USE_SUNRISE                            // Add support for Sunrise and sunset tools (+16k)
 
 #define USE_RULES                                // Add support for rules (+4k4 code)
+ #define USE_RULES_COMPRESSION                  // Compresses rules in Flash at about ~50% (+3.8k code)
  #define USE_EXPRESSION                         // Add support for expression evaluation in rules (+3k2 code, +64 bytes mem)
    #define SUPPORT_IF_STATEMENT                 // Add support for IF statement in rules (+4k2 code, -332 bytes mem)
  #define SUPPORT_MQTT_EVENT                     // Support trigger event with MQTT subscriptions (+3k5 code)
@@ -1235,7 +1237,11 @@ o8o        o888o o888ooooood8  `Y8bood8P'   o88o     o8888o
  #define USE_MGC3130                            // Enable MGC3130 Electric Field Effect Sensor (I2C address 0x42) (+2k7 code, 0k3 mem)
  #define USE_MAX44009                           // Enable MAX44009 Ambient Light sensor (I2C addresses 0x4A and 0x4B) (+0k8 code)
  #define USE_SCD30                              // Enable Sensiron SCd30 CO2 sensor (I2C address 0x61) (+3k3 code)
+ 
+ #ifdef  ESP8266
  #define USE_SPS30                              // Enable Sensiron SPS30 particle sensor (I2C address 0x69) (+1.7 code)
+ #endif
+
   #define USE_ADE7953                            // Enable ADE7953 Energy monitor as used on Shelly 2.5 (I2C address 0x38) (+1k5)
  #define USE_VL53L0X                            // Enable VL53L0x time of flight sensor (I2C address 0x29) (+4k code)
  #define USE_MLX90614                           // Enable MLX90614 ir temp sensor (I2C address 0x5a) (+0.6k code)
@@ -1251,11 +1257,11 @@ o8o        o888o o888ooooood8  `Y8bood8P'   o88o     o8888o
  #define USE_IAQ                                // [I2cDriver46] Enable iAQ-core air quality sensor (I2C address 0x5a) (+0k6 code)
  #define USE_AS3935                              // [I2cDriver48] Enable AS3935 Franklin Lightning Sensor (I2C address 0x03) (+5k4 code)
 
-//  #define USE_DISPLAY                            // Add I2C Display Support (+2k code)
+  #define USE_DISPLAY                            // Add I2C Display Support (+2k code)
     // #define USE_DISPLAY_MODES1TO5                // Enable display mode 1 to 5 in addition to mode 0
     #define USE_DISPLAY_LCD                      // [DisplayModel 1] [I2cDriver3] Enable Lcd display (I2C addresses 0x27 and 0x3F) (+6k code)
-    // #define USE_DISPLAY_SSD1306                  // [DisplayModel 2] [I2cDriver4] Enable SSD1306 Oled 128x64 display (I2C addresses 0x3C and 0x3D) (+16k code)
-    // #define USE_DISPLAY_MATRIX                   // [DisplayModel 3] [I2cDriver5] Enable 8x8 Matrix display (I2C adresseses see below) (+11k code)
+     #define USE_DISPLAY_SSD1306                  // [DisplayModel 2] [I2cDriver4] Enable SSD1306 Oled 128x64 display (I2C addresses 0x3C and 0x3D) (+16k code)
+     #define USE_DISPLAY_MATRIX                   // [DisplayModel 3] [I2cDriver5] Enable 8x8 Matrix display (I2C adresseses see below) (+11k code)
       // #define MTX_ADDRESS1     0x71              // [DisplayAddress1] I2C address of first 8x8 matrix module
       // #define MTX_ADDRESS2     0x74              // [DisplayAddress2] I2C address of second 8x8 matrix module
       // #define MTX_ADDRESS3     0x75              // [DisplayAddress3] I2C address of third 8x8 matrix module
@@ -1266,12 +1272,12 @@ o8o        o888o o888ooooood8  `Y8bood8P'   o88o     o8888o
       // #define MTX_ADDRESS8     0x00              // [DisplayAddress8] I2C address of eigth 8x8 matrix module
     // #define USE_DISPLAY_SEVENSEG                 // [DisplayModel 11] [I2cDriver47] Enable sevenseg display (I2C 0x70-0x77) (<+11k code)
       // #define SEVENSEG_ADDRESS1     0x70         // [DisplayAddress1] I2C address of first sevenseg matrix module
-  //  #define USE_DISPLAY_SH1106                   // [DisplayModel 7] [I2cDriver6] Enable SH1106 Oled 128x64 display (I2C addresses 0x3C and 0x3D)
+    #define USE_DISPLAY_SH1106                   // [DisplayModel 7] [I2cDriver6] Enable SH1106 Oled 128x64 display (I2C addresses 0x3C and 0x3D)
 
 #endif   // USE_I2C
 
 // -- SPI sensors ---------------------------------
-// #define USE_SPI                                  // Hardware SPI using GPIO12(MISO), GPIO13(MOSI) and GPIO14(CLK) in addition to two user selectable GPIOs(CS and DC)
+ #define USE_SPI                                  // Hardware SPI using GPIO12(MISO), GPIO13(MOSI) and GPIO14(CLK) in addition to two user selectable GPIOs(CS and DC)
 #ifdef USE_SPI
 //  #define USE_NRF24                              // Add SPI support for NRF24L01(+) (+2k6 code)
   #ifdef USE_NRF24
@@ -1280,12 +1286,12 @@ o8o        o888o o888ooooood8  `Y8bood8P'   o88o     o8888o
     #ifndef USE_DISPLAY
       #define USE_DISPLAY                        // Add SPI Display support for 320x240 and 480x320 TFT
     #endif
-      // #define USE_DISPLAY_ILI9341                // [DisplayModel 4] Enable ILI9341 Tft 480x320 display (+19k code)
-      // #define USE_DISPLAY_EPAPER_29              // [DisplayModel 5] Enable e-paper 2.9 inch display (+19k code)
-      // #define USE_DISPLAY_EPAPER_42              // [DisplayModel 6] Enable e-paper 4.2 inch display
-      // #define USE_DISPLAY_ILI9488                // [DisplayModel 8] [I2cDriver38] (Touch)
-      // #define USE_DISPLAY_SSD1351                // [DisplayModel 9]
-      // #define USE_DISPLAY_RA8876                 // [DisplayModel 10] [I2cDriver39] (Touch)
+       #define USE_DISPLAY_ILI9341                // [DisplayModel 4] Enable ILI9341 Tft 480x320 display (+19k code)
+       #define USE_DISPLAY_EPAPER_29              // [DisplayModel 5] Enable e-paper 2.9 inch display (+19k code)
+       //#define USE_DISPLAY_EPAPER_42              // [DisplayModel 6] Enable e-paper 4.2 inch display
+       #define USE_DISPLAY_ILI9488                // [DisplayModel 8] [I2cDriver38] (Touch)
+       #define USE_DISPLAY_SSD1351                // [DisplayModel 9]
+       //#define USE_DISPLAY_RA8876                 // [DisplayModel 10] [I2cDriver39] (Touch)
   #endif  // USE_NRF24
 #endif  // USE_SPI
 
@@ -1304,7 +1310,14 @@ o8o        o888o o888ooooood8  `Y8bood8P'   o88o     o8888o
   #define USE_PN532_DATA_RAW                     // Allow DATA block to be used by non-alpha-numberic data (+ 80 bytes code, 48 bytes ram)
 #define USE_RDM6300                              // Add support for RDM6300 125kHz RFID Reader (+0k8)
 #define USE_IBEACON                              // Add support for bluetooth LE passive scan of ibeacon devices (uses HM17 module)
+
+#ifdef  ESP8266
 #define USE_HM10                                 // Add support for HM-10 as a BLE-bridge for the LYWSD03 (+5k1 code)
+#endif
+#ifdef  ESP32
+#define USE_MI_ESP32
+#endif
+
 #define USE_HRXL                                 // Add support for MaxBotix HRXL-MaxSonar ultrasonic range finders (+0k7)
 
 // Power monitoring sensors -----------------------
@@ -1347,8 +1360,8 @@ o8o        o888o o888ooooood8  `Y8bood8P'   o88o     o8888o
 #define USE_HX711                                // Add support for HX711 load cell (+1k5 code)
   #define USE_HX711_GUI                          // Add optional web GUI to HX711 as scale (+1k8 code)
 
-// #define USE_TX20_WIND_SENSOR                     // Add support for La Crosse TX20 anemometer (+2k6/0k8 code)
-#define USE_TX23_WIND_SENSOR                     // Add support for La Crosse TX23 anemometer (+2k7/1k code)
+#define USE_TX20_WIND_SENSOR                     // Add support for La Crosse TX20 anemometer (+2k6/0k8 code)
+//#define USE_TX23_WIND_SENSOR                     // Add support for La Crosse TX23 anemometer (+2k7/1k code)
 
 #define USE_RC_SWITCH                            // Add support for RF transceiver using library RcSwitch (+2k7 code, 460 iram)
 
@@ -1359,7 +1372,9 @@ o8o        o888o o888ooooood8  `Y8bood8P'   o88o     o8888o
 #define USE_HRE                                  // Add support for Badger HR-E Water Meter (+1k4 code)
 #define USE_A4988_STEPPER                        // Add support for A4988 stepper-motor-driver-circuit (+10k5 code)
 
+#ifdef  ESP8266
 #define USE_TASMOTA_SLAVE                        // Add support for Arduino Uno/Pro Mini via serial interface including flashing (+2k3 code, 44 mem)
+#endif
 
 #endif  // CUSTOM_CONFIG_MEGA *****************************************************************************
 
@@ -1377,7 +1392,10 @@ o888o        o888ooooood8 o88o     o8888o     o888o     o888o o8o        `8     
 #undef CODE_IMAGE_STR
 #define CODE_IMAGE_STR "platinum"
 
+#ifdef  ESP8266
 #define USE_ARDUINO_OTA                          // Add optional support for Arduino OTA (+13k code)
+#endif
+
 #define USE_DOMOTICZ                             // Enable Domoticz (+6k code, +0.3k mem)
 #define USE_HOME_ASSISTANT                       // Enable Home Assistant Discovery Support (+7k code)
 
@@ -1394,11 +1412,15 @@ o888o        o888ooooood8 o88o     o8888o     o888o     o888o o8o        `8     
   #define USE_SUNRISE                            // Add support for Sunrise and sunset tools (+16k)
 
 #define USE_RULES                                // Add support for rules (+4k4 code)
+ #define USE_RULES_COMPRESSION                  // Compresses rules in Flash at about ~50% (+3.8k code)
  #define USE_EXPRESSION                         // Add support for expression evaluation in rules (+3k2 code, +64 bytes mem)
    #define SUPPORT_IF_STATEMENT                 // Add support for IF statement in rules (+4k2 code, -332 bytes mem)
  #define SUPPORT_MQTT_EVENT                     // Support trigger event with MQTT subscriptions (+3k5 code)
 
+#ifdef  ESP8266
 #define ROTARY_V1                                // Add support for MI Desk Lamp
+#endif
+
 #define USE_SONOFF_RF                            // Add support for Sonoff Rf Bridge
  #define USE_RF_FLASH                           // Add support for flashing the EFM8BB1 chip on the Sonoff RF Bridge. C2CK must be connected to GPIO4, C2D to GPIO5 on the PCB (+3k code)
 #define USE_SONOFF_SC                            // Add support for Sonoff Sc (+1k1 code)
@@ -1448,7 +1470,7 @@ o888o        o888ooooood8 o88o     o8888o     o888o     o888o o8o        `8     
  #define USE_SHT3X                              // Enable SHT3x (I2C address 0x44 or 0x45) or SHTC3 (I2C address 0x70) sensor (+0k7 code)
 //  #define USE_TSL2561                            // Enable TSL2561 sensor (I2C address 0x29, 0x39 or 0x49) using library Joba_Tsl2561 (+2k3 code)
  #define USE_TSL2591                            // Enable TSL2591 sensor (I2C address 0x29, 0x39 or 0x49) using library Adafruit_TSL2591 (+2k3 code)
-//  #define USE_MGS                                // Enable Xadow and Grove Mutichannel Gas sensor using library Multichannel_Gas_Sensor (+10k code)
+ #define USE_MGS                                // Enable Xadow and Grove Mutichannel Gas sensor using library Multichannel_Gas_Sensor (+10k code)
     // #define MGS_SENSOR_ADDR    0x04              // Default Mutichannel Gas sensor i2c address
  #define USE_SGP30                              // Enable SGP30 sensor (I2C address 0x58) (+1k1 code)
  #define USE_SI1145                             // Enable SI1145/46/47 sensor (I2C address 0x60) (+1k code)
@@ -1469,7 +1491,11 @@ o888o        o888ooooood8 o88o     o8888o     o888o     o888o o8o        `8     
  #define USE_MGC3130                            // Enable MGC3130 Electric Field Effect Sensor (I2C address 0x42) (+2k7 code, 0k3 mem)
  #define USE_MAX44009                           // Enable MAX44009 Ambient Light sensor (I2C addresses 0x4A and 0x4B) (+0k8 code)
  #define USE_SCD30                              // Enable Sensiron SCd30 CO2 sensor (I2C address 0x61) (+3k3 code)
+ 
+ #ifdef  ESP8266
  #define USE_SPS30                              // Enable Sensiron SPS30 particle sensor (I2C address 0x69) (+1.7 code)
+ #endif
+
   #define USE_ADE7953                            // Enable ADE7953 Energy monitor as used on Shelly 2.5 (I2C address 0x38) (+1k5)
  #define USE_VL53L0X                            // Enable VL53L0x time of flight sensor (I2C address 0x29) (+4k code)
  #define USE_MLX90614                           // Enable MLX90614 ir temp sensor (I2C address 0x5a) (+0.6k code)
@@ -1486,7 +1512,7 @@ o888o        o888ooooood8 o88o     o8888o     o888o     o888o o8o        `8     
  #define USE_AS3935                              // [I2cDriver48] Enable AS3935 Franklin Lightning Sensor (I2C address 0x03) (+5k4 code)
 
  #define USE_DISPLAY                            // Add I2C Display Support (+2k code)
-    #define USE_DISPLAY_MODES1TO5                // Enable display mode 1 to 5 in addition to mode 0
+//    #define USE_DISPLAY_MODES1TO5                // Enable display mode 1 to 5 in addition to mode 0
     #define USE_DISPLAY_LCD                      // [DisplayModel 1] [I2cDriver3] Enable Lcd display (I2C addresses 0x27 and 0x3F) (+6k code)
     #define USE_DISPLAY_SSD1306                  // [DisplayModel 2] [I2cDriver4] Enable SSD1306 Oled 128x64 display (I2C addresses 0x3C and 0x3D) (+16k code)
     #define USE_DISPLAY_MATRIX                   // [DisplayModel 3] [I2cDriver5] Enable 8x8 Matrix display (I2C adresseses see below) (+11k code)
@@ -1538,7 +1564,14 @@ o888o        o888ooooood8 o88o     o8888o     o888o     o888o o8o        `8     
   #define USE_PN532_DATA_RAW                     // Allow DATA block to be used by non-alpha-numberic data (+ 80 bytes code, 48 bytes ram)
 #define USE_RDM6300                              // Add support for RDM6300 125kHz RFID Reader (+0k8)
 #define USE_IBEACON                              // Add support for bluetooth LE passive scan of ibeacon devices (uses HM17 module)
+
+#ifdef  ESP8266
 #define USE_HM10                                 // Add support for HM-10 as a BLE-bridge for the LYWSD03 (+5k1 code)
+#endif
+#ifdef  ESP32
+#define USE_MI_ESP32
+#endif                                           // Add support for HM-10 as a BLE-bridge for the LYWSD03 (+5k1 code)
+
 #define USE_HRXL                                 // Add support for MaxBotix HRXL-MaxSonar ultrasonic range finders (+0k7)
 
 // Power monitoring sensors -----------------------
@@ -1587,7 +1620,15 @@ o888o        o888ooooood8 o88o     o8888o     o888o     o888o o8o        `8     
 #define USE_HRE                                  // Add support for Badger HR-E Water Meter (+1k4 code)
 #define USE_A4988_STEPPER                        // Add support for A4988 stepper-motor-driver-circuit (+10k5 code)
 
+#ifdef  ESP8266
 #define USE_TASMOTA_SLAVE                        // Add support for Arduino Uno/Pro Mini via serial interface including flashing (+2k3 code, 44 mem)
+#endif
+
+#define USE_THERMOSTAT                           // Add support for the new driver created for thermostat control. #8212
+
+#ifdef  ESP8266
+#define USE_PING                                 // Add support for the PING command. #7176
+#endif
 
 #endif  // CUSTOM_CONFIG_PLATINUM *******************************************************************
 
