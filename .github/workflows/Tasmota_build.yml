@@ -1715,33 +1715,6 @@ jobs:
     runs-on: ubuntu-latest
     continue-on-error: true
     steps:
-    - uses: actions/checkout@v1 
-    - uses: actions/download-artifact@v2
-      with:
-        name: firmware
-        path: ./build_output/firmware
-    - name: Display structure of downloaded files
-      run: ls -R
-      working-directory: ./build_output/firmware
-    - name: Commit files  # transfer the new binaries back into the repository
-      run: |
-        git config --local user.name "Platformio BUILD"
-        git add -f ./build_output/firmware/*
-        git commit -m "Tasmota ESP Binaries http://tasmota.com"
-        git pull "https://github.com/Jason2866/Merge.git"
-    - name: Push changes  # push the output folder to the repo
-      uses: ad-m/github-push-action@master
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        branch: 'master'
-        force: true
-
-
-  Upload-firmware:
-    needs: Upload    
-    runs-on: ubuntu-latest
-    continue-on-error: true
-    steps:
     - uses: actions/checkout@v1
     - uses: actions/download-artifact@v2
       with:
