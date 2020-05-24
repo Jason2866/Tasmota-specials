@@ -336,6 +336,13 @@ void SetPowerOnState(void)
   blink_powersave = power;
 }
 
+void UpdateLedPowerAll()
+{
+	for (uint32_t i = 0; i < leds_present; i++) {
+		SetLedPowerIdx(i, bitRead(led_power, i));
+	}
+}
+
 void SetLedPowerIdx(uint32_t led, uint32_t state)
 {
   if (!PinUsed(GPIO_LEDLNK) && (0 == led)) {  // Legacy - LED1 is link led only if LED2 is present
@@ -351,7 +358,17 @@ void SetLedPowerIdx(uint32_t led, uint32_t state)
     } else {
       led_power &= (0xFF ^ mask);
     }
-    DigitalWrite(GPIO_LED1, led, bitRead(led_inverted, led) ? !state : state);
+    uint16_t pwm = 0;
+    if (bitRead(Settings.ledpwm_mask, led)) {
+#ifdef USE_LIGHT
+      pwm = changeUIntScale(ledGamma10(state ? Settings.ledpwm_on : Settings.ledpwm_off), 0, 1023, 0, Settings.pwm_range); // gamma corrected
+#else //USE_LIGHT
+      pwm = changeUIntScale((uint16_t)(state ? Settings.ledpwm_on : Settings.ledpwm_off), 0, 255, 0, Settings.pwm_range); // linear
+#endif //USE_LIGHT
+      analogWrite(Pin(GPIO_LED1, led), bitRead(led_inverted, led) ? Settings.pwm_range - pwm : pwm);
+    } else {
+      DigitalWrite(GPIO_LED1, led, bitRead(led_inverted, led) ? !state : state);
+    }
   }
 #ifdef USE_BUZZER
   if (led == 0) {
@@ -386,10 +403,9 @@ void SetLedLink(uint32_t state)
   uint32_t led_pin = Pin(GPIO_LEDLNK);
   uint32_t led_inv = ledlnk_inverted;
   if (99 == led_pin) {                    // Legacy - LED1 is status
-    led_pin = Pin(GPIO_LED1);
-    led_inv = bitRead(led_inverted, 0);
+    SetLedPowerIdx(0, state);
   }
-  if (led_pin < 99) {
+  else if (led_pin < 99) {
     if (state) { state = 1; }
     digitalWrite(led_pin, (led_inv) ? !state : state);
   }
@@ -1275,16 +1291,23 @@ void SerialInput(void)
       }
     } else {
       if (serial_in_byte || Settings.flag.mqtt_serial_raw) {                     // Any char between 1 and 127 or any char (0 - 255) - CMND_SERIALSEND3
+        bool in_byte_is_delimiter =                                              // Char is delimiter when...
+          (((Settings.serial_delimiter < 128) && (serial_in_byte == Settings.serial_delimiter)) || // Any char between 1 and 127 and being delimiter
+          ((Settings.serial_delimiter == 128) && !isprint(serial_in_byte))) &&   // Any char not between 32 and 127
+          !Settings.flag.mqtt_serial_raw;                                        // In raw mode (CMND_SERIALSEND3) there is never a delimiter
+
         if ((serial_in_byte_counter < INPUT_BUFFER_SIZE -1) &&                   // Add char to string if it still fits and ...
-            ((isprint(serial_in_byte) && (128 == Settings.serial_delimiter)) ||  // Any char between 32 and 127
-            ((serial_in_byte != Settings.serial_delimiter) && (128 != Settings.serial_delimiter)) ||  // Any char between 1 and 127 and not being delimiter
-              Settings.flag.mqtt_serial_raw)) {                                  // Any char between 0 and 255 - CMND_SERIALSEND3
+            !in_byte_is_delimiter) {                                             // Char is not a delimiter
           serial_in_buffer[serial_in_byte_counter++] = serial_in_byte;
-          serial_polling_window = millis();
-        } else {
+        }
+        
+        if ((serial_in_byte_counter >= INPUT_BUFFER_SIZE -1) ||                  // Send message when buffer is full or ...
+            in_byte_is_delimiter) {                                              // Char is delimiter
           serial_polling_window = 0;                                             // Reception done - send mqtt
           break;
         }
+
+        serial_polling_window = millis();                                        // Wait for next char
       }
     }
 

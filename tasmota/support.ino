@@ -1875,60 +1875,33 @@ void AddLogBufferSize(uint32_t loglevel, uint8_t *buffer, uint32_t count, uint32
 }
 
 /*********************************************************************************************\
- * JSON parsing
+ * Uncompress static PROGMEM strings
 \*********************************************************************************************/
 
-// does the character needs to be escaped, and if so with which character
-char escapeJSONChar(char c) {
-  if ((c == '\"') || (c == '\\')) {
-    return c;
+#if defined(USE_RULES_COMPRESSION) || defined(USE_SCRIPT_COMPRESSION)
+
+#include <unishox.h>
+
+Unishox compressor;
+
+String Decompress(const char * compressed, size_t uncompressed_size) {
+  String content("");
+
+  uncompressed_size += 2;    // take a security margin
+
+  // We use a nasty trick here. To avoid allocating twice the buffer,
+  // we first extend the buffer of the String object to the target size (maybe overshooting by 7 bytes)
+  // then we decompress in this buffer,
+  // and finally assign the raw string to the String, which happens to work: String uses memmove(), so overlapping works
+  content.reserve(uncompressed_size);
+  char * buffer = content.begin();
+
+  int32_t len = compressor.unishox_decompress(compressed, strlen_P(compressed), buffer, uncompressed_size);
+  if (len > 0) {
+    buffer[len] = 0;    // terminate string with NULL
+    content = buffer;         // copy in place
   }
-  if (c == '\n') { return 'n'; }
-  if (c == '\t') { return 't'; }
-  if (c == '\r') { return 'r'; }
-  if (c == '\f') { return 'f'; }
-  if (c == '\b') { return 'b'; }
-  return 0;
+  return content;
 }
 
-String escapeJSONString(const char *str) {
-  String r("");
-  if (nullptr == str) { return r; }
-
-  bool needs_escape = false;
-  size_t len_out = 1;
-  const char * c = str;
-
-  while (*c) {
-    if (escapeJSONChar(*c)) {
-      len_out++;
-      needs_escape = true;
-    }
-    c++;
-    len_out++;
-  }
-
-  if (needs_escape) {
-    // we need to escape some chars
-    // allocate target buffer
-    r.reserve(len_out);
-    c = str;
-    char *d = r.begin();
-    while (*c) {
-      char c2 = escapeJSONChar(*c);
-      if (c2) {
-        c++;
-        *d++ = '\\';
-        *d++ = c2;
-      } else {
-        *d++ = *c++;
-      }
-    }
-    *d = 0;   // add NULL terminator
-    r = (char*) r.begin();      // assign the buffer to the string
-  } else {
-    r = str;
-  }
-
-  return r;
-}
+#endif // defined(USE_RULES_COMPRESSION) || defined(USE_SCRIPT_COMPRESSION)

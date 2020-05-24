@@ -76,7 +76,6 @@ boolean Adafruit_VEML7700::begin(TwoWire *theWire) {
   return true;
 }
 
-
 float Adafruit_VEML7700::normalize_resolution(float value) {
   // adjust for gain (1x is normalized)
   switch (getGain()) {
@@ -123,7 +122,7 @@ float Adafruit_VEML7700::readLuxNormalized() {
   // user-provided correction for non-linearities at high lux/white values:
   // https://forums.adafruit.com/viewtopic.php?f=19&t=152997&p=758582#p759346
   if ((getGain() == VEML7700_GAIN_1_8) && (getIntegrationTime() == VEML7700_IT_25MS)){
-    lux = 6.0135e-13*pow(lux,4) -  9.3924e-9*pow(lux,3) + 8.1488e-5*pow(lux,2) + 1.0023*lux;
+    lux = 6.0135e-13*alternate_pow(lux,4) -  9.3924e-9*alternate_pow(lux,3) + 8.1488e-5*alternate_pow(lux,2) + 1.0023*lux;
   }
  
   return lux;  
@@ -156,7 +155,7 @@ float Adafruit_VEML7700::readWhiteNormalized() {
   // user-provided correction for non-linearities at high lux values:
   // https://forums.adafruit.com/viewtopic.php?f=19&t=152997&p=758582#p759346
   if ((getGain() == VEML7700_GAIN_1_8) && (getIntegrationTime() == VEML7700_IT_25MS)){
-    white = 2E-15*pow(white,4) + 4E-12*pow(white,3) + 9E-06*pow(white,2) + 1.0179*white - 11.052;
+    white = 2E-15*alternate_pow(white,4) + 4E-12*alternate_pow(white,3) + 9E-06*alternate_pow(white,2) + 1.0179*white - 11.052;
   }
 
   return white;
