@@ -1440,7 +1440,6 @@ jobs:
     - name: Run PlatformIO
       run: | 
         mv user_config_override.special tasmota/user_config_override.h
-        mv platformio_override.special platformio_override.ini
         platformio run -e tasmota-zigbee
     - uses: actions/upload-artifact@v2
       with:
@@ -1448,7 +1447,6 @@ jobs:
         path: ./build_output/firmware
  
   
-
   tasmota-battery:
     needs: tasmota_pull
     runs-on: ubuntu-latest
@@ -1466,14 +1464,12 @@ jobs:
     - name: Run PlatformIO
       run: | 
         mv user_config_override.special tasmota/user_config_override.h
-        mv platformio_override.special platformio_override.ini
         platformio run -e tasmota-battery
     - uses: actions/upload-artifact@v2
       with:
         name: firmware
         path: ./build_output/firmware
   
-
 
   tasmota-scripting:
     needs: tasmota_pull
@@ -1492,14 +1488,12 @@ jobs:
     - name: Run PlatformIO
       run: | 
         mv user_config_override.special tasmota/user_config_override.h
-        mv platformio_override.special platformio_override.ini
         platformio run -e tasmota-scripting
     - uses: actions/upload-artifact@v2
       with:
         name: firmware
         path: ./build_output/firmware
   
-
 
   tasmota-mega:
     needs: tasmota_pull
@@ -1518,14 +1512,12 @@ jobs:
     - name: Run PlatformIO
       run: | 
         mv user_config_override.special tasmota/user_config_override.h
-        mv platformio_override.special platformio_override.ini
         platformio run -e tasmota-mega
     - uses: actions/upload-artifact@v2
       with:
         name: firmware
         path: ./build_output/firmware
   
-
 
   tasmota-fullrules:
     needs: tasmota_pull
@@ -1544,14 +1536,12 @@ jobs:
     - name: Run PlatformIO
       run: | 
         mv user_config_override.special tasmota/user_config_override.h
-        mv platformio_override.special platformio_override.ini
         platformio run -e tasmota-fullrules
     - uses: actions/upload-artifact@v2
       with:
         name: firmware
         path: ./build_output/firmware
   
-
 
   tasmota-platinum:
     needs: tasmota_pull
@@ -1570,8 +1560,127 @@ jobs:
     - name: Run PlatformIO
       run: | 
         mv user_config_override.special tasmota/user_config_override.h
-        mv platformio_override.special platformio_override.ini
         platformio run -e tasmota-platinum
+    - uses: actions/upload-artifact@v2
+      with:
+        name: firmware
+        path: ./build_output/firmware
+
+  
+  tasmota32-battery:
+    needs: tasmota_pull
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set up Python
+      uses: actions/setup-python@v1
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -U platformio
+        platformio upgrade --dev
+        platformio update
+    - name: Run PlatformIO
+      run: | 
+        mv user_config_override.special tasmota/user_config_override.h
+        platformio run -e tasmota32-battery
+    - uses: actions/upload-artifact@v2
+      with:
+        name: firmware
+        path: ./build_output/firmware
+  
+
+  tasmota32-scripting:
+    needs: tasmota_pull
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set up Python
+      uses: actions/setup-python@v1
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -U platformio
+        platformio upgrade --dev
+        platformio update
+    - name: Run PlatformIO
+      run: | 
+        mv user_config_override.special tasmota/user_config_override.h
+        platformio run -e tasmota32-scripting
+    - uses: actions/upload-artifact@v2
+      with:
+        name: firmware
+        path: ./build_output/firmware
+  
+
+  tasmota32-mega:
+    needs: tasmota_pull
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set up Python
+      uses: actions/setup-python@v1
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -U platformio
+        platformio upgrade --dev
+        platformio update
+    - name: Run PlatformIO
+      run: | 
+        mv user_config_override.special tasmota/user_config_override.h
+        platformio run -e tasmota32-mega
+    - uses: actions/upload-artifact@v2
+      with:
+        name: firmware
+        path: ./build_output/firmware
+  
+
+  tasmota32-fullrules:
+    needs: tasmota_pull
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set up Python
+      uses: actions/setup-python@v1
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -U platformio
+        platformio upgrade --dev
+        platformio update
+    - name: Run PlatformIO
+      run: | 
+        mv user_config_override.special tasmota/user_config_override.h
+        platformio run -e tasmota32-fullrules
+    - uses: actions/upload-artifact@v2
+      with:
+        name: firmware
+        path: ./build_output/firmware
+  
+
+  tasmota32-platinum:
+    needs: tasmota_pull
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set up Python
+      uses: actions/setup-python@v1
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -U platformio
+        platformio upgrade --dev
+        platformio update
+    - name: Run PlatformIO
+      run: | 
+        mv user_config_override.special tasmota/user_config_override.h
+        platformio run -e tasmota32-platinum
     - uses: actions/upload-artifact@v2
       with:
         name: firmware
