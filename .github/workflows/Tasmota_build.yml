@@ -1687,7 +1687,7 @@ jobs:
         path: ./build_output/firmware
 
   Upload:
-    needs: [tasmota-UK, tasmota32-ircustom, tasmota32-UK, tasmota-zigbee, tasmota-fullrules, tasmota-platinum]    
+    needs: [tasmota-UK, tasmota32-ircustom, tasmota32-UK, tasmota-zigbee, tasmota-fullrules, tasmota-platinum, tasmota32-scripting, tasmota32-mega, tasmota32-fullrules, tasmota32-platinum]    
     runs-on: ubuntu-latest
     continue-on-error: true
     steps:
