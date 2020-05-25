@@ -755,7 +755,7 @@ jobs:
         platformio update
     - name: Run PlatformIO
       run: | 
-        platformio run -e tasmota-minimal
+        platformio run -e tasmota32-minimal
     - uses: actions/upload-artifact@v2
       with:
         name: firmware
