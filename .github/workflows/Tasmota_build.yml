@@ -3,8 +3,8 @@ name: Build_firmware
 on:
   push:
   pull_request:
-  schedule:
-    - cron: '0 * * * *'  
+#  schedule:
+#    - cron: '0 * * * *'  
 
 jobs:
   tasmota_pull:
@@ -24,12 +24,6 @@ jobs:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         branch: 'master'
         force: true
-
-  tasmota:
-    needs: tasmota_pull
-    runs-on: ubuntu-latest
-    continue-on-error: true
-    steps:
     - uses: actions/checkout@v1
     - name: Set up Python
       uses: actions/setup-python@v1
@@ -39,6 +33,12 @@ jobs:
         pip install -U platformio
         platformio upgrade --dev
         platformio update
+
+  tasmota:
+    needs: tasmota_pull
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
     - name: Run PlatformIO
       run: | 
         platformio run -e tasmota
