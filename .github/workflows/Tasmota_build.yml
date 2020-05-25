@@ -1746,12 +1746,12 @@ jobs:
         mv ./mv_firmware/tasmota32-minimal.* ./firmware/tasmota32/
         mv ./mv_firmware/tasmota32-lite.* ./firmware/tasmota32/
         mv ./mv_firmware/tasmota32-ir*.* ./firmware/tasmota32/
-        mv ./mv_firmware/tasmota32-display.* ./firmware/tasmota/
+        mv ./mv_firmware/tasmota32-display.* ./firmware/tasmota32/
         mv ./mv_firmware/tasmota32-web*.* ./firmware/tasmota32/
         mv ./mv_firmware/tasmota32-knx.* ./firmware/tasmota32/
         mv ./mv_firmware/tasmota32* ./firmware/tasmota32/other/
         mv ./mv_firmware/* ./firmware/tasmota/other/
-        mv ./ESP32_flash_files/*.* ./firmware/tasmota32/        
+        mv ./ESP32_flash_files/*.* ./firmware/tasmota32/ESP32_needed_files/        
     - name: Commit files  # transfer the new binaries back into the repository
       run: |
         git config --local user.name "Platformio BUILD"
