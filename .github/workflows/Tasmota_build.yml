@@ -1726,17 +1726,40 @@ jobs:
     - uses: actions/download-artifact@v2
       with:
         name: firmware
-        path: ./Tasmota_firmware
+        path: ./mv_firmware
+    - name: Move firmware files in sub-folders
+      run: |
+        mkdir ./firmware/tasmota
+        mkdir ./firmware/tasmota32
+        mkdir ./firmware/tasmota/other
+        mkdir ./firmware/tasmota32/other
+        mv ./mv_firmware/tasmota.* ./firmware/tasmota/
+        mv ./mv_firmware/tasmota-sensors.* ./firmware/tasmota/
+        mv ./mv_firmware/tasmota-minimal.* ./firmware/tasmota/
+        mv ./mv_firmware/tasmota-lite.* ./firmware/tasmota/
+        mv ./mv_firmware/tasmota-ir*.* ./firmware/tasmota/
+        mv ./mv_firmware/tasmota-display.* ./firmware/tasmota/
+        mv ./mv_firmware/tasmota-knx.* ./firmware/tasmota/
+        mv ./mv_firmware/tasmota32.* ./firmware/tasmota32/
+        mv ./mv_firmware/tasmota32-sensors.* ./firmware/tasmota32/
+        mv ./mv_firmware/tasmota32-minimal.* ./firmware/tasmota32/
+        mv ./mv_firmware/tasmota32-lite.* ./firmware/tasmota32/
+        mv ./mv_firmware/tasmota32-ir*.* ./firmware/tasmota32/
+        mv ./mv_firmware/tasmota32-display.* ./firmware/tasmota/
+        mv ./mv_firmware/tasmota32-web*.* ./firmware/tasmota32/
+        mv ./mv_firmware/tasmota32-knx.* ./firmware/tasmota32/
+        mv ./mv_firmware/tasmota32* ./firmware/tasmota32/other/
+        mv ./mv_firmware/* ./firmware/tasmota/other/
+        mv ./ESP32_flash_files/*.* ./firmware/tasmota32/        
     - name: Display structure of downloaded files
       run: ls -R
-      working-directory: ./Tasmota_firmware
+      working-directory: ./firmware
     - name: Commit files  # transfer the new binaries back into the repository
       run: |
         git config --local user.name "Platformio BUILD"
         git rm -r --cached .
         git add ./README.md
-        git add -f ./ESP32_flash_files/*.*
-        git add -f ./Tasmota_firmware/*.*
+        git add -f ./firmware/*.*
         git commit -m "Tasmota ESP Binaries http://tasmota.com"
     - name: Push changes  # push the firmware files to branch firmware
       uses: ad-m/github-push-action@master
