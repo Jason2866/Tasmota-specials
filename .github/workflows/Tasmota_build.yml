@@ -1734,6 +1734,7 @@ jobs:
       run: |
         mkdir -p ./firmware/tasmota/other
         mkdir -p ./firmware/tasmota32/other
+        mkdir -p ./firmware/tasmota32/ESP32_needed_files/
         mv ./mv_firmware/tasmota.* ./firmware/tasmota/
         mv ./mv_firmware/tasmota-sensors.* ./firmware/tasmota/
         mv ./mv_firmware/tasmota-minimal.* ./firmware/tasmota/
