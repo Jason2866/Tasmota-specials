@@ -1729,10 +1729,8 @@ jobs:
         path: ./mv_firmware
     - name: Move firmware files in sub-folders
       run: |
-        mkdir ./firmware/tasmota
-        mkdir ./firmware/tasmota32
-        mkdir ./firmware/tasmota/other
-        mkdir ./firmware/tasmota32/other
+        mkdir -p ./firmware/tasmota/other
+        mkdir -p ./firmware/tasmota32/other
         mv ./mv_firmware/tasmota.* ./firmware/tasmota/
         mv ./mv_firmware/tasmota-sensors.* ./firmware/tasmota/
         mv ./mv_firmware/tasmota-minimal.* ./firmware/tasmota/
