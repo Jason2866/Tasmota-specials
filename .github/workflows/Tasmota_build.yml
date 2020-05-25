@@ -1727,6 +1727,9 @@ jobs:
       with:
         name: firmware
         path: ./mv_firmware
+    - name: Display structure of downloaded files
+      run: ls -R
+      working-directory: ./mv_firmware
     - name: Move firmware files in sub-folders
       run: |
         mkdir -p ./firmware/tasmota/other
@@ -1749,9 +1752,6 @@ jobs:
         mv ./mv_firmware/tasmota32* ./firmware/tasmota32/other/
         mv ./mv_firmware/* ./firmware/tasmota/other/
         mv ./ESP32_flash_files/*.* ./firmware/tasmota32/        
-    - name: Display structure of downloaded files
-      run: ls -R
-      working-directory: ./firmware
     - name: Commit files  # transfer the new binaries back into the repository
       run: |
         git config --local user.name "Platformio BUILD"
