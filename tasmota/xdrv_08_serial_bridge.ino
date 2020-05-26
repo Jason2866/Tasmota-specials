@@ -63,7 +63,7 @@ void SerialBridgeInput(void)
           !in_byte_is_delimiter) {                                             // Char is not a delimiter
         serial_bridge_buffer[serial_bridge_in_byte_counter++] = serial_in_byte;
       }
-      
+
       if ((serial_bridge_in_byte_counter >= SERIAL_BRIDGE_BUFFER_SIZE -1) ||   // Send message when buffer is full or ...
           in_byte_is_delimiter) {                                              // Char is delimiter
         serial_bridge_polling_window = 0;                                      // Publish now
@@ -76,12 +76,23 @@ void SerialBridgeInput(void)
 
   if (serial_bridge_in_byte_counter && (millis() > (serial_bridge_polling_window + SERIAL_POLLING))) {
     serial_bridge_buffer[serial_bridge_in_byte_counter] = 0;                   // Serial data completed
-    char hex_char[(serial_bridge_in_byte_counter * 2) + 2];
     bool assume_json = (!serial_bridge_raw && (serial_bridge_buffer[0] == '{'));
-    Response_P(PSTR("{\"" D_JSON_SSERIALRECEIVED "\":%s%s%s}"),
-      (assume_json) ? "" : "\"",
-      (serial_bridge_raw) ? ToHex_P((unsigned char*)serial_bridge_buffer, serial_bridge_in_byte_counter, hex_char, sizeof(hex_char)) : serial_bridge_buffer,
-      (assume_json) ? "" : "\"");
+
+    Response_P(PSTR("{\"" D_JSON_SSERIALRECEIVED "\":"));
+    if (assume_json) {
+      ResponseAppend_P(serial_bridge_buffer);
+    } else {
+      ResponseAppend_P(PSTR("\""));
+      if (serial_bridge_raw) {
+        char hex_char[(serial_bridge_in_byte_counter * 2) + 2];
+        ResponseAppend_P(ToHex_P((unsigned char*)serial_bridge_buffer, serial_bridge_in_byte_counter, hex_char, sizeof(hex_char)));
+      } else {
+        ResponseAppend_P(EscapeJSONString(serial_bridge_buffer).c_str());
+      }
+      ResponseAppend_P(PSTR("\""));
+    }
+    ResponseJsonEnd();
+
     MqttPublishPrefixTopic_P(RESULT_OR_TELE, PSTR(D_JSON_SSERIALRECEIVED));
     XdrvRulesProcess();
     serial_bridge_in_byte_counter = 0;
