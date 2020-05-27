@@ -40,7 +40,7 @@ static const char* LOG_TAG = "NimBLEDevice";
 /**
  * Singletons for the NimBLEDevice.
  */
-bool            initialized = false;
+bool            nimble_device_initialized = false;
 #if defined(CONFIG_BT_NIMBLE_ROLE_OBSERVER)
 NimBLEScan*     NimBLEDevice::m_pScan = nullptr;
 #endif
@@ -401,7 +401,7 @@ void NimBLEDevice::stopAdvertising() {
 
     m_synced = true;
 
-    if(initialized) {
+    if(nimble_device_initialized) {
 #if defined(CONFIG_BT_NIMBLE_ROLE_OBSERVER)
         if(m_pScan != nullptr) {
             // Restart scanning with the last values sent, allow to clear results.
@@ -437,7 +437,7 @@ void NimBLEDevice::stopAdvertising() {
  * @param deviceName The device name of the device.
  */
 /* STATIC */ void NimBLEDevice::init(const std::string &deviceName) {
-    if(!initialized){
+    if(!nimble_device_initialized){
         int rc=0;
         esp_err_t errRc = ESP_OK;
 
@@ -486,7 +486,7 @@ void NimBLEDevice::stopAdvertising() {
         vTaskDelay(1 / portTICK_PERIOD_MS);
     }
 
-    initialized = true; // Set the initialization flag to ensure we are only initialized once.
+    nimble_device_initialized = true; // Set the initialization flag to ensure we are only initialized once.
 } // init
 
 
@@ -503,7 +503,7 @@ void NimBLEDevice::stopAdvertising() {
             NIMBLE_LOGE(LOG_TAG, "esp_nimble_hci_and_controller_deinit() failed with error: %d", ret);
         }
 
-        initialized = false;
+        nimble_device_initialized = false;
         m_synced = false;
     }
 } // deinit
@@ -513,7 +513,7 @@ void NimBLEDevice::stopAdvertising() {
  * @brief Check if the initialization is complete.
  */
 bool NimBLEDevice::getInitialized() {
-    return initialized;
+    return nimble_device_initialized;
 } // getInitialized
 
 
