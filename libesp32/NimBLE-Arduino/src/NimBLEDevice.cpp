@@ -40,7 +40,11 @@ static const char* LOG_TAG = "NimBLEDevice";
 /**
  * Singletons for the NimBLEDevice.
  */
+<<<<<<< HEAD
 bool            nimble_device_initialized = false;
+=======
+static bool            initialized = false;
+>>>>>>> Tasmota/development
 #if defined(CONFIG_BT_NIMBLE_ROLE_OBSERVER)
 NimBLEScan*     NimBLEDevice::m_pScan = nullptr;
 #endif
