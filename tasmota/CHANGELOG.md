@@ -11,6 +11,10 @@
 - Add Three Phase Export Active Energy to SDM630 driver
 - Add wildcard pattern ``?`` for JSON matching in rules
 - Add support for unique MQTTClient (and inherited fallback topic) by full Mac address using ``mqttclient DVES_%12X`` (#8300)
+- Add Zigbee options to ``ZbSend`` to write and report attributes
+- Add ``CpuFrequency`` to ``status 2``
+- Add ``FlashFrequency`` to ``status 4``
+- Add support for up to two BH1750 sensors controlled by commands ``BH1750Resolution`` and ``BH1750MTime`` (#8139)
 
 ### 8.3.1.1 20200518
 
