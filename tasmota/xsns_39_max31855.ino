@@ -21,7 +21,7 @@
 
 #define XSNS_39              39
 
-bool max31855_initialized = false;
+bool initialized = false;
 
 struct MAX31855_ResultStruct{
     uint8_t ErrorCode;                  // Error Codes: 0 = No Error / 1 = TC open circuit / 2 = TC short to GND / 4 = TC short to VCC
@@ -30,7 +30,7 @@ struct MAX31855_ResultStruct{
 } MAX31855_Result;
 
 void MAX31855_Init(void){
-    if(max31855_initialized)
+    if(initialized)
         return;
 
     // Set GPIO modes for SW-SPI
@@ -42,7 +42,7 @@ void MAX31855_Init(void){
     digitalWrite(Pin(GPIO_MAX31855CS), HIGH);
     digitalWrite(Pin(GPIO_MAX31855CLK), LOW);
 
-    max31855_initialized = true;
+    initialized = true;
 }
 
 /*
@@ -50,6 +50,20 @@ void MAX31855_Init(void){
 *   Acquires the raw data via SPI, checks for MAX31855 errors and fills result structure
 */
 void MAX31855_GetResult(void){
+    // Controlled via SetOption94
+    if (Settings.flag4.max6675) {
+        int32_t RawData = MAX31855_ShiftIn(16);
+        int32_t temp = (RawData >> 3) & ((1 << 12) - 1);
+
+        /* Occasionally the sensor returns 0xfff, consider it an error */
+        if (temp == ((1 << 12) - 1))
+            return;
+
+        MAX31855_Result.ErrorCode = 0;
+        MAX31855_Result.ReferenceTemperature = NAN;
+        MAX31855_Result.ProbeTemperature = ConvertTemp(0.25 * temp);
+        return;
+    }
     int32_t RawData = MAX31855_ShiftIn(32);
     uint8_t probeerror = RawData & 0x7;
 
