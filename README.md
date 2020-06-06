@@ -11,11 +11,11 @@ Command syntax for flashing Tasmota32 firmware on ESP32 via Esptool (replace COM
 
 ## Build variants:
 
-- Scripting included instead of rules
 - Tasmota Zigbee gateway build
 - Tasmota Rules with all the extras enabled
+- Scripting included instead of rules
 - Tasmota Battery build for battery powered tuya sensors
-- Tasmota minimal even smaller (NO Webserver, you have to use mqtt!!)
+- Tasmota minicustom minimal even smaller (NO Webserver, you have to use mqtt!!)
 - Tasmota Mega at the bleeding edge - Almost every sensor included
 - Tasmota Platinum nearly ALL enabled IT.IS.HUGE! <br>
 *Only serial flash is possible, there's no OTA possible!*
