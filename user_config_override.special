@@ -709,6 +709,7 @@ oo     .d8P `88b    ooo   888  `88b.   888   888              888       888   8 
 
 #undef  USE_RULES
 #define USE_SCRIPT                               // Add support for script
+  #define USE_SCRIPT_COMPRESSION
   #define USE_SCRIPT_JSON_EXPORT
   #define USE_SCRIPT_WEB_DISPLAY
   #define USE_SENDMAIL
