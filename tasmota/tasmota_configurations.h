@@ -1,18 +1,14 @@
 /*
   tasmota_configurations.h - Configurations for Tasmota
-
   Copyright (C) 2020  Theo Arends
-
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
   the Free Software Foundation, either version 3 of the License, or
   (at your option) any later version.
-
   This program is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
-
   You should have received a copy of the GNU General Public License
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
@@ -154,7 +150,6 @@
 #define USE_HRXL                                 // Add support for MaxBotix HRXL-MaxSonar ultrasonic range finders (+0k7)
 //#define USE_TASMOTA_SLAVE                        // Add support for Arduino Uno/Pro Mini via serial interface including flashing (+2k3 code, 44 mem)
 //#define USE_OPENTHERM                            // Add support for OpenTherm (+15k code)
-//#define USE_MCP9808                            // Add support for MCP9808 temperature sensor (+0k9 code)
 
 #define USE_ENERGY_SENSOR                        // Add energy sensors (-14k code)
 #define USE_PZEM004T                             // Add support for PZEM004T Energy monitor (+2k code)
@@ -517,11 +512,13 @@
 #undef USE_DEBUG_DRIVER                          // Disable debug code
 #endif  // FIRMWARE_LITE
 
+
 /*********************************************************************************************\
  * [tasmota-minimal.bin]
  * Provide the smallest image possible while still enabling a webserver for intermediate image load
 \*********************************************************************************************/
 
+#ifndef FIRMWARE_MINICUSTOM
 #ifdef FIRMWARE_MINIMAL
 
 #undef CODE_IMAGE_STR
@@ -639,10 +636,35 @@
 #undef USE_THERMOSTAT                            // Disable support for Thermostat
 #undef DEBUG_THEO                                // Disable debug code
 #undef USE_DEBUG_DRIVER                          // Disable debug code
+
 #endif  // FIRMWARE_MINIMAL
+#endif  // ifndef FIRMWARE_MINICUSTOM
+
+
+/*********************************************************************************************\
+ * [tasmota-minicustom.bin]
+ * Make a small minimal custom image possible
+\*********************************************************************************************/
+
+#ifdef FIRMWARE_MINICUSTOM
+#define FIRMWARE_MINIMAL
+
+#undef CODE_IMAGE_STR
+#define CODE_IMAGE_STR "mini-custom"
+
+#undef FIRMWARE_LITE                            // Disable tasmota-lite with no sensors
+#undef FIRMWARE_SENSORS                         // Disable tasmota-sensors with useful sensors enabled
+#undef FIRMWARE_KNX_NO_EMULATION                // Disable tasmota-knx with KNX but without Emulation
+#undef FIRMWARE_DISPLAYS                        // Disable tasmota-display with display drivers enabled
+#undef FIRMWARE_IR                              // Disable tasmota-ir with IR full protocols activated
+#undef FIRMWARE_IR_CUSTOM                       // Disable tasmota customizable with special marker to add all IR protocols
+
+#endif  // FIRMWARE_MINICUSTOM
+
 
 #ifdef ESP32
 #include "tasmota_configurations_ESP32.h"
 #endif  // ESP32
+
 
 #endif  // _TASMOTA_CONFIGURATIONS_H_
