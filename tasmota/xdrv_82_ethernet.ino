@@ -50,25 +50,13 @@
 #endif
 
 #ifndef ETH_TYPE
-#define ETH_TYPE          ETH_PHY_LAN8720        // ETH.h eth_phy_type_t:       0 = ETH_PHY_LAN8720, 1 = ETH_PHY_TLK110
+#define ETH_TYPE          ETH_PHY_LAN8720        // ETH.h eth_phy_type_t:       0 = ETH_PHY_LAN8720, 1 = ETH_PHY_TLK110, 2 = ETH_PHY_IP101
 #endif
 
 #ifndef ETH_CLKMODE
 #define ETH_CLKMODE       ETH_CLOCK_GPIO0_IN     // esp_eth.h eth_clock_mode_t: 0 = ETH_CLOCK_GPIO0_IN, 1 = ETH_CLOCK_GPIO0_OUT, 2 = ETH_CLOCK_GPIO16_OUT, 3 = ETH_CLOCK_GPIO17_OUT
 #endif
 */
-
-#ifndef ETH_POWER_PIN
-#define ETH_POWER_PIN     -1
-#endif
-
-#ifndef ETH_MDC_PIN
-#define ETH_MDC_PIN       23
-#endif
-
-#ifndef ETH_MDIO_PIN
-#define ETH_MDIO_PIN      18
-#endif
 
 #include <ETH.h>
 
@@ -116,13 +104,17 @@ void EthernetEvent(WiFiEvent_t event) {
 
 void EthernetInit(void) {
   if (!Settings.flag4.network_ethernet) { return; }
+  if (!PinUsed(GPIO_ETH_PHY_MDC) && !PinUsed(GPIO_ETH_PHY_MDIO)) {
+    AddLog_P2(LOG_LEVEL_DEBUG, PSTR("ETH: No ETH MDC and/or ETH MDIO GPIO defined"));
+    return;
+  }
 
   snprintf_P(Eth.hostname, sizeof(Eth.hostname), PSTR("%s_eth"), my_hostname);
   WiFi.onEvent(EthernetEvent);
 
-  int eth_power = (PinUsed(GPIO_ETH_PHY_POWER)) ? Pin(GPIO_ETH_PHY_POWER) : ETH_POWER_PIN;
-  int eth_mdc = (PinUsed(GPIO_ETH_PHY_MDC)) ? Pin(GPIO_ETH_PHY_MDC) : ETH_MDC_PIN;
-  int eth_mdio = (PinUsed(GPIO_ETH_PHY_MDIO)) ? Pin(GPIO_ETH_PHY_MDIO) : ETH_MDIO_PIN;
+  int eth_power = (PinUsed(GPIO_ETH_PHY_POWER)) ? Pin(GPIO_ETH_PHY_POWER) : -1;
+  int eth_mdc = Pin(GPIO_ETH_PHY_MDC);
+  int eth_mdio = Pin(GPIO_ETH_PHY_MDIO);
   if (!ETH.begin(Settings.eth_address, eth_power, eth_mdc, eth_mdio, (eth_phy_type_t)Settings.eth_type, (eth_clock_mode_t)Settings.eth_clk_mode)) {
     AddLog_P2(LOG_LEVEL_DEBUG, PSTR("ETH: Bad PHY type or init error"));
   };
@@ -174,7 +166,7 @@ void CmndEthAddress(void)
 
 void CmndEthType(void)
 {
-  if ((XdrvMailbox.payload >= 0) && (XdrvMailbox.payload <= 1)) {
+  if ((XdrvMailbox.payload >= 0) && (XdrvMailbox.payload <= 2)) {
     Settings.eth_type = XdrvMailbox.payload;
     restart_flag = 2;
   }
