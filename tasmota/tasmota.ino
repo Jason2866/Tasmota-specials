@@ -205,7 +205,7 @@ void setup(void) {
 #endif
 #endif
 
-  global_state.data = 3;  // Init global state (wifi_down, mqtt_down) to solve possible network issues
+  global_state.data = 0xF;  // Init global state (wifi_down, mqtt_down) to solve possible network issues
 
   RtcRebootLoad();
   if (!RtcRebootValid()) {
@@ -322,6 +322,9 @@ void setup(void) {
 
   XdrvCall(FUNC_INIT);
   XsnsCall(FUNC_INIT);
+#ifdef USE_SCRIPT
+  Run_Scripter(">BS",3,0);
+#endif
 
   rules_flag.system_init = 1;
 }
@@ -413,7 +416,7 @@ void loop(void) {
     if (my_activity < (uint32_t)ssleep) {
       SleepDelay((uint32_t)ssleep - my_activity);  // Provide time for background tasks like wifi
     } else {
-      if (global_state.wifi_down) {
+      if (global_state.network_down) {
         SleepDelay(my_activity /2);                // If wifi down and my_activity > setoption36 then force loop delay to 1/3 of my_activity period
       }
     }

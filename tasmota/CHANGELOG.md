@@ -1,10 +1,20 @@
 ## Unreleased (development)
 
+### 8.3.1.5 20200616
+
+- Add ESP32 ethernet commands ``EthType 0/1``, ``EthAddress 0..31`` and ``EthClockMode 0..3``
+- Add Zigbee initial support for EmberZNet protocol (raw send/receive only)
+
+### 8.3.1.4 20200615
+
+- Add basic support for ESP32 ethernet adding commands ``Wifi 0/1`` and ``Ethernet 0/1`` both default ON
+
 ### 8.3.1.3 20200611
 
 - Add initial support for Telegram bot (#8619)
 - Add support for HP303B Temperature and Pressure sensor by Robert Jaakke (#8638)
 - Add rule trigger ``System#Init`` to allow early rule execution without wifi and mqtt initialized yet
+- Add serial to TCP bridge, ``TCPStart`` and ``TCPBaudRate`` (needs #define USE_TCP_BRIDGE)
 
 ### 8.3.1.2 20200522
 
