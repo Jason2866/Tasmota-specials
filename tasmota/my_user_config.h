@@ -50,7 +50,12 @@
 #define PROJECT                "tasmota"         // PROJECT is used as the default topic delimiter
 
 // If not selected the default will be SONOFF_BASIC
-//#define MODULE                 SONOFF_BASIC      // [Module] Select default model from tasmota_template.h
+//#define MODULE                 SONOFF_BASIC      // [Module] Select default module from tasmota_template.h
+#ifdef ESP8266
+#define FALLBACK_MODULE        SONOFF_BASIC      // [Module2] Select default module on fast reboot where USER_MODULE is user template
+#else // ESP32
+#define FALLBACK_MODULE        WEMOS             // [Module2] Select default module on fast reboot where USER_MODULE is user template
+#endif
 
 #define SAVE_DATA              1                 // [SaveData] Save changed parameters to Flash (0 = disable, 1 - 3600 seconds)
 #define SAVE_STATE             true              // [SetOption0] Save changed power state to Flash (false = disable, true = enable)
@@ -618,6 +623,8 @@
   #define LE01MR_SPEED         9600              // LE-01MR modbus baudrate (default: 9600)
   #define LE01MR_ADDR          1                 // LE-01MR modbus address (default: 0x01)
 #define USE_BL0940                               // Add support for BL0940 Energy monitor as used in Blitzwolf SHP-10 (+1k6 code)
+//#define USE_TELEINFO                             // Add support for Teleinfo via serial RX interface (+5k2 code, +168 RAM + SmartMeter LinkedList Values RAM)
+//  #define USE_TELEINFO_STANDARD                  // Use standard mode (9600 bps) else it's historical mode (1200 bps)
 
 // -- Low level interface devices -----------------
 #define USE_DHT                                  // Add support for DHT11, AM2301 (DHT21, DHT22, AM2302, AM2321) and SI7021 Temperature and Humidity sensor (1k6 code)

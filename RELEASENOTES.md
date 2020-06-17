@@ -52,7 +52,7 @@ The following binary downloads have been compiled with ESP8266/Arduino library c
 
 ## Changelog
 
-### Version 8.3.1.5
+### Version 8.3.1.6
 
 - Change IRremoteESP8266 library updated to v2.7.7
 - Change Adafruit_SGP30 library from v1.0.3 to v1.2.0 (#8519)
@@ -62,6 +62,7 @@ The following binary downloads have been compiled with ESP8266/Arduino library c
 - Add command ``Rule0`` to change global rule parameters
 - Add command ``Time 4`` to display timestamp using milliseconds (#8537)
 - Add command ``SetOption94 0/1`` to select MAX31855 or MAX6675 thermocouple support (#8616)
+- Add command ``Module2`` to configure fallback module on fast reboot (#8464)
 - Add commands ``LedPwmOn 0..255``, ``LedPwmOff 0..255`` and ``LedPwmMode1 0/1`` to control led brightness by George (#8491)
 - Add ESP32 ethernet commands ``EthType 0/1``, ``EthAddress 0..31`` and ``EthClockMode 0..3``
 - Add support for unique MQTTClient (and inherited fallback topic) by full Mac address using ``mqttclient DVES_%12X`` (#8300)
@@ -80,4 +81,6 @@ The following binary downloads have been compiled with ESP8266/Arduino library c
 - Add initial support for Telegram bot (#8619)
 - Add support for HP303B Temperature and Pressure sensor by Robert Jaakke (#8638)
 - Add rule trigger ``System#Init`` to allow early rule execution without wifi and mqtt initialized yet
+- Add support for Energy sensor (Denky) for French Smart Metering meter provided by global Energy Providers, need a adaptater. See dedicated full [blog](http://hallard.me/category/tinfo/) about French teleinformation stuff
+- Add Library to be used for decoding Teleinfo (French Metering Smart Meter)
 - Add basic support for ESP32 ethernet adding commands ``Wifi 0/1`` and ``Ethernet 0/1`` both default ON

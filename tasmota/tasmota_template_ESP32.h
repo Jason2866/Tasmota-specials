@@ -131,6 +131,8 @@ enum UserSelectablePins {
   GPIO_BL0940_RX,                      // BL0940 serial interface
   GPIO_TCP_TX, GPIO_TCP_RX,            // TCP to serial bridge
   GPIO_ETH_PHY_POWER, GPIO_ETH_PHY_MDC, GPIO_ETH_PHY_MDIO,  // Ethernet
+  GPIO_TELEINFO_RX,                    // Teleinfo telemetry data receive pin
+  GPIO_TELEINFO_ENABLE,                // Teleinfo Enable Receive Pin
   GPIO_SENSOR_END };
 
 enum ProgramSelectablePins {
@@ -222,7 +224,8 @@ const char kSensorNames[] PROGMEM =
   D_SENSOR_WINDMETER_SPEED "|" D_SENSOR_BUTTON "_tc|"
   D_SENSOR_BL0940_RX "|"
   D_SENSOR_TCP_TXD "|" D_SENSOR_TCP_RXD "|"
-  D_SENSOR_ETH_PHY_POWER "|" D_SENSOR_ETH_PHY_MDC "|" D_SENSOR_ETH_PHY_MDIO
+  D_SENSOR_ETH_PHY_POWER "|" D_SENSOR_ETH_PHY_MDC "|" D_SENSOR_ETH_PHY_MDIO "|"
+  D_SENSOR_TELEINFO_RX "|" D_SENSOR_TELEINFO_ENABLE
   ;
 
 const char kSensorNamesFixed[] PROGMEM =
@@ -532,6 +535,10 @@ const uint16_t kGpioNiceList[] PROGMEM = {
 #ifdef USE_AS3935
   AGPIO(GPIO_AS3935),
 #endif
+#ifdef USE_TELEINFO
+  AGPIO(GPIO_TELEINFO_RX),
+  AGPIO(GPIO_TELEINFO_ENABLE),
+#endif
 /*
 #ifndef USE_ADC_VCC
   AGPIO(ADC0_INPUT),          // Analog input
@@ -615,20 +622,14 @@ typedef struct MYTMPLT {
 
 /********************************************************************************************/
 // Supported hardware modules
-enum SupportedModules {
-  WEMOS, ESP32_CAM_AITHINKER,
-  MAXMODULE};
+enum SupportedModules { WEMOS, ESP32_CAM_AITHINKER, MAXMODULE };
 
 #define USER_MODULE        255
 
-const char kModuleNames[] PROGMEM =
-  "ESP32-DevKit|ESP32 Cam AiThinker";
+const char kModuleNames[] PROGMEM = "ESP32-DevKit|ESP32 Cam AiThinker";
 
 // Default module settings
-const uint8_t kModuleNiceList[MAXMODULE] PROGMEM = {
-  WEMOS,
-  ESP32_CAM_AITHINKER
-};
+const uint8_t kModuleNiceList[MAXMODULE] PROGMEM = { WEMOS, ESP32_CAM_AITHINKER };
 
 const mytmplt kModules PROGMEM =
 {                              // WEMOS - Espressif ESP32-DevKitC - Any ESP32 device like WeMos and NodeMCU hardware (ESP32)
@@ -682,7 +683,6 @@ const mytmplt kModules PROGMEM =
 {"NAME":"Olimex ESP32-PoE","GPIO":[65504,65504,65504,65504,65504,65504,0,0,5536,65504,65504,65504,65504,0,5600,0,0,0,0,5568,0,0,0,0,0,0,0,0,65504,65504,65504,65504,65504,0,0,65504],"FLAG":0,"BASE":1}
 
 \*********************************************************************************************/
-
 
 #endif  // ESP32
 
