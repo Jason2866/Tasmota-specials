@@ -90,11 +90,8 @@ void Ili9341InitDriver(void)
     if (Settings.display_height != ILI9341_TFTHEIGHT) {
       Settings.display_height = ILI9341_TFTHEIGHT;
     }
-#ifdef ESP8266
+
     tft = new Adafruit_ILI9341(Pin(GPIO_SPI_CS), Pin(GPIO_SPI_DC));
-#else  // ESP32
-    tft = new Adafruit_ILI9341(Pin(GPIO_SPI_CS), Pin(GPIO_SPI_DC), Pin(GPIO_SPI_MOSI), Pin(GPIO_SPI_CLK), -1, Pin(GPIO_SPI_MISO));
-#endif
     tft->begin();
 
 #ifdef USE_DISPLAY_MODES1TO5
@@ -197,6 +194,10 @@ void Ili9341PrintLog(void)
 void Ili9341Refresh(void)  // Every second
 {
   if (Settings.display_mode) {  // Mode 0 is User text
+    if (Settings.display_cols[0] < 19) {
+      Settings.display_cols[0] = 19;
+    }
+
     char tftdt[Settings.display_cols[0] +1];
     char date4[11];  // 24-04-2017
     char space[Settings.display_cols[0] - 17];
