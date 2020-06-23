@@ -14,7 +14,7 @@ Command syntax for flashing Tasmota32 firmware on ESP32 via Esptool (replace COM
 - Tasmota Zigbee gateway build
 - Tasmota Rules with all the extras enabled
 - Scripting included instead of rules
-- Ethernet ESP32 for wired LAN
+- Ethernet ESP32 for wired LAN (needs Ethernet hardware module)
 - Tasmota Battery build for battery powered tuya sensors
 - Tasmota minicustom minimal even smaller (NO Webserver, you have to use mqtt!!)
 - Tasmota Mega at the bleeding edge - Almost every sensor included
