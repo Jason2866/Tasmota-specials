@@ -17,8 +17,6 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-//#define USE_PROMETHEUS                         // Enable retrieval of metrics
-
 #ifdef USE_PROMETHEUS
 /*********************************************************************************************\
  * Prometheus support
@@ -38,6 +36,7 @@ void HandleMetrics(void)
   char parameter[FLOATSZ];
 
   WSContentSend_P(PSTR("# TYPE tasmota_uptime_seconds gauge\ntasmota_uptime_seconds %d\n"), uptime);
+  WSContentSend_P(PSTR("# TYPE tasmota_boot_count counter\ntasmota_boot_count %d\n"), Settings.bootcount);
 
   if (!isnan(global_temperature)) {
     dtostrfd(global_temperature, Settings.flag2.temperature_resolution, parameter);
