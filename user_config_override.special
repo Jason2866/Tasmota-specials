@@ -60,7 +60,8 @@ ooooo     ooo ooooo      ooo oooooooooo.   oooooooooooo oooooooooooo ooooo ooooo
 #undef USE_SCRIPT                               // Disable support for script
   #undef USE_SCRIPT_FATFS                       // Disable support for script storage on SD card (+12k code, +4k mem)
 
-#undef ROTARY_V1                                // Disable support for MI Desk Lamp
+#undef ROTARY_V1                                // Disable support for Rotary Encoder as used in MI Desk Lamp (+0k8 code)
+  #undef ROTARY_MAX_STEPS                       // Rotary step boundary
 #undef USE_SONOFF_RF                            // Add support for Sonoff Rf Bridge
   #undef USE_RF_FLASH                           // Add support for flashing the EFM8BB1 chip on the Sonoff RF Bridge. C2CK must be connected to GPIO4, C2D to GPIO5 on the PCB (+3k code)
 #undef USE_SONOFF_SC                            // Disable support for Sonoff Sc (+1k1 code)
@@ -716,7 +717,8 @@ oo     .d8P `88b    ooo   888  `88b.   888   888              888       888   8 
   // #define USE_SCRIPT_FATFS 4                     // Add support for script storage on SD card (+12k code, +4k mem)
 
 // -- Optional modules ----------------------------
-//#define ROTARY_V1                                // Add support for MI Desk Lamp
+#define ROTARY_V1                                // Add support for Rotary Encoder as used in MI Desk Lamp (+0k8 code)
+  #define ROTARY_MAX_STEPS     10                // Rotary step boundary
 #define USE_SONOFF_RF                            // Add support for Sonoff Rf Bridge (+3k2 code)
   #define USE_RF_FLASH                           // Add support for flashing the EFM8BB1 chip on the Sonoff RF Bridge. C2CK must be connected to GPIO4, C2D to GPIO5 on the PCB (+2k7 code)
 #define USE_SONOFF_SC                            // Add support for Sonoff Sc (+1k1 code)
@@ -765,7 +767,7 @@ oo     .d8P `88b    ooo   888  `88b.   888   888              888       888   8 
 #ifdef USE_I2C
 //  #define USE_SHT                                // [I2cDriver8] Enable SHT1X sensor (+1k4 code)
 //  #define USE_HTU                                // [I2cDriver9] Enable HTU21/SI7013/SI7020/SI7021 sensor (I2C address 0x40) (+1k5 code)
-//  #define USE_BMP                                // [I2cDriver10] Enable BMP085/BMP180/BMP280/BME280 sensors (I2C addresses 0x76 and 0x77) (+4k4 code)
+  #define USE_BMP                                // [I2cDriver10] Enable BMP085/BMP180/BMP280/BME280 sensors (I2C addresses 0x76 and 0x77) (+4k4 code)
 //    #define USE_BME680                           // Enable support for BME680 sensor using Bosch BME680 library (+4k code)
 //  #define USE_BH1750                             // [I2cDriver11] Enable BH1750 sensor (I2C address 0x23 or 0x5C) (+0k5 code)
 //  #define USE_VEML6070                           // [I2cDriver12] Enable VEML6070 sensor (I2C addresses 0x38 and 0x39) (+1k5 code)
@@ -1007,7 +1009,8 @@ o888o           `YbodP'    o888ooooood8 o888ooooood8 o888o  o888o    `YbodP'    
  #define SUPPORT_MQTT_EVENT                     // Support trigger event with MQTT subscriptions (+3k5 code)
 
 // -- Optional modules ----------------------------
-//#define ROTARY_V1                                // Add support for MI Desk Lamp
+#define ROTARY_V1                                // Add support for Rotary Encoder as used in MI Desk Lamp (+0k8 code)
+  #define ROTARY_MAX_STEPS     10                // Rotary step boundary
 #define USE_SONOFF_RF                            // Add support for Sonoff Rf Bridge (+3k2 code)
   #define USE_RF_FLASH                           // Add support for flashing the EFM8BB1 chip on the Sonoff RF Bridge. C2CK must be connected to GPIO4, C2D to GPIO5 on the PCB (+2k7 code)
 #define USE_SONOFF_SC                            // Add support for Sonoff Sc (+1k1 code)
@@ -1559,7 +1562,8 @@ o8o        o888o o888ooooood8  `Y8bood8P'   o88o     o8888o
   #define USE_SCRIPT_FATFS 4                     // Add support for script storage on SD card (+12k code, +4k mem)
 
 // -- Optional modules ----------------------------
-//#define ROTARY_V1                                // Add support for MI Desk Lamp
+#define ROTARY_V1                                // Add support for Rotary Encoder as used in MI Desk Lamp (+0k8 code)
+  #define ROTARY_MAX_STEPS     10                // Rotary step boundary
 #define USE_SONOFF_RF                            // Add support for Sonoff Rf Bridge
  #define USE_RF_FLASH                           // Add support for flashing the EFM8BB1 chip on the Sonoff RF Bridge. C2CK must be connected to GPIO4, C2D to GPIO5 on the PCB (+3k code)
 #define USE_SONOFF_SC                            // Add support for Sonoff Sc (+1k1 code)
@@ -1812,9 +1816,10 @@ o888o        o888ooooood8 o88o     o8888o     o888o     o888o o8o        `8     
    #define SUPPORT_IF_STATEMENT                 // Add support for IF statement in rules (+4k2 code, -332 bytes mem)
  #define SUPPORT_MQTT_EVENT                     // Support trigger event with MQTT subscriptions (+3k5 code)
 
-#ifdef  ESP8266
-#define ROTARY_V1                                // Add support for MI Desk Lamp
-#endif
+//#ifdef  ESP8266
+#define ROTARY_V1                                // Add support for Rotary Encoder as used in MI Desk Lamp (+0k8 code)
+  #define ROTARY_MAX_STEPS     10                // Rotary step boundary
+//#endif
 
 #define USE_SONOFF_RF                            // Add support for Sonoff Rf Bridge
  #define USE_RF_FLASH                           // Add support for flashing the EFM8BB1 chip on the Sonoff RF Bridge. C2CK must be connected to GPIO4, C2D to GPIO5 on the PCB (+3k code)
