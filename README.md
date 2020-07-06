@@ -11,7 +11,8 @@ Command syntax for flashing Tasmota32 firmware on ESP32 via Esptool (replace COM
 
 ## Build variants:
 
-- Tasmota Zigbee gateway build
+- Tasmota Zigbee gateway build (based on TI CC2530)
+- Tasmota Zigbee for Sonoff ZigbeeBridge (based on EFR32)
 - Tasmota Rules with all the extras enabled
 - Scripting included instead of rules
 - Ethernet ESP32 for wired LAN (needs Ethernet hardware module)
