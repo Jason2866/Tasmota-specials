@@ -391,7 +391,7 @@ d'""""""d888' `888'  d8P'  `Y8b   `888'   `Y8b `888'     `8 `888'     `8
 
 //#define USE_ARDUINO_OTA                          // Add optional support for Arduino OTA (+13k code)
 #define USE_DOMOTICZ                             // Enable Domoticz (+6k code, +0.3k mem)
-#define USE_HOME_ASSISTANT                       // Enable Home Assistant Discovery Support (+7k code)
+//#define USE_HOME_ASSISTANT                       // Enable Home Assistant Discovery Support (+7k code)
 
 //#define USE_MQTT_TLS                             // Use TLS for MQTT connection (+34.5k code, +7.0k mem and +4.8k additional during connection handshake)
 //  #define USE_MQTT_TLS_CA_CERT                   // Force full CA validation instead of fingerprints, slower, but simpler to use (+2.2k code, +1.9k mem during connection handshake)
@@ -654,7 +654,7 @@ oo     .d8P `88b    d88'  8       `888  `88b    d88'  888          888          
 
 //#define USE_ARDUINO_OTA                          // Add optional support for Arduino OTA (+13k code)
 #define USE_DOMOTICZ                             // Enable Domoticz (+6k code, +0.3k mem)
-#define USE_HOME_ASSISTANT                       // Enable Home Assistant Discovery Support (+7k code)
+//#define USE_HOME_ASSISTANT                       // Enable Home Assistant Discovery Support (+7k code)
 
 //#define USE_MQTT_TLS                             // Use TLS for MQTT connection (+34.5k code, +7.0k mem and +4.8k additional during connection handshake)
 //  #define USE_MQTT_TLS_CA_CERT                   // Force full CA validation instead of fingerprints, slower, but simpler to use (+2.2k code, +1.9k mem during connection handshake)
