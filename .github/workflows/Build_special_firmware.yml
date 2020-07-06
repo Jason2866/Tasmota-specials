@@ -242,7 +242,7 @@ jobs:
         path: ./build_output/firmware
 
 
-  tasmota32--zigbeebridge:
+  tasmota32-zigbeebridge:
     needs: tasmota_pull
     runs-on: ubuntu-latest
     continue-on-error: true
