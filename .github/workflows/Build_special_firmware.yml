@@ -259,7 +259,7 @@ jobs:
     - name: Run PlatformIO
       run: | 
         mv user_config_override.special tasmota/user_config_override.h
-        platformio run -e tasmota32--zigbeebridge
+        platformio run -e tasmota32-zigbeebridge
     - uses: actions/upload-artifact@v2
       with:
         name: firmware
