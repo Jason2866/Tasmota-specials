@@ -102,7 +102,7 @@ typedef struct Z_Deferred {
   uint16_t              groupaddr;      // group address (if needed)
   uint16_t              cluster;        // cluster to use for the timer
   uint8_t               endpoint;       // endpoint to use for timer
-  uint8_t               category;       // which category of deferred is it 
+  uint8_t               category;       // which category of deferred is it
   uint32_t              value;          // any raw value to use for the timer
   Z_DeviceTimer         func;           // function to call when timer occurs
 } Z_Deferred;
@@ -141,6 +141,7 @@ public:
   // Add an endpoint to a device
   void addEndpoint(uint16_t shortaddr, uint8_t endpoint);
   void clearEndpoints(uint16_t shortaddr);
+  uint32_t countEndpoints(uint16_t shortaddr) const;    // return the number of known endpoints (0 if unknown)
 
   void setManufId(uint16_t shortaddr, const char * str);
   void setModelId(uint16_t shortaddr, const char * str);
@@ -213,7 +214,7 @@ public:
 private:
   std::vector<Z_Device*>    _devices = {};
   std::vector<Z_Deferred>   _deferred = {};   // list of deferred calls
-  uint32_t                  _saveTimer = 0;   
+  uint32_t                  _saveTimer = 0;
   uint8_t                   _seqNumber = 0;     // global seqNumber if device is unknown
 
   template < typename T>
@@ -533,6 +534,23 @@ void Z_Devices::addEndpoint(uint16_t shortaddr, uint8_t endpoint) {
   }
 }
 
+//
+// Count the number of known endpoints
+//
+uint32_t Z_Devices::countEndpoints(uint16_t shortaddr) const {
+  uint32_t count_ep = 0;
+  int32_t found = findShortAddr(shortaddr);
+  if (found < 0)  return 0;     // avoid creating an entry if the device was never seen
+  const Z_Device &device = devicesAt(found);
+
+  for (uint32_t i = 0; i < endpoints_max; i++) {
+    if (0 != device.endpoints[i]) {
+      count_ep++;
+    }
+  }
+  return count_ep;
+}
+
 // Find the first endpoint of the device
 uint8_t Z_Devices::findFirstEndpoint(uint16_t shortaddr) const {
   // When in router of end-device mode, the coordinator was not probed, in this case always talk to endpoint 1
@@ -738,7 +756,7 @@ bool Z_Devices::getHueState(uint16_t shortaddr,
 void Z_Devices::resetTimersForDevice(uint16_t shortaddr, uint16_t groupaddr, uint8_t category) {
   // iterate the list of deferred, and remove any linked to the shortaddr
   for (auto it = _deferred.begin(); it != _deferred.end(); it++) {
-    // Notice that the iterator is decremented after it is passed 
+    // Notice that the iterator is decremented after it is passed
 		// to erase() but before erase() is executed
     // see https://www.techiedelight.com/remove-elements-vector-inside-loop-cpp/
     if ((it->shortaddr == shortaddr) && (it->groupaddr == groupaddr)) {
@@ -937,9 +955,17 @@ void Z_Devices::jsonPublishFlush(uint16_t shortaddr) {
   zigbee_devices.jsonClear(shortaddr);
 
   if (use_fname) {
-    Response_P(PSTR("{\"" D_JSON_ZIGBEE_RECEIVED "\":{\"%s\":%s}}"), fname, msg.c_str());
+    if (Settings.flag4.remove_zbreceived) {
+      Response_P(PSTR("{\"%s\":%s}"), fname, msg.c_str());
+    } else {
+      Response_P(PSTR("{\"" D_JSON_ZIGBEE_RECEIVED "\":{\"%s\":%s}}"), fname, msg.c_str());
+    }
   } else {
-    Response_P(PSTR("{\"" D_JSON_ZIGBEE_RECEIVED "\":{\"0x%04X\":%s}}"), shortaddr, msg.c_str());
+    if (Settings.flag4.remove_zbreceived) {
+      Response_P(PSTR("{\"0x%04X\":%s}"), shortaddr, msg.c_str());
+    } else {
+      Response_P(PSTR("{\"" D_JSON_ZIGBEE_RECEIVED "\":{\"0x%04X\":%s}}"), shortaddr, msg.c_str());
+    }
   }
   if (Settings.flag4.zigbee_distinct_topics) {
     char subtopic[16];

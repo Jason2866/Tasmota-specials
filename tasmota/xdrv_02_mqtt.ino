@@ -381,10 +381,20 @@ void MqttPublishPrefixTopic_P(uint32_t prefix, const char* subtopic)
   MqttPublishPrefixTopic_P(prefix, subtopic, false);
 }
 
+void MqttPublishPrefixTopicRulesProcess_P(uint32_t prefix, const char* subtopic, bool retained)
+{
+  MqttPublishPrefixTopic_P(prefix, subtopic, retained);
+  XdrvRulesProcess();
+}
+
+void MqttPublishPrefixTopicRulesProcess_P(uint32_t prefix, const char* subtopic)
+{
+  MqttPublishPrefixTopicRulesProcess_P(prefix, subtopic, false);
+}
+
 void MqttPublishTeleSensor(void)
 {
-  MqttPublishPrefixTopic_P(TELE, PSTR(D_RSLT_SENSOR), Settings.flag.mqtt_sensor_retain);  // CMND_SENSORRETAIN
-  XdrvRulesProcess();
+  MqttPublishPrefixTopicRulesProcess_P(TELE, PSTR(D_RSLT_SENSOR), Settings.flag.mqtt_sensor_retain);  // CMND_SENSORRETAIN
 }
 
 void MqttPublishPowerState(uint32_t device)
@@ -1217,11 +1227,7 @@ void CmndTlsDump(void) {
   uint32_t end   = start + tls_block_len -1;
   for (uint32_t pos = start; pos < end; pos += 0x10) {
     uint32_t* values = (uint32_t*)(pos);
-#ifdef ARDUINO_ESP8266_RELEASE_2_3_0
-    Serial.printf("%08x:  %08x %08x %08x %08x\n", pos, bswap32(values[0]), bswap32(values[1]), bswap32(values[2]), bswap32(values[3]));
-#else
     Serial.printf_P(PSTR("%08x:  %08x %08x %08x %08x\n"), pos, bswap32(values[0]), bswap32(values[1]), bswap32(values[2]), bswap32(values[3]));
-#endif
   }
 }
 #endif  // DEBUG_DUMP_TLS

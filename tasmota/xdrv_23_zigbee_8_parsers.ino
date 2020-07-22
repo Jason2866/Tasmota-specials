@@ -43,8 +43,7 @@ int32_t EZ_RSTACK(uint8_t reset_code) {
                   ",\"Code\":%d}}"),
                   ZIGBEE_STATUS_BOOT, reason_str, reset_code);
 
-  MqttPublishPrefixTopic_P(RESULT_OR_TELE, PSTR(D_JSON_ZIGBEE_STATE));
-  XdrvRulesProcess();
+  MqttPublishPrefixTopicRulesProcess_P(RESULT_OR_TELE, PSTR(D_JSON_ZIGBEE_STATE));
 }
 
 // EZSP: received ASH "ERROR" frame, indicating that the MCU finished boot
@@ -60,8 +59,7 @@ int32_t EZ_ERROR(uint8_t error_code) {
                   ",\"Code\":%d}}"),
                   ZIGBEE_STATUS_ABORT, reason_str, error_code);
 
-  MqttPublishPrefixTopic_P(RESULT_OR_TELE, PSTR(D_JSON_ZIGBEE_STATE));
-  XdrvRulesProcess();
+  MqttPublishPrefixTopicRulesProcess_P(RESULT_OR_TELE, PSTR(D_JSON_ZIGBEE_STATE));
 }
 
 int32_t EZ_ReadAPSUnicastMessage(int32_t res, class SBuffer &buf) {
@@ -112,8 +110,7 @@ int32_t EZ_NetworkParameters(int32_t res, class SBuffer &buf) {
                   ",\"DeviceType\":%d}}"),
                   ZIGBEE_STATUS_EZ_INFO, hex, localShortAddr, node_type);
 
-  MqttPublishPrefixTopic_P(RESULT_OR_TELE, PSTR(D_JSON_ZIGBEE_STATE));
-  XdrvRulesProcess();
+  MqttPublishPrefixTopicRulesProcess_P(RESULT_OR_TELE, PSTR(D_JSON_ZIGBEE_STATE));
 
   return res;
 }
@@ -161,8 +158,7 @@ int32_t Z_EZSPNetworkParameters(int32_t res, class SBuffer &buf) {
                   ",\"DeviceType\":%d}}"),
                   ZIGBEE_STATUS_EZ_INFO, hex, localShortAddr, node_type);
 
-  MqttPublishPrefixTopic_P(RESULT_OR_TELE, PSTR(D_JSON_ZIGBEE_STATE));
-  XdrvRulesProcess();
+  MqttPublishPrefixTopicRulesProcess_P(RESULT_OR_TELE, PSTR(D_JSON_ZIGBEE_STATE));
 
   return res;
 }
@@ -212,10 +208,8 @@ int32_t ZNP_ReceiveDeviceInfo(int32_t res, class SBuffer &buf) {
     ResponseAppend_P(PSTR("]"));
   }
 
-  ResponseJsonEnd();      // append '}'
-  ResponseJsonEnd();      // append '}'
-  MqttPublishPrefixTopic_P(RESULT_OR_TELE, PSTR(D_JSON_ZIGBEE_STATE));
-  XdrvRulesProcess();
+  ResponseJsonEndEnd();      // append '}}'
+  MqttPublishPrefixTopicRulesProcess_P(RESULT_OR_TELE, PSTR(D_JSON_ZIGBEE_STATE));
 
   return res;
 }
@@ -257,8 +251,7 @@ int32_t ZNP_Reboot(int32_t res, class SBuffer &buf) {
                   ZIGBEE_STATUS_BOOT, reason_str,
                   major_rel, minor_rel);
 
-  MqttPublishPrefixTopic_P(RESULT_OR_TELE, PSTR(D_JSON_ZIGBEE_STATE));
-  XdrvRulesProcess();
+  MqttPublishPrefixTopicRulesProcess_P(RESULT_OR_TELE, PSTR(D_JSON_ZIGBEE_STATE));
 
   if ((0x02 == major_rel) && (0x06 == minor_rel)) {
   	return 0;	  // version 2.6.x is ok
@@ -289,8 +282,7 @@ int32_t ZNP_ReceiveCheckVersion(int32_t res, class SBuffer &buf) {
                   ZIGBEE_STATUS_CC_VERSION, major_rel, minor_rel,
                   maint_rel, revision);
 
-  MqttPublishPrefixTopic_P(RESULT_OR_TELE, PSTR(D_JSON_ZIGBEE_STATE));
-  XdrvRulesProcess();
+  MqttPublishPrefixTopicRulesProcess_P(RESULT_OR_TELE, PSTR(D_JSON_ZIGBEE_STATE));
 
   if ((0x02 == major_rel) && (0x06 == minor_rel)) {
   	return 0;	  // version 2.6.x is ok
@@ -318,8 +310,7 @@ int32_t EZ_ReceiveCheckVersion(int32_t res, class SBuffer &buf) {
                   stack_type
                   );
 
-  MqttPublishPrefixTopic_P(RESULT_OR_TELE, PSTR(D_JSON_ZIGBEE_STATE));
-  XdrvRulesProcess();
+  MqttPublishPrefixTopicRulesProcess_P(RESULT_OR_TELE, PSTR(D_JSON_ZIGBEE_STATE));
 
   if (0x08 == protocol_version) {
   	return 0;	  // protocol v8 is ok
@@ -394,8 +385,7 @@ int32_t ZNP_ReceivePermitJoinStatus(int32_t res, const class SBuffer &buf) {
   ResponseAppend_P(message, duration);
   ResponseAppend_P(PSTR("\"}}"));
 
-  MqttPublishPrefixTopic_P(RESULT_OR_TELE, PSTR(D_JSON_ZIGBEE_STATE));
-  XdrvRulesProcess();
+  MqttPublishPrefixTopicRulesProcess_P(RESULT_OR_TELE, PSTR(D_JSON_ZIGBEE_STATE));
   return -1;
 }
 
@@ -435,8 +425,7 @@ int32_t ZNP_ReceiveNodeDesc(int32_t res, const class SBuffer &buf) {
                     complexDescriptorAvailable ? PSTR("true") : PSTR("false")
                     );
 
-    MqttPublishPrefixTopic_P(RESULT_OR_TELE, PSTR(D_JSON_ZIGBEEZCL_RECEIVED));
-    XdrvRulesProcess();
+    MqttPublishPrefixTopicRulesProcess_P(RESULT_OR_TELE, PSTR(D_JSON_ZIGBEEZCL_RECEIVED));
   }
 
   return -1;
@@ -473,8 +462,7 @@ int32_t Z_ReceiveActiveEp(int32_t res, const class SBuffer &buf) {
     ResponseAppend_P(PSTR("\"0x%02X\""), activeEpList[i]);
   }
   ResponseAppend_P(PSTR("]}}"));
-  MqttPublishPrefixTopic_P(RESULT_OR_TELE, PSTR(D_JSON_ZIGBEEZCL_RECEIVED));
-  XdrvRulesProcess();
+  MqttPublishPrefixTopicRulesProcess_P(RESULT_OR_TELE, PSTR(D_JSON_ZIGBEEZCL_RECEIVED));
 
   Z_SendAFInfoRequest(nwkAddr);       // probe for ModelId and ManufId
 
@@ -515,8 +503,7 @@ int32_t Z_ReceiveIEEEAddr(int32_t res, const class SBuffer &buf) {
     }
     ResponseAppend_P(PSTR("\"}}"));
 
-    MqttPublishPrefixTopic_P(RESULT_OR_TELE, PSTR(D_JSON_ZIGBEEZCL_RECEIVED));
-    XdrvRulesProcess();
+    MqttPublishPrefixTopicRulesProcess_P(RESULT_OR_TELE, PSTR(D_JSON_ZIGBEEZCL_RECEIVED));
   }
   return -1;
 }
@@ -534,8 +521,7 @@ int32_t ZNP_DataConfirm(int32_t res, const class SBuffer &buf) {
                       ",\"" D_JSON_ZIGBEE_STATUS "\":%d"
                       ",\"" D_JSON_ZIGBEE_STATUS_MSG "\":\"%s\""
                       "}}"), endpoint, status, getZigbeeStatusMessage(status).c_str());
-    MqttPublishPrefixTopic_P(RESULT_OR_TELE, PSTR(D_JSON_ZIGBEEZCL_RECEIVED));
-    XdrvRulesProcess();
+    MqttPublishPrefixTopicRulesProcess_P(RESULT_OR_TELE, PSTR(D_JSON_ZIGBEEZCL_RECEIVED));
   }
 
   return -1;
@@ -591,8 +577,7 @@ int32_t ZNP_ReceiveStateChange(int32_t res, const class SBuffer &buf) {
                     ZIGBEE_STATUS_SCANNING, state, msg
                     );
 
-    MqttPublishPrefixTopic_P(RESULT_OR_TELE, PSTR(D_JSON_ZIGBEEZCL_RECEIVED));
-    XdrvRulesProcess();
+    MqttPublishPrefixTopicRulesProcess_P(RESULT_OR_TELE, PSTR(D_JSON_ZIGBEEZCL_RECEIVED));
   }
 
   if ((ZDO_DEV_END_DEVICE == state) || (ZDO_DEV_ROUTER == state) || (ZDO_DEV_ZB_COORD == state)) {
@@ -637,8 +622,7 @@ int32_t Z_ReceiveEndDeviceAnnonce(int32_t res, const class SBuffer &buf) {
   uint32_t wait_ms = 2000;    // wait for 2s
   Z_Query_Bulb(nwkAddr, wait_ms);
 
-  MqttPublishPrefixTopic_P(RESULT_OR_TELE, PSTR(D_JSON_ZIGBEEZCL_RECEIVED));
-  XdrvRulesProcess();
+  MqttPublishPrefixTopicRulesProcess_P(RESULT_OR_TELE, PSTR(D_JSON_ZIGBEEZCL_RECEIVED));
   Z_SendActiveEpReq(nwkAddr);
   return -1;
 }
@@ -662,8 +646,7 @@ int32_t ZNP_ReceiveTCDevInd(int32_t res, const class SBuffer &buf) {
                   ZIGBEE_STATUS_DEVICE_INDICATION, hex, srcAddr, parentNw
                   );
 
-  MqttPublishPrefixTopic_P(RESULT_OR_TELE, PSTR(D_JSON_ZIGBEEZCL_RECEIVED));
-  XdrvRulesProcess();
+  MqttPublishPrefixTopicRulesProcess_P(RESULT_OR_TELE, PSTR(D_JSON_ZIGBEEZCL_RECEIVED));
   return -1;
 }
 
@@ -692,8 +675,7 @@ int32_t Z_BindRsp(int32_t res, const class SBuffer &buf) {
                   ",\"" D_JSON_ZIGBEE_STATUS_MSG "\":\"%s\""
                   "}}"), status, msg.c_str());
 
-  MqttPublishPrefixTopic_P(RESULT_OR_TELE, PSTR(D_JSON_ZIGBEEZCL_RECEIVED));
-  XdrvRulesProcess();
+  MqttPublishPrefixTopicRulesProcess_P(RESULT_OR_TELE, PSTR(D_JSON_ZIGBEEZCL_RECEIVED));
 
   return -1;
 }
@@ -723,8 +705,7 @@ int32_t Z_UnbindRsp(int32_t res, const class SBuffer &buf) {
                   ",\"" D_JSON_ZIGBEE_STATUS_MSG "\":\"%s\""
                   "}}"), status, msg.c_str());
 
-  MqttPublishPrefixTopic_P(RESULT_OR_TELE, PSTR(D_JSON_ZIGBEEZCL_RECEIVED));
-  XdrvRulesProcess();
+  MqttPublishPrefixTopicRulesProcess_P(RESULT_OR_TELE, PSTR(D_JSON_ZIGBEEZCL_RECEIVED));
 
   return -1;
 }
@@ -799,8 +780,7 @@ int32_t Z_MgmtBindRsp(int32_t res, const class SBuffer &buf) {
 
   ResponseAppend_P(PSTR("]}}"));
 
-  MqttPublishPrefixTopic_P(RESULT_OR_TELE, PSTR(D_JSON_ZIGBEE_BIND_STATE));
-  XdrvRulesProcess();
+  MqttPublishPrefixTopicRulesProcess_P(RESULT_OR_TELE, PSTR(D_JSON_ZIGBEE_BIND_STATE));
 
   return -1;
 }
@@ -880,8 +860,7 @@ int32_t EZ_ReceiveTCJoinHandler(int32_t res, const class SBuffer &buf) {
                     status, decision
                     );
 
-    MqttPublishPrefixTopic_P(RESULT_OR_TELE, PSTR(D_JSON_ZIGBEEZCL_RECEIVED));
-    XdrvRulesProcess();
+    MqttPublishPrefixTopicRulesProcess_P(RESULT_OR_TELE, PSTR(D_JSON_ZIGBEEZCL_RECEIVED));
   }
   return -1;
 }
@@ -987,23 +966,44 @@ void EZ_SendZDO(uint16_t shortaddr, uint16_t cmd, const unsigned char *payload, 
   SBuffer buf(payload_len + 22);
   uint8_t seq = zigbee_devices.getNextSeqNumber(0x0000);
 
-  buf.add16(EZSP_sendUnicast);
+  if (shortaddr < 0xFFFC) {
+    // send unicast
+    buf.add16(EZSP_sendUnicast);
 
-  buf.add8(EMBER_OUTGOING_DIRECT);    // 00
-  buf.add16(shortaddr);               // dest addr
-  // ApsFrame
-  buf.add16(0x0000);                  // ZOD profile
-  buf.add16(cmd);                     // ZDO cmd in cluster
-  buf.add8(0);                        // srcEp
-  buf.add8(0);                        // dstEp
-  buf.add16(EMBER_APS_OPTION_ENABLE_ROUTE_DISCOVERY | EMBER_APS_OPTION_RETRY);      // APS frame
-  buf.add16(0x0000);                  // groupId
-  buf.add8(seq);
-  // end of ApsFrame
-  buf.add8(0x01);                     // tag TODO
-  buf.add8(payload_len + 1);        // insert seq number
-  buf.add8(seq);
-  buf.addBuffer(payload, payload_len);
+    buf.add8(EMBER_OUTGOING_DIRECT);    // 00
+    buf.add16(shortaddr);               // dest addr
+    // ApsFrame
+    buf.add16(0x0000);                  // ZOD profile
+    buf.add16(cmd);                     // ZDO cmd in cluster
+    buf.add8(0);                        // srcEp
+    buf.add8(0);                        // dstEp
+    buf.add16(EMBER_APS_OPTION_ENABLE_ROUTE_DISCOVERY | EMBER_APS_OPTION_RETRY);      // APS frame
+    buf.add16(0x0000);                  // groupId
+    buf.add8(seq);
+    // end of ApsFrame
+    buf.add8(0x01);                     // tag TODO
+    buf.add8(payload_len + 1);        // insert seq number
+    buf.add8(seq);
+    buf.addBuffer(payload, payload_len);
+  } else {
+    // send broadcast
+    buf.add16(EZSP_sendBroadcast);
+    buf.add16(shortaddr);               // dest addr
+    // ApsFrame
+    buf.add16(0x0000);                  // ZOD profile
+    buf.add16(cmd);                     // ZDO cmd in cluster
+    buf.add8(0);                        // srcEp
+    buf.add8(0);                        // dstEp
+    buf.add16(0x00);      // APS frame
+    buf.add16(0x0000);                  // groupId
+    buf.add8(seq);
+    // end of ApsFrame
+    buf.add8(0x1E);                     // radius
+    buf.add8(0x01);                     // tag TODO
+    buf.add8(payload_len + 1);        // insert seq number
+    buf.add8(seq);
+    buf.addBuffer(payload, payload_len);
+  }
 
   ZigbeeEZSPSendCmd(buf.buf(), buf.len(), true);
 }
@@ -1065,14 +1065,18 @@ int32_t EZ_IncomingMessage(int32_t res, const class SBuffer &buf) {
 }
 
 //
-// Callback for loading Zigbee configuration from Flash, called by the state machine
+// Callback for resetting the NCP, called by the state machine
 //
 // value = 0 : drive reset pin and halt MCU
 // value = 1 : release the reset pin, restart
 int32_t EZ_Reset_Device(uint8_t value) {
+/*
   // we use Led4i to drive the reset pin. Since it is reverted we need to pass 1 to start reset, and 0 to release reset
   if (PinUsed(GPIO_LED1, ZIGBEE_EZSP_RESET_LED - 1)) {
     SetLedPowerIdx(ZIGBEE_EZSP_RESET_LED - 1, value ? 0 : 1);
+*/
+  if (PinUsed(GPIO_ZIGBEE_RST)) {
+    digitalWrite(Pin(GPIO_ZIGBEE_RST), value);
   } else {
     // no GPIO so we use software Reset instead
     if (value) {  // send reset only when we are supposed to release reset
@@ -1146,6 +1150,30 @@ int32_t Z_PublishAttributes(uint16_t shortaddr, uint16_t groupaddr, uint16_t clu
 \*********************************************************************************************/
 
 #ifdef USE_ZIGBEE_ZNP
+
+//
+// Callback for resetting the NCP, called by the state machine
+//
+// value = 0 : drive reset pin and halt MCU
+// value = 1 : release the reset pin, restart
+int32_t ZNP_Reset_Device(uint8_t value) {
+/*
+  // we use Led4i to drive the reset pin. Since it is reverted we need to pass 1 to start reset, and 0 to release reset
+  if (PinUsed(GPIO_LED1, ZIGBEE_EZSP_RESET_LED - 1)) {
+    SetLedPowerIdx(ZIGBEE_EZSP_RESET_LED - 1, value ? 0 : 1);
+*/
+  if (PinUsed(GPIO_ZIGBEE_RST)) {
+    digitalWrite(Pin(GPIO_ZIGBEE_RST), value);
+  } else {
+    // no GPIO so we use software Reset instead
+    if (value) {  // send reset only when we are supposed to release reset
+      // flush the serial buffer, sending 0xFF 256 times.
+      ZigbeeZNPFlush();
+      ZigbeeZNPSend(ZBS_RESET, sizeof(ZBS_RESET));
+    }
+  }
+  return 0;                              // continue
+}
 
 int32_t ZNP_ReceiveAfIncomingMessage(int32_t res, const class SBuffer &buf) {
   uint16_t        groupid = buf.get16(2);

@@ -906,6 +906,17 @@ void SerialSendRaw(char *codes)
   }
 }
 
+// values is a comma-delimited string: e.g. "72,101,108,108,111,32,87,111,114,108,100,33,10"
+void SerialSendDecimal(char *values)
+{
+  char *p;
+  uint8_t code;
+  for (char* str = strtok_r(values, ",", &p); str; str = strtok_r(nullptr, ",", &p)) {
+    code = (uint8_t)atoi(str);
+    Serial.write(code);
+  }
+}
+
 uint32_t GetHash(const char *buffer, size_t size)
 {
   uint32_t hash = 0;
@@ -1080,12 +1091,8 @@ int ResponseJsonEndEnd(void)
  * GPIO Module and Template management
 \*********************************************************************************************/
 
-#ifndef ARDUINO_ESP8266_RELEASE_2_3_0  // Fix core 2.5.x ISR not in IRAM Exception
-uint32_t Pin(uint32_t gpio, uint32_t index) ICACHE_RAM_ATTR;
-#endif
-
-uint32_t Pin(uint32_t gpio, uint32_t index = 0);
-uint32_t Pin(uint32_t gpio, uint32_t index) {
+uint32_t ICACHE_RAM_ATTR Pin(uint32_t gpio, uint32_t index = 0);
+uint32_t ICACHE_RAM_ATTR Pin(uint32_t gpio, uint32_t index) {
 #ifdef ESP8266
   uint16_t real_gpio = gpio + index;
 #else  // ESP32

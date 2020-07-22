@@ -852,11 +852,8 @@ void PerformEverySecond(void)
     }
   }
 
-#ifndef ARDUINO_ESP8266_RELEASE_2_3_0
   // Wifi keep alive to send Gratuitous ARP
   wifiKeepAlive();
-#endif  // ARDUINO_ESP8266_RELEASE_2_3_0
-
 
 #ifdef ESP32
   if (11 == uptime) {      // Perform one-time ESP32 houskeeping
@@ -972,6 +969,9 @@ void Every250mSeconds(void)
         SettingsSave(1);  // Free flash for OTA update
       }
       if (ota_state_flag <= 0) {
+#ifdef USE_COUNTER
+        CounterInterruptDisable(true);  // Prevent OTA failures on 100Hz counter interrupts
+#endif  // USE_COUNTER
 #ifdef USE_WEBSERVER
         if (Settings.webserver) StopWebserver();
 #endif  // USE_WEBSERVER
@@ -1003,15 +1003,6 @@ void Every250mSeconds(void)
 
             char *bch = strrchr(mqtt_data, '/');                       // Only consider filename after last backslash prevent change of urls having "-" in it
             if (bch == nullptr) { bch = mqtt_data; }                   // No path found so use filename only
-/*
-            char *ech = strrchr(bch, '.');                             // Find file type in filename (none, .bin or .gz)
-            if ((ech != nullptr) && (0 == strncasecmp_P(ech, PSTR(".GZ"), 3))) {
-              char *fch = ech;
-              *fch = '\0';
-              ech = strrchr(bch, '.');                                 // Find file type .bin.gz
-              *fch = '.';
-            }
-*/
             char *ech = strchr(bch, '.');                              // Find file type in filename (none, .ino.bin, .ino.bin.gz, .bin, .bin.gz or .gz)
             if (ech == nullptr) { ech = mqtt_data + strlen(mqtt_data); }  // Point to '/0' at end of mqtt_data becoming an empty string
 
@@ -1027,13 +1018,8 @@ void Every250mSeconds(void)
           }
 #endif  // FIRMWARE_MINIMAL
           AddLog_P2(LOG_LEVEL_DEBUG, PSTR(D_LOG_UPLOAD "%s"), mqtt_data);
-#if defined(ARDUINO_ESP8266_RELEASE_2_3_0) || defined(ARDUINO_ESP8266_RELEASE_2_4_0) || defined(ARDUINO_ESP8266_RELEASE_2_4_1) || defined(ARDUINO_ESP8266_RELEASE_2_4_2)
-          ota_result = (HTTP_UPDATE_FAILED != ESPhttpUpdate.update(mqtt_data));
-#else
-          // If using core stage or 2.5.0+ the syntax has changed
           WiFiClient OTAclient;
           ota_result = (HTTP_UPDATE_FAILED != ESPhttpUpdate.update(OTAclient, mqtt_data));
-#endif
           if (!ota_result) {
 #ifndef FIRMWARE_MINIMAL
             int ota_error = ESPhttpUpdate.getLastError();
@@ -1063,6 +1049,9 @@ void Every250mSeconds(void)
         ResponseAppend_P(PSTR("\"}"));
 //        restart_flag = 2;          // Restart anyway to keep memory clean webserver
         MqttPublishPrefixTopic_P(STAT, PSTR(D_CMND_UPGRADE));
+#ifdef USE_COUNTER
+        CounterInterruptDisable(false);
+#endif  // USE_COUNTER
       }
     }
     break;
@@ -1440,8 +1429,7 @@ void SerialInput(void)
     }
     ResponseJsonEnd();
 
-    MqttPublishPrefixTopic_P(RESULT_OR_TELE, PSTR(D_JSON_SERIALRECEIVED));
-    XdrvRulesProcess();
+    MqttPublishPrefixTopicRulesProcess_P(RESULT_OR_TELE, PSTR(D_JSON_SERIALRECEIVED));
     serial_in_byte_counter = 0;
   }
 }

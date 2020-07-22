@@ -481,7 +481,7 @@
 
 // Commands xdrv_09_timers.ino
 #define D_CMND_TIMER "Timer"
-  #define D_JSON_TIMER_ARM "Arm"
+  #define D_JSON_TIMER_ARM "Enable"
   #define D_JSON_TIMER_MODE "Mode"
   #define D_JSON_TIMER_TIME "Time"
   #define D_JSON_TIMER_WINDOW "Window"
@@ -576,11 +576,13 @@
 #define D_CMND_SHUTTER_OPEN "Open"
 #define D_CMND_SHUTTER_CLOSE "Close"
 #define D_CMND_SHUTTER_TOGGLE "Toggle"
+#define D_CMND_SHUTTER_TOGGLEDIR "ToggleDir"
 #define D_CMND_SHUTTER_UP "Up"
 #define D_CMND_SHUTTER_DOWN "Down"
 #define D_CMND_SHUTTER_STOPOPEN "StopOpen"
 #define D_CMND_SHUTTER_STOPCLOSE "StopClose"
 #define D_CMND_SHUTTER_STOPTOGGLE "StopToggle"
+#define D_CMND_SHUTTER_STOPTOGGLEDIR "StopToggleDir"
 #define D_CMND_SHUTTER_STOPPOSITION "StopPosition"
 #define D_CMND_SHUTTER_STOP "Stop"
 #define D_CMND_SHUTTER_POSITION "Position"
@@ -616,7 +618,7 @@
 
 // xsns_70_veml6075.ino
 #define D_JSON_UVA_INTENSITY "UvaIntensity"
-#define D_JSON_UVB_INTENSITY  "UvbItensity"
+#define D_JSON_UVB_INTENSITY  "UvbIntensity"
 #define D_CMND_VEML6075_POWER "power"
 #define D_CMND_VEML6075_DYNAMIC "dynamic"
 #define D_CMND_VEML6075_INTTIME "inttime"

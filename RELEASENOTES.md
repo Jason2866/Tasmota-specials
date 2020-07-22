@@ -21,9 +21,9 @@ While fallback or downgrading is common practice it was never supported due to S
 
 ## Supported Core versions
 
-This release will be supported from ESP8266/Arduino library Core version **2.7.2** due to reported security and stability issues on previous Core version. This will also support gzipped binaries.
+This release will be supported from ESP8266/Arduino library Core version **2.7.2.1** due to reported security and stability issues on previous Core version. This will also support gzipped binaries.
 
-Although it might still compile on previous Core versions all support will be removed in the near future.
+Support of Core versions before 2.7.1 has been removed.
 
 ## Support of TLS
 
@@ -35,7 +35,7 @@ For initial configuration this release supports Webserver based **WifiManager** 
 
 ## Provided Binary Downloads
 
-The following binary downloads have been compiled with ESP8266/Arduino library core version **2.7.2**.
+The following binary downloads have been compiled with ESP8266/Arduino library core version **2.7.2.1**.
 
 - **tasmota.bin** = The Tasmota version with most drivers. **RECOMMENDED RELEASE BINARY**
 - **tasmota-BG.bin** to **tasmota-TW.bin** = The Tasmota version in different languages.
@@ -52,8 +52,10 @@ The following binary downloads have been compiled with ESP8266/Arduino library c
 
 ## Changelog
 
-### Version 8.3.1.6
+### Version 8.3.1.7
 
+- Remove Arduino ESP8266 Core support for versions before 2.7.1
+- Change to limited support of Arduino IDE as an increasing amount of features cannot be compiled with Arduino IDE
 - Change IRremoteESP8266 library from v2.7.6 to v2.7.8
 - Change Adafruit_SGP30 library from v1.0.3 to v1.2.0 (#8519)
 - Change Energy JSON Total field from ``"Total":[33.736,11.717,16.978]`` to ``"Total":33.736,"TotalTariff":[11.717,16.978]``
@@ -61,6 +63,7 @@ The following binary downloads have been compiled with ESP8266/Arduino library c
 - Change ESP32 USER GPIO template representation decreasing template message size
 - Change define USE_TASMOTA_SLAVE into USE_TASMOTA_CLIENT
 - Change commands ``SlaveSend`` and ``SlaveReset`` into ``ClientSend`` and ``ClientReset``
+- Change all timer references from ``Arm`` to ``Enable`` in GUI, ``Timer`` command and JSON message
 - Fix escape of non-JSON received serial data (#8329)
 - Fix exception or watchdog on rule re-entry (#8757)
 - Add command ``Rule0`` to change global rule parameters
@@ -68,7 +71,11 @@ The following binary downloads have been compiled with ESP8266/Arduino library c
 - Add command ``SetOption94 0/1`` to select MAX31855 or MAX6675 thermocouple support (#8616)
 - Add command ``SetOption97 0/1`` to switch between Tuya serial speeds 9600 bps (0) or 115200 bps (1)
 - Add command ``SetOption98 0/1`` to provide rotary rule triggers (1) instead of controlling light (0)
+- Add command ``SetOption99 0/1`` to enable zero cross detection on PWM dimmer
+- Add command ``SetOption100 0/1`` to remove Zigbee ``ZbReceived`` value from ``{"ZbReceived":{xxx:yyy}}`` JSON message
+- Add command ``SetOption101 0/1`` to add the Zigbee source endpoint as suffix to attributes, ex `Power3` instead of `Power` if sent from endpoint 3
 - Add command ``Module2`` to configure fallback module on fast reboot (#8464)
+- Add command (``S``)``SerialSend6`` \<comma seperated values\> (#8937)
 - Add commands ``LedPwmOn 0..255``, ``LedPwmOff 0..255`` and ``LedPwmMode1 0/1`` to control led brightness by George (#8491)
 - Add ESP32 ethernet commands ``EthType 0/1``, ``EthAddress 0..31`` and ``EthClockMode 0..3``
 - Add rule trigger ``System#Init`` to allow early rule execution without wifi and mqtt initialized yet
