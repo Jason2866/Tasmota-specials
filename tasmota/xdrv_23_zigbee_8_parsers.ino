@@ -20,6 +20,16 @@
 #ifdef USE_ZIGBEE
 
 #ifdef USE_ZIGBEE_EZSP
+//
+// Trying to get a uniform LQI measure, we are aligning with the definition of ZNP
+// I.e. a linear projection from -87dBm to +10dB over 0..255
+// for ZNP, lqi is linear from -87 to +10 dBm (https://sunmaysky.blogspot.com/2017/02/conversion-between-rssi-and-lqi-in-z.html)
+uint8_t ZNP_RSSI2Lqi(int8_t rssi) {
+  if (rssi < -87)  { rssi = -87; }
+  if (rssi > 10)   { rssi = 10; }
+  return changeUIntScale(rssi + 87, 0, 87+10, 0, 255);
+}
+
 /*********************************************************************************************\
  * Parsers for incoming EZSP messages
 \*********************************************************************************************/
@@ -113,6 +123,43 @@ int32_t EZ_NetworkParameters(int32_t res, class SBuffer &buf) {
   MqttPublishPrefixTopicRulesProcess_P(RESULT_OR_TELE, PSTR(D_JSON_ZIGBEE_STATE));
 
   return res;
+}
+
+//
+// Handle a "incomingRouteErrorHandler" incoming message
+//
+int32_t EZ_RouteError(int32_t res, const class SBuffer &buf) {
+  uint8_t  status = buf.get8(2);
+  uint16_t shortaddr = buf.get16(3);
+
+  Response_P(PSTR("{\"" D_JSON_ZIGBEE_ROUTE_ERROR "\":{"
+                  "\"ShortAddr\":\"0x%04X\",\"" D_JSON_ZIGBEE_STATUS "\":%d,\"" D_JSON_ZIGBEE_STATUS_MSG "\":\"%s\"}}"),
+                  shortaddr, status, getEmberStatus(status).c_str());
+
+  MqttPublishPrefixTopicRulesProcess_P(RESULT_OR_TELE, PSTR(D_JSON_ZIGBEE_STATE));
+
+  return -1;
+}
+
+//
+// Handle a "permitJoining" incoming message
+//
+int32_t EZ_PermitJoinRsp(int32_t res, const class SBuffer &buf) {
+  uint8_t  status = buf.get8(2);
+  
+  Response_P(PSTR("{\"" D_JSON_ZIGBEE_STATE "\":{"
+                  "\"Status\":%d,\"Message\":\"%s"),
+                  (0 == status) ? ZIGBEE_STATUS_PERMITJOIN_OPEN_60 : ZIGBEE_STATUS_PERMITJOIN_CLOSE,
+                  (0 == status) ? PSTR("Pairing mode enabled") : PSTR("Pairing mode error")
+                  );
+  if (status)  {
+    ResponseAppend_P("0x%02X", status);
+  }
+  ResponseAppend_P(PSTR("\"}}"));
+
+  MqttPublishPrefixTopicRulesProcess_P(RESULT_OR_TELE, PSTR(D_JSON_ZIGBEE_STATE));
+
+  return -1;
 }
 
 #endif // USE_ZIGBEE_EZSP
@@ -739,8 +786,9 @@ int32_t Z_MgmtBindRsp(int32_t res, const class SBuffer &buf) {
   ResponseAppend_P(PSTR(",\"" D_JSON_ZIGBEE_STATUS "\":%d"
                         ",\"" D_JSON_ZIGBEE_STATUS_MSG "\":\"%s\""
                         ",\"BindingsTotal\":%d"
+                        ",\"BindingsStart\":%d"
                         ",\"Bindings\":["
-                        ), status, getZigbeeStatusMessage(status).c_str(), bind_total);
+                        ), status, getZigbeeStatusMessage(status).c_str(), bind_total, bind_start + 1);
 
   uint32_t idx = prefix_len;
   for (uint32_t i = 0; i < bind_len; i++) {
@@ -784,6 +832,64 @@ int32_t Z_MgmtBindRsp(int32_t res, const class SBuffer &buf) {
 
   return -1;
 }
+
+#ifdef USE_ZIGBEE_EZSP
+//
+// Handle Parent Annonce Rsp incoming message
+//
+// rsp: true = ZDO_Parent_annce_rsp, false = ZDO_Parent_annce
+int32_t EZ_ParentAnnceRsp(int32_t res, const class SBuffer &buf, bool rsp) {
+  size_t prefix_len;
+  uint8_t     status;
+  uint8_t     num_children;
+  uint16_t    shortaddr   = buf.get16(buf.len()-2);
+  if (rsp) {
+    status      = buf.get8(0);
+    num_children = buf.get8(1);
+    prefix_len = 2;
+  } else {
+    status      = 0;
+    num_children = buf.get8(0);
+    prefix_len = 1;
+  }
+
+  const char * friendlyName = zigbee_devices.getFriendlyName(shortaddr);
+
+  Response_P(PSTR("{\"" D_JSON_ZIGBEE_PARENT "\":{\"" D_JSON_ZIGBEE_DEVICE "\":\"0x%04X\""), shortaddr);
+  if (friendlyName) {
+    ResponseAppend_P(PSTR(",\"" D_JSON_ZIGBEE_NAME "\":\"%s\""), friendlyName);
+  }
+  if (rsp) {
+    ResponseAppend_P(PSTR(",\"" D_JSON_ZIGBEE_STATUS "\":%d"
+                          ",\"" D_JSON_ZIGBEE_STATUS_MSG "\":\"%s\""
+                          ), status, getZigbeeStatusMessage(status).c_str());
+  }
+  ResponseAppend_P(PSTR(",\"Children\":%d"
+                        ",\"ChildInfo\":["
+                        ), num_children);
+
+  uint32_t idx = prefix_len;
+  for (uint32_t i = 0; i < num_children; i++) {
+    if (idx + 8 > buf.len()) { break; }   // overflow, frame size is between 14 and 21
+
+    uint64_t    child_ieee = buf.get64(idx);
+    idx += 8;
+
+    if (i > 0) {
+      ResponseAppend_P(PSTR(","));
+    }
+    char hex[20];
+    Uint64toHex(child_ieee, hex, 64);
+    ResponseAppend_P(PSTR("\"0x%s\""), hex);
+  }
+
+  ResponseAppend_P(PSTR("]}}"));
+
+  MqttPublishPrefixTopicRulesProcess_P(RESULT_OR_TELE, PSTR(D_JSON_ZIGBEE_BIND_STATE));
+
+  return -1;
+}
+#endif // USE_ZIGBEE_EZSP
 
 /*********************************************************************************************\
  * Send specific ZNP messages
@@ -1023,8 +1129,9 @@ int32_t EZ_IncomingMessage(int32_t res, const class SBuffer &buf) {
   bool            securityuse = (apsoptions & EMBER_APS_OPTION_ENCRYPTION) ? true : false;
   uint16_t        groupid = buf.get16(11);
   uint8_t         seqnumber = buf.get8(13);
-  uint8_t         linkquality = buf.get8(14);
-  // uint8_t         linkrsssi = buf.get8(15);     // probably not used as there is no equivalent in Z-Stack
+  // uint8_t         linkquality = buf.get8(14);
+  int8_t          linkrssi = buf.get8(15);
+  uint8_t         linkquality = ZNP_RSSI2Lqi(linkrssi);   // don't take EZSP LQI but calculate our own based on ZNP 
   uint16_t        srcaddr = buf.get16(16);
   // uint8_t         bindingindex = buf.get8(18);      // not sure we need this one as a coordinator
   // uint8_t         addressindex = buf.get8(19);      // not sure how to handle this one
@@ -1051,6 +1158,14 @@ int32_t EZ_IncomingMessage(int32_t res, const class SBuffer &buf) {
         return Z_UnbindRsp(res, zdo_buf);
       case ZDO_Mgmt_Bind_rsp:
         return Z_MgmtBindRsp(res, zdo_buf);
+      case ZDO_Parent_annce:
+        return EZ_ParentAnnceRsp(res, zdo_buf, false);
+      case ZDO_Parent_annce_rsp:
+        return EZ_ParentAnnceRsp(res, zdo_buf, true);
+      default:
+        // TODO move later to LOG_LEVEL_DEBUG
+        AddLog_P2(LOG_LEVEL_INFO, PSTR("ZIG: Internal ZDO message 0x%04X sent from 0x%04X %s"), clusterid, srcaddr, wasbroadcast ? PSTR("(broadcast)") : "");
+        break;
     }
   } else {
     bool            defer_attributes = false;     // do we defer attributes reporting to coalesce
@@ -1105,6 +1220,12 @@ int32_t EZ_Recv_Default(int32_t res, const class SBuffer &buf) {
         break;
       case EZSP_trustCenterJoinHandler:
         return EZ_ReceiveTCJoinHandler(res, buf);
+        break;
+      case EZSP_incomingRouteErrorHandler:
+        return EZ_RouteError(res, buf);
+        break;
+      case EZSP_permitJoining:
+        return EZ_PermitJoinRsp(res, buf);
         break;
     }
     return -1;
@@ -1205,30 +1326,6 @@ int32_t ZNP_ReceiveAfIncomingMessage(int32_t res, const class SBuffer &buf) {
 /*********************************************************************************************\
  * Global dispatcher for incoming messages
 \*********************************************************************************************/
-
-int32_t Z_ReceiveAfIncomingMessage(int32_t res, const class SBuffer &buf) {
-  uint16_t        groupid = buf.get16(2);
-  uint16_t        clusterid = buf.get16(4);
-  uint16_t        srcaddr = buf.get16(6);
-  uint8_t         srcendpoint = buf.get8(8);
-  uint8_t         dstendpoint = buf.get8(9);
-  uint8_t         wasbroadcast = buf.get8(10);
-  uint8_t         linkquality = buf.get8(11);
-  uint8_t         securityuse = buf.get8(12);
-  // uint32_t        timestamp = buf.get32(13);
-  uint8_t         seqnumber = buf.get8(17);
-
-  bool            defer_attributes = false;     // do we defer attributes reporting to coalesce
-
-  ZCLFrame zcl_received = ZCLFrame::parseRawFrame(buf, 19, buf.get8(18), clusterid, groupid,
-                              srcaddr,
-                              srcendpoint, dstendpoint, wasbroadcast,
-                              linkquality, securityuse, seqnumber);
-  //
-  Z_IncomingMessage(zcl_received);
-
-  return -1;
-}
 
 #ifdef USE_ZIGBEE_ZNP
 

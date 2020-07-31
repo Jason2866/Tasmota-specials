@@ -416,6 +416,9 @@
 #undef FALLBACK_MODULE
 #define FALLBACK_MODULE        SONOFF_ZB_BRIDGE  // [Module2] Select default module on fast reboot where USER_MODULE is user template
 
+#undef  SERIAL_LOG_LEVEL
+#define SERIAL_LOG_LEVEL       LOG_LEVEL_NONE    // [SerialLog] (LOG_LEVEL_NONE, LOG_LEVEL_ERROR, LOG_LEVEL_INFO, LOG_LEVEL_DEBUG, LOG_LEVEL_DEBUG_MORE)
+
 #undef USE_ARDUINO_OTA                           // Disable support for Arduino OTA
 #define USE_DOMOTICZ                              // Disable Domoticz
 #undef USE_HOME_ASSISTANT                        // Disable Home Assistant
@@ -468,7 +471,7 @@
 #undef USE_COUNTER                               // Disable counters
 #define USE_ADC_VCC                              // Display Vcc in Power status. Disable for use as Analog input on selected devices
 #undef USE_DS18x20                               // Disable DS18x20 sensor
-#undef USE_I2C                                   // Disable all I2C sensors and devices
+//#undef USE_I2C                                   // Enable I2C, zbbridge uses i2c EEprom 
 #undef USE_SPI                                   // Disable all SPI devices
 #undef USE_DISPLAY                               // Disable Display support
 #undef USE_MHZ19                                 // Disable support for MH-Z19 CO2 sensor
@@ -491,6 +494,7 @@
 #undef USE_OPENTHERM                             // Disable support for OpenTherm (+15k code)
 
 #undef USE_ENERGY_SENSOR                         // Disable energy sensors
+#undef USE_ADE7953                               // Disable ADE7953 Energy monitor as used on Shelly 2.5 (I2C address 0x38) (+1k5)
 #undef USE_PZEM004T                              // Disable PZEM004T energy sensor
 #undef USE_PZEM_AC                               // Disable PZEM014,016 Energy monitor
 #undef USE_PZEM_DC                               // Disable PZEM003,017 Energy monitor
@@ -527,12 +531,7 @@
 #undef USE_ZIGBEE_ZNP
 #define USE_ZIGBEE_EZSP
 #define USE_TCP_BRIDGE
-  #define USE_ZIGBEE_PANID  0x1A63                // arbitrary PAN ID for Zigbee network, must be unique in the home
-  #define USE_ZIGBEE_EXTPANID 0xCCCCCCCCCCCCCCCCL // arbitrary extended PAN ID
   #define USE_ZIGBEE_CHANNEL  11                  // Zigbee Channel (11-26)
-  #define USE_ZIGBEE_PRECFGKEY_L 0x0F0D0B0907050301L  // note: changing requires to re-pair all devices
-  #define USE_ZIGBEE_PRECFGKEY_H 0x0D0C0A0806040200L  // note: changing requires to re-pair all devices
-  #define USE_ZIGBEE_PERMIT_JOIN false           // don't allow joining by default
   #define USE_ZIGBEE_COALESCE_ATTR_TIMER 350     // timer to coalesce attribute values (in ms)
 
 
