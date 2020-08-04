@@ -1351,7 +1351,11 @@ void LightInit(void)
     for (uint32_t i = 0; i < light_type; i++) {
       Settings.pwm_value[i] = 0;        // Disable direct PWM control
       if (PinUsed(GPIO_PWM1, i)) {
+#ifdef ESP8266
         pinMode(Pin(GPIO_PWM1, i), OUTPUT);
+#else  // ESP32
+        analogAttach(Pin(GPIO_PWM1, i), i);
+#endif
       }
     }
     if (PinUsed(GPIO_ARIRFRCV)) {

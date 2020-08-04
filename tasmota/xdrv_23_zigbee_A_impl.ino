@@ -62,8 +62,12 @@ void ZigbeeInit(void)
       AddLog_P2(LOG_LEVEL_INFO, PSTR(D_LOG_ZIGBEE "Randomizing Zigbee parameters, please check with 'ZbConfig'"));
       uint64_t mac64 = 0;     // stuff mac address into 64 bits
       WiFi.macAddress((uint8_t*) &mac64);
-      uint32_t esp_id = ESP.getChipId();
+      uint32_t esp_id = ESP_getChipId();
+#ifdef ESP8266
       uint32_t flash_id = ESP.getFlashChipId();
+#else  // ESP32
+      uint32_t flash_id = 0;
+#endif  // ESP8266 or ESP32
 
       uint16_t  pan_id = (mac64 & 0x3FFF);
       if (0x0000 == pan_id) { pan_id = 0x0001; }    // avoid extreme values
@@ -175,7 +179,9 @@ void zigbeeZCLSendStr(uint16_t shortaddr, uint16_t groupaddr, uint8_t endpoint, 
   ZigbeeZCLSend_Raw(shortaddr, groupaddr, cluster, endpoint, cmd, clusterSpecific, manuf, buf.getBuffer(), buf.len(), true, zigbee_devices.getNextSeqNumber(shortaddr));
   // now set the timer, if any, to read back the state later
   if (clusterSpecific) {
+#ifndef USE_ZIGBEE_NO_READ_ATTRIBUTES   // read back attribute value unless it is disabled
     zigbeeSetCommandTimer(shortaddr, groupaddr, cluster, endpoint);
+#endif
   }
 }
 

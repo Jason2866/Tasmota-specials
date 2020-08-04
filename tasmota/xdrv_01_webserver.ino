@@ -1921,7 +1921,7 @@ void HandleModuleConfiguration(void)
   }
   WSContentSend_P(PSTR("\";sk(%d," STR(ADC0_PIN) ");"), Settings.my_adc0);
 #endif  // USE_ADC_VCC
-#endif  // ESP8266 - ESP32
+#endif  // ESP8266
 
   WSContentSend_P(PSTR("}wl(sl);"));
 
@@ -2711,7 +2711,11 @@ void HandleUploadLoop(void)
       }
       else {
 #if defined(USE_ZIGBEE) && defined(USE_ZIGBEE_EZSP)
+#ifdef ESP8266
         if ((SONOFF_ZB_BRIDGE == my_module_type) && (upload.buf[0] == 0xEB)) {  // Check if this is a Zigbee bridge FW file
+#else  // ESP32
+        if (PinUsed(GPIO_ZIGBEE_RX) && PinUsed(GPIO_ZIGBEE_TX) && (upload.buf[0] == 0xEB)) {  // Check if this is a Zigbee bridge FW file
+#endif  // ESP8266 or ESP32
           Update.end();              // End esp8266 update session
           Web.upload_file_type = UPL_EFR32;
 
