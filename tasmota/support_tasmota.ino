@@ -573,7 +573,7 @@ void ExecuteCommandPower(uint32_t device, uint32_t state, uint32_t source)
     }
 #ifdef USE_DEVICE_GROUPS
     if (SRC_REMOTE != source && SRC_RETRY != source) {
-      if (Settings.flag4.remote_device_mode)  // SetOption88 - Enable relays in separate device groups
+      if (Settings.flag4.multiple_device_groups)  // SetOption88 - Enable relays in separate device groups
         SendDeviceGroupMessage(device - 1, DGR_MSGTYP_UPDATE, DGR_ITEM_POWER, (power >> (device - 1)) & 1 | 0x01000000);  // Explicitly set number of relays to one
       else
         SendLocalDeviceGroupMessage(DGR_MSGTYP_UPDATE, DGR_ITEM_POWER, power);
@@ -1143,7 +1143,7 @@ void Every250mSeconds(void)
       }
       restart_flag--;
       if (restart_flag <= 0) {
-        AddLog_P(LOG_LEVEL_INFO, PSTR(D_LOG_APPLICATION D_RESTARTING));
+        AddLog_P2(LOG_LEVEL_INFO, PSTR(D_LOG_APPLICATION "%s"), (restart_halt) ? "Halted" : D_RESTARTING);
         EspRestart();
       }
     }

@@ -307,6 +307,7 @@
 #define D_DEVICE_NAME "Device Name"
 #define D_WEB_ADMIN_PASSWORD "Парола на уеб администратора"
 #define D_MQTT_ENABLE "Активиране на MQTT"
+#define D_MQTT_TLS_ENABLE "MQTT TLS"
 #define D_FRIENDLY_NAME "Приятелско име"
 #define D_BELKIN_WEMO "Belkin WeMo"
 #define D_HUE_BRIDGE "Hue Bridge"
@@ -335,6 +336,7 @@
 #define D_MQTT_TOPIC "MQTT топик"
 #define D_MQTT_GROUP_TOPIC "MQTT групов топик"
 #define D_MQTT_FULL_TOPIC "MQTT пълен топик"
+#define D_MQTT_NO_RETAIN "MQTT No Retain"
 #define D_MDNS_DISCOVERY "mDNS откриване"
 #define D_MDNS_ADVERTISE "mDNS известяване"
 #define D_ESP_CHIP_ID "ID на ESP чипа"
@@ -349,6 +351,7 @@
 #define D_UPLOAD_STARTED "Зареждането започна"
 #define D_UPGRADE_STARTED "Обновяването започна"
 #define D_UPLOAD_DONE "Зареждането завърши"
+#define D_TRANSFER_STARTED "Transfer started"
 #define D_UPLOAD_ERR_1 "Не е избран файл"
 #define D_UPLOAD_ERR_2 "Недостатъчно свободно място"
 #define D_UPLOAD_ERR_3 "Magic байтът не е 0xE9"
@@ -681,6 +684,7 @@
 #define D_SENSOR_CC1101_GDO0   "CC1101 GDO0"
 #define D_SENSOR_CC1101_GDO2   "CC1101 GDO2"
 #define D_SENSOR_HRXL_RX       "HRXL Rx"
+#define D_SENSOR_DYP_RX        "DYP Rx"
 #define D_SENSOR_ELECTRIQ_MOODL "MOODL Tx"
 #define D_SENSOR_AS3935        "AS3935"
 #define D_SENSOR_WINDMETER_SPEED "WindMeter Spd"
@@ -828,5 +832,14 @@
 //xsns_68_opentherm.ino
 #define D_SENSOR_BOILER_OT_RX   "OpenTherm RX"
 #define D_SENSOR_BOILER_OT_TX   "OpenTherm TX"
+
+// xnrg_15_teleinfo Denky (Teleinfo)
+#define D_CONTRACT        "Contract"
+#define D_POWER_LOAD      "Power load"
+#define D_CURRENT_TARIFF  "Current Tariff"
+#define D_TARIFF          "Tariff"
+#define D_OVERLOAD        "ADPS"
+#define D_MAX_POWER       "Max Power"
+#define D_MAX_CURRENT     "Max Current"
 
 #endif  // _LANGUAGE_BG_BG_H_

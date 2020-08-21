@@ -138,6 +138,7 @@ enum UserSelectablePins {
   GPIO_LMT01,                          // LMT01 input counting pin
   GPIO_IEM3000_TX, GPIO_IEM3000_RX,    // IEM3000 Serial interface
   GPIO_ZIGBEE_RST,                     // Zigbee reset
+  GPIO_DYP_RX,
   GPIO_SENSOR_END };
 
 enum ProgramSelectablePins {
@@ -238,7 +239,8 @@ const char kSensorNames[] PROGMEM =
   D_SENSOR_TELEINFO_RX "|" D_SENSOR_TELEINFO_ENABLE "|"
   D_SENSOR_LMT01_PULSE "|"
   D_SENSOR_IEM3000_TX "|" D_SENSOR_IEM3000_RX "|"
-  D_SENSOR_ZIGBEE_RST
+  D_SENSOR_ZIGBEE_RST "|"
+  D_SENSOR_DYP_RX
   ;
 
 const char kSensorNamesFixed[] PROGMEM =
@@ -480,7 +482,7 @@ const uint16_t kGpioNiceList[] PROGMEM = {
   AGPIO(GPIO_TX2X_TXD_BLACK), // TX20/TX23 Transmission Pin
 #endif
 #ifdef USE_WINDMETER
-  GPIO_WINDMETER_SPEED,
+  AGPIO(GPIO_WINDMETER_SPEED),
 #endif
 #ifdef USE_MP3_PLAYER
   AGPIO(GPIO_MP3_DFR562),     // RB-DFR-562, DFPlayer Mini MP3 Player Serial interface
@@ -515,8 +517,8 @@ const uint16_t kGpioNiceList[] PROGMEM = {
   AGPIO(GPIO_HM10_RX),         // GPS serial interface
 #endif
 #ifdef USE_OPENTHERM
-  GPIO_BOILER_OT_TX,
-  GPIO_BOILER_OT_RX,
+  AGPIO(GPIO_BOILER_OT_TX),
+  AGPIO(GPIO_BOILER_OT_RX),
 #endif
 
 #ifdef USE_MGC3130
@@ -550,6 +552,9 @@ const uint16_t kGpioNiceList[] PROGMEM = {
 #endif
 #ifdef USE_HRXL
   AGPIO(GPIO_HRXL_RX),
+#endif
+#ifdef USE_DYP
+  AGPIO(GPIO_DYP_RX),
 #endif
 #ifdef USE_AS3935
   AGPIO(GPIO_AS3935),
@@ -714,7 +719,8 @@ const mytmplt kModules PROGMEM =
 
 {"NAME":"AITHINKER CAM","GPIO":[4992,1,1,1,1,5088,1,1,1,1,1,1,1,1,5089,5090,0,5091,5184,5152,0,5120,5024,5056,0,0,0,0,4928,1,5094,5095,5092,0,0,5093],"FLAG":0,"BASE":1}
 {"NAME":"Olimex ESP32-PoE","GPIO":[1,1,1,1,1,1,0,0,5536,1,1,1,1,0,5600,0,0,0,0,5568,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,1],"FLAG":0,"BASE":1}
-{"NAME":"wESP32","GPIO":[0,0,1,0,1,1,0,0,1,1,1,1,5568,5600,1,0,0,0,0,1,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,1],"FLAG":0,"BASE":1}
+{"NAME":"wESP32","GPIO":[1,1,1,1,1,1,0,0,0,1,1,1,5568,5600,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,1],"FLAG":0,"BASE":1}
+{"NAME":"Denky (Teleinfo)","GPIO":[1,1,1,1,5664,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,0,1376,1,1,0,0,0,0,1,5632,1,1,1,0,0,1],"FLAG":0,"BASE":1}
 
 \*********************************************************************************************/
 

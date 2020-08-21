@@ -82,6 +82,7 @@ unsigned long feature_sns1;                 // Compiled sensor feature map
 unsigned long feature_sns2;                 // Compiled sensor feature map
 unsigned long feature5;                     // Compiled feature map
 unsigned long feature6;                     // Compiled feature map
+unsigned long feature7;                     // Compiled feature map
 unsigned long serial_polling_window = 0;    // Serial polling window
 unsigned long state_second = 0;             // State second timer
 unsigned long state_50msecond = 0;          // State 50msecond timer
@@ -168,6 +169,7 @@ bool soft_spi_flg = false;                  // Software SPI configured
 bool ntp_force_sync = false;                // Force NTP sync
 bool is_8285 = false;                       // Hardware device ESP8266EX (0) or ESP8285 (1)
 bool skip_light_fade;                       // Temporarily skip light fading
+bool restart_halt = false;                  // Do not restart but stay in wait loop
 myio my_module;                             // Active copy of Module GPIOs (17 x 8 bits)
 gpio_flag my_module_flag;                   // Active copy of Template GPIO flags
 StateBitfield global_state;                 // Global states (currently Wifi and Mqtt) (8 bits)
@@ -282,7 +284,7 @@ void setup(void) {
         Settings.module = Settings.fallback_module;  // Reset module to fallback module
 //        Settings.last_module = Settings.fallback_module;
       }
-      AddLog_P2(LOG_LEVEL_INFO, PSTR(D_LOG_APPLICATION D_LOG_SOME_SETTINGS_RESET " (%d)"), RtcReboot.fast_reboot_count);
+      AddLog_P2(LOG_LEVEL_INFO, PSTR("FRC: " D_LOG_SOME_SETTINGS_RESET " (%d)"), RtcReboot.fast_reboot_count);
     }
   }
 

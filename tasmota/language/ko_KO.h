@@ -307,6 +307,7 @@
 #define D_DEVICE_NAME "Device Name"
 #define D_WEB_ADMIN_PASSWORD "Web Admin 비밀번호"
 #define D_MQTT_ENABLE "MQTT 사용"
+#define D_MQTT_TLS_ENABLE "MQTT TLS"
 #define D_FRIENDLY_NAME "Friendly Name"
 #define D_BELKIN_WEMO "Belkin WeMo"
 #define D_HUE_BRIDGE "Hue Bridge"
@@ -335,6 +336,7 @@
 #define D_MQTT_TOPIC "MQTT Topic"
 #define D_MQTT_GROUP_TOPIC "MQTT Group Topic"
 #define D_MQTT_FULL_TOPIC "MQTT Full Topic"
+#define D_MQTT_NO_RETAIN "MQTT No Retain"
 #define D_MDNS_DISCOVERY "mDNS Discovery"
 #define D_MDNS_ADVERTISE "mDNS Advertise"
 #define D_ESP_CHIP_ID "ESP 칩 Id"
@@ -349,6 +351,7 @@
 #define D_UPLOAD_STARTED "업로드 시작됨"
 #define D_UPGRADE_STARTED "업그레이드 시작됨"
 #define D_UPLOAD_DONE "업그레이드 완료"
+#define D_TRANSFER_STARTED "Transfer started"
 #define D_UPLOAD_ERR_1 "파일이 선택되지 않았습니다"
 #define D_UPLOAD_ERR_2 "용량이 충분하지 않습니다"
 #define D_UPLOAD_ERR_3 "Magic 바이트가 0xE9가 아닙니다"
@@ -681,6 +684,7 @@
 #define D_SENSOR_CC1101_GDO0   "CC1101 GDO0"
 #define D_SENSOR_CC1101_GDO2   "CC1101 GDO2"
 #define D_SENSOR_HRXL_RX       "HRXL Rx"
+#define D_SENSOR_DYP_RX        "DYP Rx"
 #define D_SENSOR_ELECTRIQ_MOODL "MOODL Tx"
 #define D_SENSOR_AS3935        "AS3935"
 #define D_SENSOR_WINDMETER_SPEED "WindMeter Spd"
@@ -828,5 +832,14 @@
 //xsns_68_opentherm.ino
 #define D_SENSOR_BOILER_OT_RX   "OpenTherm RX"
 #define D_SENSOR_BOILER_OT_TX   "OpenTherm TX"
+
+// xnrg_15_teleinfo Denky (Teleinfo)
+#define D_CONTRACT        "Contract"
+#define D_POWER_LOAD      "Power load"
+#define D_CURRENT_TARIFF  "Current Tariff"
+#define D_TARIFF          "Tariff"
+#define D_OVERLOAD        "ADPS"
+#define D_MAX_POWER       "Max Power"
+#define D_MAX_CURRENT     "Max Current"
 
 #endif  // _LANGUAGE_KO_KO_H_
