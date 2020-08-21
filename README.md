@@ -13,6 +13,7 @@ Command syntax for flashing Tasmota32 firmware on ESP32 via Esptool (replace COM
 
 - Tasmota Zigbee gateway build (based on TI CC2530)
 - Tasmota Rules with all the extras enabled
+- Tasmota Thermostat (enabled Thermostat driver and Temp sensors)
 - Scripting included instead of rules
 - Ethernet ESP32 for wired LAN (needs Ethernet hardware module)
 - Tasmota Battery build for battery powered tuya sensors
