@@ -25,7 +25,6 @@ jobs:
         branch: 'master'
         force: true
 
-
   tasmota-zigbee:
     needs: tasmota_pull
     runs-on: ubuntu-latest
@@ -48,7 +47,6 @@ jobs:
       with:
         name: firmware
         path: ./build_output/firmware
-
   
   tasmota-battery:
     needs: tasmota_pull
@@ -73,7 +71,6 @@ jobs:
         name: firmware
         path: ./build_output/firmware
   
-
   tasmota-scripting:
     needs: tasmota_pull
     runs-on: ubuntu-latest
@@ -97,7 +94,6 @@ jobs:
         name: firmware
         path: ./build_output/firmware
   
-
   tasmota-mega:
     needs: tasmota_pull
     runs-on: ubuntu-latest
@@ -167,7 +163,6 @@ jobs:
         name: firmware
         path: ./build_output/firmware
   
-
   tasmota-platinum:
     needs: tasmota_pull
     runs-on: ubuntu-latest
@@ -190,7 +185,6 @@ jobs:
       with:
         name: firmware
         path: ./build_output/firmware
-
 
   tasmota-minicustom:
     needs: tasmota_pull
@@ -215,7 +209,6 @@ jobs:
         name: firmware
         path: ./build_output/firmware
 
-
   tasmota32-zigbee:
     needs: tasmota_pull
     runs-on: ubuntu-latest
@@ -238,7 +231,6 @@ jobs:
       with:
         name: firmware
         path: ./build_output/firmware
-
   
   tasmota32-battery:
     needs: tasmota_pull
@@ -263,7 +255,6 @@ jobs:
         name: firmware
         path: ./build_output/firmware
   
-
   tasmota32-scripting:
     needs: tasmota_pull
     runs-on: ubuntu-latest
@@ -287,7 +278,6 @@ jobs:
         name: firmware
         path: ./build_output/firmware
   
-
   tasmota32-mega:
     needs: tasmota_pull
     runs-on: ubuntu-latest
@@ -310,8 +300,7 @@ jobs:
       with:
         name: firmware
         path: ./build_output/firmware
-  
-  
+   
   tasmota32-ethernet:
     needs: tasmota_pull
     runs-on: ubuntu-latest
@@ -330,6 +319,29 @@ jobs:
       run: | 
         mv user_config_override.special tasmota/user_config_override.h
         platformio run -e tasmota32-ethernet
+    - uses: actions/upload-artifact@v2
+      with:
+        name: firmware
+        path: ./build_output/firmware
+   
+  tasmota32-odroid:
+    needs: tasmota_pull
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set up Python
+      uses: actions/setup-python@v1
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -U platformio
+        platformio upgrade --dev
+        platformio update
+    - name: Run PlatformIO
+      run: | 
+        mv user_config_override.special tasmota/user_config_override.h
+        platformio run -e tasmota32-odroid
     - uses: actions/upload-artifact@v2
       with:
         name: firmware
@@ -356,8 +368,7 @@ jobs:
     - uses: actions/upload-artifact@v2
       with:
         name: firmware
-        path: ./build_output/firmware
-  
+        path: ./build_output/firmware  
 
   tasmota32-platinum:
     needs: tasmota_pull
@@ -381,7 +392,6 @@ jobs:
       with:
         name: firmware
         path: ./build_output/firmware
-
 
   tasmota32-minicustom:
     needs: tasmota_pull
