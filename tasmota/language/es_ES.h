@@ -28,7 +28,7 @@
  * Use online command StateText to translate ON, OFF, HOLD and TOGGLE.
  * Use online command Prefix to translate cmnd, stat and tele.
  *
- * Updated until v8.3.0.2
+ * Updated until v8.4.0.3
 \*********************************************************************/
 
 #define LANGUAGE_MODULE_NAME         // Enable to display "Module Generic" (ie Spanish), Disable to display "Generic Module" (ie English)
@@ -56,7 +56,7 @@
 #define D_AP "AP"                    // Access Point
 #define D_AS "como"
 #define D_AUTO "AUTO"
-#define D_BATT "Batt"                // Short for Battery
+#define D_BATT "Bat"                // Short for Battery
 #define D_BLINK "Blink"
 #define D_BLINKOFF "BlinkOff"
 #define D_BOOT_COUNT "Conteo Reinicios"
@@ -351,6 +351,7 @@
 #define D_UPLOAD_STARTED "Cargando archivo"
 #define D_UPGRADE_STARTED "Actualización iniciada"
 #define D_UPLOAD_DONE "Carga finalizada"
+#define D_UPLOAD_TRANSFER "Upload transfer"
 #define D_TRANSFER_STARTED "Transfer started"
 #define D_UPLOAD_ERR_1 "Ningún archivo seleccionado"
 #define D_UPLOAD_ERR_2 "Espacio insuficiente"
@@ -365,7 +366,7 @@
 #define D_UPLOAD_ERR_11 "No se pudo borrar en el chip RF"
 #define D_UPLOAD_ERR_12 "No se puedo escribir en el chip RF"
 #define D_UPLOAD_ERR_13 "No se pudo decodificar firmware RF"
-#define D_UPLOAD_ERR_14 "Not compatible"
+#define D_UPLOAD_ERR_14 "No compatible"
 #define D_UPLOAD_ERROR_CODE "Código de error de carga"
 
 #define D_ENTER_COMMAND "Ingresar comando"
@@ -501,12 +502,12 @@
 #define D_PROXIMITY "Proximidad"
 
 // xsns_32_mpu6050.ino
-#define D_AX_AXIS "Accel. X-Axis"
-#define D_AY_AXIS "Accel. Y-Axis"
-#define D_AZ_AXIS "Accel. Z-Axis"
-#define D_GX_AXIS "Gyro X-Axis"
-#define D_GY_AXIS "Gyro Y-Axis"
-#define D_GZ_AXIS "Gyro Z-Axis"
+#define D_AX_AXIS "Acel. Eje X"
+#define D_AY_AXIS "Acel. Eje Y"
+#define D_AZ_AXIS "Acel. Eje Z"
+#define D_GX_AXIS "Girós. Eje X"
+#define D_GY_AXIS "Girós. Eje Y"
+#define D_GZ_AXIS "Girós. Eje Z"
 
 // xsns_34_hx711.ino
 #define D_HX_CAL_REMOVE "Remover Peso"
@@ -672,9 +673,9 @@
 #define D_SENSOR_SM2135_DAT    "SM2135 Dat"
 #define D_SENSOR_DEEPSLEEP     "DeepSleep"
 #define D_SENSOR_EXS_ENABLE    "EXS Enable"
-#define D_SENSOR_CLIENT_TX      "Client TX"
-#define D_SENSOR_CLIENT_RX      "Client RX"
-#define D_SENSOR_CLIENT_RESET   "Client RST"
+#define D_SENSOR_CLIENT_TX     "Client TX"
+#define D_SENSOR_CLIENT_RX     "Client RX"
+#define D_SENSOR_CLIENT_RESET  "Client RST"
 #define D_SENSOR_GPS_RX        "GPS RX"
 #define D_SENSOR_GPS_TX        "GPS TX"
 #define D_SENSOR_HM10_RX       "HM10 RX"
@@ -822,6 +823,8 @@
 #define D_AS3935_NOISE "Ruido detectado"
 #define D_AS3935_DISTDET "Perturbancia detectada"
 #define D_AS3935_INTNOEV "Interrupción sin evento!"
+#define D_AS3935_FLICKER "IRQ flicker!"
+#define D_AS3935_POWEROFF "Power Off"
 #define D_AS3935_NOMESS "Escuchando..."
 #define D_AS3935_ON "Encendido"
 #define D_AS3935_OFF "Apagado"
@@ -835,12 +838,12 @@
 #define D_SENSOR_BOILER_OT_TX   "OpenTherm TX"
 
 // xnrg_15_teleinfo Denky (Teleinfo)
-#define D_CONTRACT        "Contract"
-#define D_POWER_LOAD      "Power load"
-#define D_CURRENT_TARIFF  "Current Tariff"
-#define D_TARIFF          "Tariff"
+#define D_CONTRACT        "Contratado"
+#define D_POWER_LOAD      "Potencia"
+#define D_CURRENT_TARIFF  "Tarifa Actual"
+#define D_TARIFF          "Tarifa"
 #define D_OVERLOAD        "ADPS"
-#define D_MAX_POWER       "Max Power"
-#define D_MAX_CURRENT     "Max Current"
+#define D_MAX_POWER       "Potencia Máxima"
+#define D_MAX_CURRENT     "Corriente Máxima"
 
 #endif  // _LANGUAGE_ES_ES_H_

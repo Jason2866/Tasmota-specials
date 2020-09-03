@@ -28,7 +28,7 @@
  * Use online command StateText to translate ON, OFF, HOLD and TOGGLE.
  * Use online command Prefix to translate cmnd, stat and tele.
  *
- * Updated until v8.1.0.1
+ * Updated until v8.4.0.3
 \*********************************************************************/
 
 //#define LANGUAGE_MODULE_NAME         // Enable to display "Module Generic" (ie Spanish), Disable to display "Generic Module" (ie English)
@@ -119,7 +119,7 @@
 #define D_LWT "LWT"
 #define D_LQI "LQI"                  // Zigbee Link Quality Index
 #define D_MODULE "Modul"
-#define D_MOISTURE "Moisture"
+#define D_MOISTURE "Feuchtigkeit"
 #define D_MQTT "MQTT"
 #define D_MULTI_PRESS "Mehrfachdruck"
 #define D_NOISE "Lautstärke"
@@ -142,7 +142,7 @@
 #define D_PROGRAM_SIZE "Ben. Flash Speicher"
 #define D_PROJECT "Projekt"
 #define D_RAIN "Regen"
-#define D_RANGE "Range"
+#define D_RANGE "Bereich"
 #define D_RECEIVED "erhalten"
 #define D_RESTART "Neustart"
 #define D_RESTARTING "starte neu"
@@ -351,7 +351,8 @@
 #define D_UPLOAD_STARTED "Upload gestartet"
 #define D_UPGRADE_STARTED "Update gestartet"
 #define D_UPLOAD_DONE "Upload abgeschlossen"
-#define D_TRANSFER_STARTED "Transfer started"
+#define D_UPLOAD_TRANSFER "Upload Übertragung"
+#define D_TRANSFER_STARTED "Transfer gestartet"
 #define D_UPLOAD_ERR_1 "Keine Datei ausgewählt"
 #define D_UPLOAD_ERR_2 "Ungenügend Speicherplatz"
 #define D_UPLOAD_ERR_3 "Magic Byte ist nicht 0xE9"
@@ -811,7 +812,7 @@
 #define D_AS3935_GAIN "Rauschpegel:"
 #define D_AS3935_ENERGY "Energie:"
 #define D_AS3935_DISTANCE "Entfernung:"
-#define D_AS3935_DISTURBER "Störsingal:"
+#define D_AS3935_DISTURBER "Entstörer:"
 #define D_AS3935_VRMS "µVrms:"
 #define D_AS3935_APRX "ca.:"
 #define D_AS3935_AWAY "entfernt"
@@ -822,6 +823,8 @@
 #define D_AS3935_NOISE "Rauschen entdeckt"
 #define D_AS3935_DISTDET "Störer entdeckt"
 #define D_AS3935_INTNOEV "Interrupt ohne Grund!"
+#define D_AS3935_FLICKER "IRQ Pin flackerd!"
+#define D_AS3935_POWEROFF "Ausgeschaltet"
 #define D_AS3935_NOMESS "lausche..."
 #define D_AS3935_ON "On"
 #define D_AS3935_OFF "Off"
@@ -835,12 +838,12 @@
 #define D_SENSOR_BOILER_OT_TX   "OpenTherm TX"
 
 // xnrg_15_teleinfo Denky (Teleinfo)
-#define D_CONTRACT        "Contract"
-#define D_POWER_LOAD      "Power load"
-#define D_CURRENT_TARIFF  "Current Tariff"
-#define D_TARIFF          "Tariff"
+#define D_CONTRACT        "Vertrag"
+#define D_POWER_LOAD      "Leistung"
+#define D_CURRENT_TARIFF  "Aktueller Tarif"
+#define D_TARIFF          "Tarif"
 #define D_OVERLOAD        "ADPS"
-#define D_MAX_POWER       "Max Power"
-#define D_MAX_CURRENT     "Max Current"
+#define D_MAX_POWER       "max. Leistung"
+#define D_MAX_CURRENT     "max. Stromstärke"
 
 #endif  // _LANGUAGE_DE_DE_H_
