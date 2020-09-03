@@ -728,6 +728,7 @@ oo     .d8P `88b    ooo   888  `88b.   888   888              888       888   8 
   #define USE_SCRIPT_WEB_DISPLAY
   #define SCRIPT_FULL_WEBPAGE
   #define SUPPORT_MQTT_EVENT
+  #define USE_SCRIPT_HUE
 
 // -- Optional modules ----------------------------
 #define ROTARY_V1                                // Add support for Rotary Encoder as used in MI Desk Lamp (+0k8 code)
