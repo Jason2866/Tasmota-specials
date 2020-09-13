@@ -139,7 +139,6 @@ void CmndZbReset(void) {
 // High-level function
 // Send a command specified as an HEX string for the workload.
 // The target endpoint is computed if zero, i.e. sent to the first known endpoint of the device.
-// If cluster-specific, a timer may be set calling `zigbeeSetCommandTimer()`, for ex to coalesce attributes or Aqara presence sensor
 //
 // Inputs:
 // - shortaddr: 16-bits short address, or 0x0000 if group address
@@ -176,11 +175,24 @@ void zigbeeZCLSendStr(uint16_t shortaddr, uint16_t groupaddr, uint8_t endpoint, 
   }
 
   // everything is good, we can send the command
-  ZigbeeZCLSend_Raw(shortaddr, groupaddr, cluster, endpoint, cmd, clusterSpecific, manuf, buf.getBuffer(), buf.len(), true, zigbee_devices.getNextSeqNumber(shortaddr));
+
+  uint8_t seq = zigbee_devices.getNextSeqNumber(shortaddr);
+  ZigbeeZCLSend_Raw(ZigbeeZCLSendMessage({
+    shortaddr,
+    groupaddr,
+    cluster /*cluster*/,
+    endpoint,
+    cmd,
+    manuf,  /* manuf */
+    clusterSpecific /* not cluster specific */,
+    true /* response */,
+    seq,  /* zcl transaction id */
+    buf.getBuffer(), buf.len()
+  }));
   // now set the timer, if any, to read back the state later
   if (clusterSpecific) {
 #ifndef USE_ZIGBEE_NO_READ_ATTRIBUTES   // read back attribute value unless it is disabled
-    zigbeeSetCommandTimer(shortaddr, groupaddr, cluster, endpoint);
+    sendHueUpdate(shortaddr, groupaddr, cluster, endpoint);
 #endif
   }
 }
@@ -202,7 +214,7 @@ void ZbApplyMultiplier(double &val_d, int8_t multiplier) {
 
 // Parse "Report", "Write", "Response" or "Condig" attribute
 // Operation is one of: ZCL_REPORT_ATTRIBUTES (0x0A), ZCL_WRITE_ATTRIBUTES (0x02) or ZCL_READ_ATTRIBUTES_RESPONSE (0x01)
-void ZbSendReportWrite(const JsonObject &val_pubwrite, uint16_t device, uint16_t groupaddr, uint16_t cluster, uint8_t endpoint, uint16_t manuf, uint32_t operation) {
+void ZbSendReportWrite(const JsonObject &val_pubwrite, uint16_t device, uint16_t groupaddr, uint16_t cluster, uint8_t endpoint, uint16_t manuf, uint8_t operation) {
   SBuffer buf(200);       // buffer to store the binary output of attibutes
 
   if (nullptr == XdrvMailbox.command) {
@@ -376,7 +388,19 @@ void ZbSendReportWrite(const JsonObject &val_pubwrite, uint16_t device, uint16_t
   }
 
   // all good, send the packet
-  ZigbeeZCLSend_Raw(device, groupaddr, cluster, endpoint, operation, false /* not cluster specific */, manuf, buf.getBuffer(), buf.len(), false /* noresponse */, zigbee_devices.getNextSeqNumber(device));
+  uint8_t seq = zigbee_devices.getNextSeqNumber(device);
+  ZigbeeZCLSend_Raw(ZigbeeZCLSendMessage({
+    device,
+    groupaddr,
+    cluster /*cluster*/,
+    endpoint,
+    operation,
+    manuf,  /* manuf */
+    false /* not cluster specific */,
+    false /* no response */,
+    seq,  /* zcl transaction id */
+    buf.getBuffer(), buf.len()
+  }));
   ResponseCmndDone();
 }
 
@@ -510,7 +534,7 @@ void ZbSendSend(const JsonVariant &val_cmd, uint16_t device, uint16_t groupaddr,
 
 
 // Parse the "Send" attribute and send the command
-void ZbSendRead(const JsonVariant &val_attr, uint16_t device, uint16_t groupaddr, uint16_t cluster, uint8_t endpoint, uint16_t manuf, uint32_t operation) {
+void ZbSendRead(const JsonVariant &val_attr, uint16_t device, uint16_t groupaddr, uint16_t cluster, uint8_t endpoint, uint16_t manuf, uint8_t operation) {
   // ZbSend {"Device":"0xF289","Cluster":0,"Endpoint":3,"Read":5}
   // ZbSend {"Device":"0xF289","Cluster":"0x0000","Endpoint":"0x0003","Read":"0x0005"}
   // ZbSend {"Device":"0xF289","Cluster":0,"Endpoint":3,"Read":[5,6,7,4]}
@@ -532,6 +556,7 @@ void ZbSendRead(const JsonVariant &val_attr, uint16_t device, uint16_t groupaddr
 
   uint16_t val = strToUInt(val_attr);
   if (val_attr.is<JsonArray>()) {
+    // value is an array []
     const JsonArray& attr_arr = val_attr.as<const JsonArray&>();
     attrs_len = attr_arr.size() * attr_item_len;
     attrs = (uint8_t*) calloc(attrs_len, 1);
@@ -545,6 +570,7 @@ void ZbSendRead(const JsonVariant &val_attr, uint16_t device, uint16_t groupaddr
       i += attr_item_len - 2 - attr_item_offset;    // normally 0
     }
   } else if (val_attr.is<JsonObject>()) {
+    // value is an object {}
     const JsonObject& attr_obj = val_attr.as<const JsonObject&>();
     attrs_len = attr_obj.size() * attr_item_len;
     attrs = (uint8_t*) calloc(attrs_len, 1);
@@ -595,14 +621,29 @@ void ZbSendRead(const JsonVariant &val_attr, uint16_t device, uint16_t groupaddr
 
     attrs_len = actual_attr_len;
   } else {
-    attrs_len = attr_item_len;
-    attrs = (uint8_t*) calloc(attrs_len, 1);
-    attrs[0 + attr_item_offset] = val & 0xFF;    // little endian
-    attrs[1 + attr_item_offset] = val >> 8;
+    // value is a literal
+    if (0xFFFF != cluster) {
+      attrs_len = attr_item_len;
+      attrs = (uint8_t*) calloc(attrs_len, 1);
+      attrs[0 + attr_item_offset] = val & 0xFF;    // little endian
+      attrs[1 + attr_item_offset] = val >> 8;
+    }
   }
 
   if (attrs_len > 0) {
-    ZigbeeZCLSend_Raw(device, groupaddr, cluster, endpoint, operation, false, manuf, attrs, attrs_len, true /* we do want a response */, zigbee_devices.getNextSeqNumber(device));
+    uint8_t seq = zigbee_devices.getNextSeqNumber(device);
+    ZigbeeZCLSend_Raw(ZigbeeZCLSendMessage({
+      device,
+      groupaddr,
+      cluster /*cluster*/,
+      endpoint,
+      operation,
+      manuf,  /* manuf */
+      false /* not cluster specific */,
+      true /* response */,
+      seq,  /* zcl transaction id */
+      attrs, attrs_len
+    }));
     ResponseCmndDone();
   } else {
     ResponseCmndChar_P(PSTR("Missing parameters"));
@@ -795,7 +836,7 @@ void ZbBindUnbind(bool unbind) {    // false = bind, true = unbind
   if (nullptr != &val_cluster) {
     cluster = strToUInt(val_cluster);   // first convert as number
     if (0 == cluster) {
-      zigbeeFindAttributeByName(val_cluster.as<const char*>(), &cluster, nullptr, nullptr, nullptr);
+      zigbeeFindAttributeByName(val_cluster.as<const char*>(), &cluster, nullptr, nullptr);
     }
   }
 
