@@ -166,20 +166,21 @@ int32_t EZ_RouteError(int32_t res, const class SBuffer &buf) {
 int32_t EZ_PermitJoinRsp(int32_t res, const class SBuffer &buf) {
   uint8_t  status = buf.get8(2);
   
-  Response_P(PSTR("{\"" D_JSON_ZIGBEE_STATE "\":{"
-                  "\"Status\":%d,\"Message\":\"%s"),
-                  (0 == status) ? ZIGBEE_STATUS_PERMITJOIN_OPEN_60 : ZIGBEE_STATUS_PERMITJOIN_CLOSE,
-                  (0 == status) ? PSTR("Pairing mode enabled") : PSTR("Pairing mode error")
-                  );
-  if (status)  {
-    ResponseAppend_P("0x%02X", status);
+  if (status) {     // only report if there is an error
+    Response_P(PSTR("{\"" D_JSON_ZIGBEE_STATE "\":{\"Status\":23,\"Message\":\"Pairing mode error 0x%02X\"}}"), status);
+    MqttPublishPrefixTopicRulesProcess_P(RESULT_OR_TELE, PSTR(D_JSON_ZIGBEE_STATE));
   }
-  ResponseAppend_P(PSTR("\"}}"));
-
-  MqttPublishPrefixTopicRulesProcess_P(RESULT_OR_TELE, PSTR(D_JSON_ZIGBEE_STATE));
-
   return -1;
 }
+
+//
+// Special case: EZSP does not send an event for PermitJoin end, so we generate a synthetic one
+//
+void Z_PermitJoinDisable(uint16_t shortaddr, uint16_t groupaddr, uint16_t cluster, uint8_t endpoint, uint32_t value) {
+    Response_P(PSTR("{\"" D_JSON_ZIGBEE_STATE "\":{\"Status\":20,\"Message\":\"Pairing mode disabled\"}}"));
+    MqttPublishPrefixTopicRulesProcess_P(RESULT_OR_TELE, PSTR(D_JSON_ZIGBEE_STATE));
+}
+
 
 //
 // Received MessageSentHandler
@@ -395,6 +396,10 @@ int32_t EZ_ReceiveCheckVersion(int32_t res, class SBuffer &buf) {
   MqttPublishPrefixTopicRulesProcess_P(RESULT_OR_TELE, PSTR(D_JSON_ZIGBEE_STATE));
 
   if (0x08 == protocol_version) {
+    if ((stack_version & 0xFF00) == 0x6700) {
+      // If v6.7 there is a bug so we need to change the response
+      ZBW(ZBR_SET_OK2, 0x00, 0x00 /*high*/, 0x00 /*ok*/)
+    }
   	return 0;	  // protocol v8 is ok
   } else {
     return ZIGBEE_LABEL_UNSUPPORTED_VERSION;  // abort
@@ -1348,7 +1353,8 @@ void Z_IncomingMessage(class ZCLFrame &zcl_received) {
   // log the packet details
   zcl_received.log();
 
-  zigbee_devices.setLQI(srcaddr, linkquality);       // EFR32 has a different scale for LQI
+  zigbee_devices.setLQI(srcaddr, linkquality != 0xFF ? linkquality : 0xFE);       // EFR32 has a different scale for LQI
+  zigbee_devices.setLastSeenNow(srcaddr);
 
   char shortaddr[8];
   snprintf_P(shortaddr, sizeof(shortaddr), PSTR("0x%04X"), srcaddr);
@@ -1390,6 +1396,7 @@ void Z_IncomingMessage(class ZCLFrame &zcl_received) {
     }
 
     zcl_received.generateSyntheticAttributes(attr_list);
+    zcl_received.computeSyntheticAttributes(attr_list);
     zcl_received.generateCallBacks(attr_list);      // set deferred callbacks, ex: Occupancy
     zcl_received.postProcessAttributes(srcaddr, attr_list);
 
@@ -1492,6 +1499,7 @@ int32_t EZ_IncomingMessage(int32_t res, const class SBuffer &buf) {
     // ZDO request
     // Report LQI
     zigbee_devices.setLQI(srcaddr, linkquality);
+    zigbee_devices.setLastSeenNow(srcaddr);
     // Since ZDO messages start with a sequence number, we skip it
     // but we add the source address in the last 2 bytes
     SBuffer zdo_buf(buf.get8(20) - 1 + 2);
@@ -1768,20 +1776,21 @@ int32_t Z_State_Ready(uint8_t value) {
 //
 // Mostly used for routers/end-devices
 // json: holds the attributes in JSON format
-void Z_AutoResponder(uint16_t srcaddr, uint16_t cluster, uint8_t endpoint, const uint16_t *attr_list, size_t attr_len) {
-  DynamicJsonBuffer jsonBuffer;
-  JsonObject& json_out = jsonBuffer.createObject();
+void Z_AutoResponder(uint16_t srcaddr, uint16_t cluster, uint8_t endpoint, const uint16_t *attr_list_ids, size_t attr_len) {
+  Z_attribute_list attr_list;
 
   for (uint32_t i=0; i<attr_len; i++) {
-    uint16_t attr = attr_list[i];
-    uint32_t ccccaaaa = (cluster << 16) | attr;
+    uint16_t attr_id = attr_list_ids[i];
+    uint32_t ccccaaaa = (cluster << 16) | attr_id;
+    Z_attribute attr;
+    attr.setKeyId(cluster, attr_id);
 
     switch (ccccaaaa) {
-      case 0x00000004: json_out[F("Manufacturer")] = F(USE_ZIGBEE_MANUFACTURER);  break;    // Manufacturer
-      case 0x00000005: json_out[F("ModelId")] = F(USE_ZIGBEE_MODELID);            break;    // ModelId
+      case 0x00000004: attr.setStr(PSTR(USE_ZIGBEE_MANUFACTURER));                break;    // Manufacturer
+      case 0x00000005: attr.setStr(PSTR(USE_ZIGBEE_MODELID));                     break;    // ModelId
 #ifdef USE_LIGHT
-      case 0x00060000: json_out[F("Power")] = Light.power ? 1 : 0;                break;    // Power
-      case 0x00080000: json_out[F("Dimmer")] = LightGetDimmer(0);                 break;    // Dimmer
+      case 0x00060000: attr.setUInt(Light.power ? 1 : 0);                         break;    // Power
+      case 0x00080000: attr.setUInt(LightGetDimmer(0));                           break;    // Dimmer
 
       case 0x03000000:  // Hue
       case 0x03000001:  // Sat
@@ -1799,50 +1808,70 @@ void Z_AutoResponder(uint16_t srcaddr, uint16_t cluster, uint8_t endpoint, const
             uxy[i] = XY[i] * 65536.0f;
             uxy[i] = (uxy[i] > 0xFEFF) ? uxy[i] : 0xFEFF;
           }
-          if (0x0000 == attr) { json_out[F("Hue")] = changeUIntScale(hue, 0, 360, 0, 254); }
-          if (0x0001 == attr) { json_out[F("Sat")] = changeUIntScale(sat, 0, 255, 0, 254); }
-          if (0x0003 == attr) { json_out[F("X")] = uxy[0]; }
-          if (0x0004 == attr) { json_out[F("Y")] = uxy[1]; }
-          if (0x0007 == attr) { json_out[F("CT")] = LightGetColorTemp(); }
+          if (0x0000 == attr_id) { attr.setUInt(changeUIntScale(hue, 0, 360, 0, 254)); }
+          if (0x0001 == attr_id) { attr.setUInt(changeUIntScale(sat, 0, 255, 0, 254)); }
+          if (0x0003 == attr_id) { attr.setUInt(uxy[0]); }
+          if (0x0004 == attr_id) { attr.setUInt(uxy[1]); }
+          if (0x0007 == attr_id) { attr.setUInt(LightGetColorTemp()); }
         }
         break;
 #endif
       case 0x000A0000:    // Time
-        json_out[F("Time")] = (Rtc.utc_time > (60 * 60 * 24 * 365 * 10)) ? Rtc.utc_time - 946684800 : Rtc.utc_time;
+        attr.setUInt((Rtc.utc_time > (60 * 60 * 24 * 365 * 10)) ? Rtc.utc_time - 946684800 : Rtc.utc_time);
         break;
       case 0x000AFF00:    // TimeEpoch - Tasmota specific
-        json_out[F("TimeEpoch")] = Rtc.utc_time;
+        attr.setUInt(Rtc.utc_time);
         break;
       case 0x000A0001:    // TimeStatus
-        json_out[F("TimeStatus")] = (Rtc.utc_time > (60 * 60 * 24 * 365 * 10)) ? 0x02 : 0x00;  // if time is beyond 2010 then we are synchronized
+        attr.setUInt((Rtc.utc_time > (60 * 60 * 24 * 365 * 10)) ? 0x02 : 0x00);  // if time is beyond 2010 then we are synchronized
         break;
       case 0x000A0002:    // TimeZone
-        json_out[F("TimeZone")] = Settings.toffset[0] * 60;
+        attr.setUInt(Settings.toffset[0] * 60);
         break;
       case 0x000A0007:    // LocalTime    // TODO take DST
-        json_out[F("LocalTime")] = Settings.toffset[0] * 60 + ((Rtc.utc_time > (60 * 60 * 24 * 365 * 10)) ? Rtc.utc_time - 946684800 : Rtc.utc_time);
+        attr.setUInt(Settings.toffset[0] * 60 + ((Rtc.utc_time > (60 * 60 * 24 * 365 * 10)) ? Rtc.utc_time - 946684800 : Rtc.utc_time));
         break;
+    }
+    if (!attr.isNone()) {
+      Z_parseAttributeKey(attr);
+      attr_list.addAttribute(cluster, attr_id) = attr;
     }
   }
 
-  if (json_out.size() > 0) {
+  SBuffer buf(200);
+  for (const auto & attr : attr_list) {
+    if (!ZbAppendWriteBuf(buf, attr, true)) {   // true = need status indicator in Read Attribute Responses
+      return;   // error
+    }
+  }
+
+  if (buf.len() > 0) {
     // we have a non-empty output
 
     // log first
-    String msg("");
-    msg.reserve(100);
-    json_out.printTo(msg);
     AddLog_P2(LOG_LEVEL_INFO, PSTR("ZIG: Auto-responder: ZbSend {\"Device\":\"0x%04X\""
                                           ",\"Cluster\":\"0x%04X\""
                                           ",\"Endpoint\":%d"
                                           ",\"Response\":%s}"
                                           ),
                                           srcaddr, cluster, endpoint,
-                                          msg.c_str());
+                                          attr_list.toString().c_str());
 
     // send
-    const JsonVariant &json_out_v = json_out;
-    ZbSendReportWrite(json_out_v, srcaddr, 0 /* group */,cluster, endpoint, 0 /* manuf */, ZCL_READ_ATTRIBUTES_RESPONSE);
+    // all good, send the packet
+    uint8_t seq = zigbee_devices.getNextSeqNumber(srcaddr);
+    ZigbeeZCLSend_Raw(ZigbeeZCLSendMessage({
+      srcaddr,
+      0x0000,
+      cluster /*cluster*/,
+      endpoint,
+      ZCL_READ_ATTRIBUTES_RESPONSE,
+      0x0000,  /* manuf */
+      false /* not cluster specific */,
+      false /* no response */,
+      seq,  /* zcl transaction id */
+      buf.getBuffer(), buf.len()
+    }));
   }
 }
 

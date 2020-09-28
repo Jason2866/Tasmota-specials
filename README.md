@@ -1,4 +1,4 @@
-# These special [Tasmota](https://github.com/arendst/Tasmota) binaries are not official stable releases and are built hourly from the latest development branch! 
+# These special Tasmota binaries are not official stable releases and are built hourly from the latest development branch! 
 
 ## :warning: No support/warranty with these binaries! :warning:
 
