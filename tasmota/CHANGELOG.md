@@ -2,6 +2,15 @@
 
 ## Unreleased (development)
 
+### 9.0.0.1 20201002
+
+- Remove auto config update for all Friendlynames and Switchtopic from versions before 8.x
+- Change redesigning ESP8266 GPIO internal representation in line with ESP32
+
+### 8.5.1 20201002
+
+- Release Hannah
+
 ### 8.5.0.1 20200907
 
 - Fix energy total counters (#9263, #9266)
@@ -21,6 +30,7 @@
 - Add new shutter modes (#9244)
 - Add Zigbee auto-config when pairing
 - Add support for MLX90640 IR array temperature sensor by Christian Baars
+- Add support for VL53L1X time of flight sensor by Johann Obermeier
 
 ### 8.5.0 20200907
 
