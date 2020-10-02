@@ -148,6 +148,8 @@ enum UserSelectablePins {
   GPIO_DYP_RX,
   GPIO_MIEL_HVAC_TX,                   // Mitsubishi Electric HVAC TX pin
   GPIO_MIEL_HVAC_RX,                   // Mitsubishi Electric HVAC RX pin
+  GPIO_WE517_TX,                       // ORNO WE517 Serial interface
+  GPIO_WE517_RX,                       // ORNO WE517 Serial interface
   GPIO_SENSOR_END };
 
 enum ProgramSelectablePins {
@@ -251,13 +253,14 @@ const char kSensorNames[] PROGMEM =
   D_SENSOR_IEM3000_TX "|" D_SENSOR_IEM3000_RX "|"
   D_SENSOR_ZIGBEE_RST "|"
   D_SENSOR_DYP_RX "|"
-  D_SENSOR_MIEL_HVAC_TX "|" D_SENSOR_MIEL_HVAC_RX
+  D_SENSOR_MIEL_HVAC_TX "|" D_SENSOR_MIEL_HVAC_RX "|"
+  D_SENSOR_WE517_TX "|" D_SENSOR_WE517_RX
   ;
 
 const char kSensorNamesFixed[] PROGMEM =
   D_SENSOR_USER;
 
-#define MAX_MAX31865_CS  6
+#define MAX_MAX31865S    6
 #define MAX_WEBCAM_DATA  8
 #define MAX_WEBCAM_HSD   3
 
@@ -309,6 +312,9 @@ const uint16_t kGpioNiceList[] PROGMEM = {
 #ifdef USE_DISPLAY
   AGPIO(GPIO_BACKLIGHT),      // Display backlight control
   AGPIO(GPIO_OLED_RESET),     // OLED Display Reset
+#endif
+#ifdef USE_MAX31865
+  AGPIO(GPIO_SSPI_MAX31865_CS1) + MAX_MAX31865S,
 #endif
 
   AGPIO(GPIO_TXD),            // Serial interface
@@ -454,6 +460,10 @@ const uint16_t kGpioNiceList[] PROGMEM = {
   AGPIO(GPIO_IEM3000_TX),    // IEM3000 Serial interface
   AGPIO(GPIO_IEM3000_RX),    // IEM3000 Serial interface
 #endif
+#ifdef USE_WE517
+  AGPIO(GPIO_WE517_TX),      // WE517 Serial interface
+  AGPIO(GPIO_WE517_RX),      // WE517 Serial interface
+#endif
 #endif  // USE_ENERGY_SENSOR
 
 // Serial
@@ -541,9 +551,6 @@ const uint16_t kGpioNiceList[] PROGMEM = {
   AGPIO(GPIO_MAX31855CS),     // MAX31855 Serial interface
   AGPIO(GPIO_MAX31855CLK),    // MAX31855 Serial interface
   AGPIO(GPIO_MAX31855DO),     // MAX31855 Serial interface
-#endif
-#ifdef USE_MAX31855
-  AGPIO(GPIO_SSPI_MAX31865_CS1) + MAX_MAX31865_CS,
 #endif
 #ifdef USE_HRE
   AGPIO(GPIO_HRE_CLOCK),
