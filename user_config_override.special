@@ -2515,13 +2515,13 @@ o888o        o888ooooood8 o88o     o8888o     o888o     o888o o8o        `8     
 #define USE_HRE                                  // Add support for Badger HR-E Water Meter (+1k4 code)
 #define USE_A4988_STEPPER                        // Add support for A4988 stepper-motor-driver-circuit (+10k5 code)
 
-#ifdef  ESP8266
 #define USE_TASMOTA_CLIENT                       // Add support for Arduino Uno/Pro Mini via serial interface including flashing (+2k3 code, 44 mem)
-#endif
 
 #define USE_THERMOSTAT                           // Add support for the new driver created for thermostat control. #8212
 
+#ifdef  ESP8266
 #define USE_PING                                 // Add support for the PING command. #7176
+#endif
 
 #endif  // CUSTOM_CONFIG_PLATINUM *******************************************************************
 
