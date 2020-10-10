@@ -33,7 +33,7 @@ const char kZbCommands[] PROGMEM = D_PRFX_ZB "|"    // prefix
   D_CMND_ZIGBEE_FORGET "|" D_CMND_ZIGBEE_SAVE "|" D_CMND_ZIGBEE_NAME "|"
   D_CMND_ZIGBEE_BIND "|" D_CMND_ZIGBEE_UNBIND "|" D_CMND_ZIGBEE_PING "|" D_CMND_ZIGBEE_MODELID "|"
   D_CMND_ZIGBEE_LIGHT "|" D_CMND_ZIGBEE_RESTORE "|" D_CMND_ZIGBEE_BIND_STATE "|"
-  D_CMND_ZIGBEE_CONFIG
+  D_CMND_ZIGBEE_CONFIG "|" D_CMND_ZIGBEE_DATA
   ;
 
 void (* const ZigbeeCommand[])(void) PROGMEM = {
@@ -48,7 +48,7 @@ void (* const ZigbeeCommand[])(void) PROGMEM = {
   &CmndZbForget, &CmndZbSave, &CmndZbName,
   &CmndZbBind, &CmndZbUnbind, &CmndZbPing, &CmndZbModelId,
   &CmndZbLight, &CmndZbRestore, &CmndZbBindState,
-  &CmndZbConfig,
+  &CmndZbConfig, CmndZbData,
   };
 
 /********************************************************************************************/
@@ -56,6 +56,10 @@ void (* const ZigbeeCommand[])(void) PROGMEM = {
 // Initialize internal structures
 void ZigbeeInit(void)
 {
+// #pragma GCC diagnostic push
+// #pragma GCC diagnostic ignored "-Winvalid-offsetof"
+// Serial.printf(">>> offset %d %d %d\n", Z_offset(Z_Data_Light, dimmer), Z_offset(Z_Data_Light, x), Z_offset(Z_Data_Thermo, temperature));
+// #pragma GCC diagnostic pop
   // Check if settings in Flash are set
   if (PinUsed(GPIO_ZIGBEE_RX) && PinUsed(GPIO_ZIGBEE_TX)) {
     if (0 == Settings.zb_channel) {
@@ -79,6 +83,12 @@ void ZigbeeInit(void)
       Settings.zb_precfgkey_h = (mac64 << 32) | (esp_id << 16) | flash_id;
       Settings.zb_channel = USE_ZIGBEE_CHANNEL;
       Settings.zb_txradio_dbm = USE_ZIGBEE_TXRADIO_DBM;
+    }
+
+    if (Settings.zb_txradio_dbm < 0) {
+      Settings.zb_txradio_dbm = -Settings.zb_txradio_dbm;
+      EZ_reset_config = true;         // force reconfigure of EZSP
+      SettingsSave(2);
     }
   }
 
@@ -112,11 +122,18 @@ void CmndZbReset(void) {
       ZigbeeZNPSend(ZIGBEE_FACTORY_RESET, sizeof(ZIGBEE_FACTORY_RESET));
 #endif // USE_ZIGBEE_ZNP
       eraseZigbeeDevices();
+    case 2:   // fall through
+      Settings.zb_txradio_dbm = - abs(Settings.zb_txradio_dbm);
       restart_flag = 2;
+#ifdef USE_ZIGBEE_ZNP
       ResponseCmndChar_P(PSTR(D_JSON_ZIGBEE_CC2530 " " D_JSON_RESET_AND_RESTARTING));
+#endif // USE_ZIGBEE_ZNP
+#ifdef USE_ZIGBEE_EZSP
+      ResponseCmndChar_P(PSTR(D_JSON_ZIGBEE_EZSP " " D_JSON_RESET_AND_RESTARTING));
+#endif // USE_ZIGBEE_EZSP
       break;
     default:
-      ResponseCmndChar_P(PSTR(D_JSON_ONE_TO_RESET));
+      ResponseCmndChar_P(PSTR("1 or 2 to reset"));
     }
   }
 }
@@ -1018,7 +1035,7 @@ void CmndZbLight(void) {
     int8_t bulbtype = strtol(p, nullptr, 10);
     if (bulbtype > 5)  { bulbtype = 5; }
     if (bulbtype < -1) { bulbtype = -1; }
-    zigbee_devices.setHueBulbtype(shortaddr, bulbtype);
+    zigbee_devices.setLightProfile(shortaddr, bulbtype);
   }
   String dump = zigbee_devices.dumpLightState(shortaddr);
   Response_P(PSTR("{\"" D_PRFX_ZB D_CMND_ZIGBEE_LIGHT "\":%s}"), dump.c_str());
@@ -1203,12 +1220,217 @@ void CmndZbStatus(void) {
   if (ZigbeeSerial) {
     if (zigbee.init_phase) { ResponseCmndChar_P(PSTR(D_ZIGBEE_NOT_STARTED)); return; }
     uint16_t shortaddr = zigbee_devices.parseDeviceParam(XdrvMailbox.data);
-    if (XdrvMailbox.payload > 0) {
+    if (XdrvMailbox.data_len > 0) {
       if (BAD_SHORTADDR == shortaddr) { ResponseCmndChar_P(PSTR("Unknown device")); return; }
     }
 
     String dump = zigbee_devices.dump(XdrvMailbox.index, shortaddr);
     Response_P(PSTR("{\"%s%d\":%s}"), XdrvMailbox.command, XdrvMailbox.index, dump.c_str());
+  }
+}
+
+//
+// Innder part of ZbData parsing
+//
+// {"L02":{"Dimmer":10,"Sat":254}}
+bool parseDeviceInnerData(class Z_Device & device, JsonParserObject root) {
+  for (auto data_elt : root) {
+    // Parse key in format "L02":....
+    const char * data_type_str = data_elt.getStr();
+    Z_Data_Type data_type;
+
+    switch (data_type_str[0]) {
+    case 'P': data_type = Z_Data_Type::Z_Plug; break;
+    case 'L': data_type = Z_Data_Type::Z_Light; break;
+    case 'O': data_type = Z_Data_Type::Z_OnOff; break;
+    case 'T': data_type = Z_Data_Type::Z_Thermo; break;
+    case 'A': data_type = Z_Data_Type::Z_Alarm; break;
+    case '_': data_type = Z_Data_Type::Z_Device; break;
+    default: data_type = Z_Data_Type::Z_Unknown; break;
+    }
+    // The format should be a valid Code Lette followed by '-'
+    if (data_type == Z_Data_Type::Z_Unknown) {
+      Response_P(PSTR("{\"%s\":\"%s \"%s\"\"}"), XdrvMailbox.command, PSTR("Invalid Parameters"), data_type_str);
+      return false;
+    }
+
+    JsonParserObject data_values = data_elt.getValue().getObject();
+    if (!data_values) { return false; }
+
+    // Decode the endpoint number
+    uint8_t endpoint = strtoul(&data_type_str[1], nullptr, 16);   // hex base 16
+    JsonParserToken val;
+
+    // Import generic attributes first
+    Z_Data & data = device.data.getByType(data_type, endpoint);
+    
+    // scan through attributes
+    for (auto attr : data_values) {
+      JsonParserToken attr_value = attr.getValue();
+      uint8_t     conv_zigbee_type;
+      Z_Data_Type conv_data_type;
+      uint8_t     conv_map_offset; 
+      if (zigbeeFindAttributeByName(attr.getStr(), nullptr, nullptr, nullptr, &conv_zigbee_type, &conv_data_type, &conv_map_offset) != nullptr) {
+        // found an attribute matching the name, does is fit the type?
+        if (conv_data_type == data_type) {
+          // we got a match. Bear in mind that a zero value is not a valid 'data_type'
+
+          uint8_t *attr_address = ((uint8_t*)&data) + sizeof(Z_Data) + conv_map_offset;
+          uint32_t uval32 = attr_value.getUInt();     // call converter to uint only once
+          int32_t  ival32 = attr_value.getInt();     // call converter to int only once
+          switch (conv_zigbee_type) {
+            case Zenum8:
+            case Zuint8:  *(uint8_t*)attr_address  = uval32;          break;
+            case Zenum16:
+            case Zuint16: *(uint16_t*)attr_address = uval32;          break;
+            case Zuint32: *(uint32_t*)attr_address = uval32;          break;
+            case Zint8:   *(int8_t*)attr_address   = ival32;          break;
+            case Zint16:  *(int16_t*)attr_address  = ival32;          break;
+            case Zint32:  *(int32_t*)attr_address  = ival32;          break;
+          }
+        } else if (conv_data_type != Z_Data_Type::Z_Unknown) {
+          AddLog_P2(LOG_LEVEL_DEBUG, PSTR(D_LOG_ZIGBEE "attribute %s is wrong type %d (expected %d)"), attr.getStr(), (uint8_t)data_type, (uint8_t)conv_data_type);
+        }
+      }
+    }
+
+    // Import specific attributes that are not handled with the generic method
+    switch (data_type) {
+    // case Z_Data_Type::Z_Plug:
+    //   {
+    //     Z_Data_Plug & plug = (Z_Data_Plug&) data;
+    //   }
+    //   break;
+    // case Z_Data_Type::Z_Light:
+    //   {
+    //     Z_Data_Light & light = (Z_Data_Light&) data;
+    //   }
+    //   break;
+    case Z_Data_Type::Z_OnOff:
+      {
+        Z_Data_OnOff & onoff = (Z_Data_OnOff&) data;
+
+        if (val = data_values[PSTR("Power")])      { onoff.setPower(val.getUInt() ? true : false); }
+      }
+      break;
+    // case Z_Data_Type::Z_Thermo:
+    //   {
+    //     Z_Data_Thermo & thermo = (Z_Data_Thermo&) data;
+    //   }
+    //   break;
+    // case Z_Data_Type::Z_Alarm:
+    //   {
+    //     Z_Data_Alarm & alarm = (Z_Data_Alarm&) data;
+    //   }
+    //   break;
+    case Z_Data_Type::Z_Device:
+      {
+        if (val = data_values[PSTR(D_CMND_ZIGBEE_LINKQUALITY)]) { device.lqi = val.getUInt(); }
+        if (val = data_values[PSTR("BatteryPercentage")])       { device.batterypercent = val.getUInt(); }
+        if (val = data_values[PSTR("LastSeen")])                { device.last_seen = val.getUInt(); }
+      }
+      break;
+    }
+  }
+  return true;
+}
+
+//
+// Command `ZbData`
+//
+void CmndZbData(void) {
+  if (zigbee.init_phase) { ResponseCmndChar_P(PSTR(D_ZIGBEE_NOT_STARTED)); return; }
+  RemoveAllSpaces(XdrvMailbox.data);
+  if (XdrvMailbox.data[0] == '{') {
+    // JSON input, enter saved data into memory -- essentially for debugging
+    JsonParser parser(XdrvMailbox.data);
+    JsonParserObject root = parser.getRootObject();
+    if (!root) { ResponseCmndChar_P(PSTR(D_JSON_INVALID_JSON)); return; }
+
+    // Skip `ZbData` if present
+    JsonParserToken zbdata = root.getObject().findStartsWith(PSTR("ZbData"));
+    if (zbdata) {
+      root = zbdata;
+    }
+
+    for (auto device_name : root) {
+      uint16_t shortaddr = zigbee_devices.parseDeviceParam(device_name.getStr());
+      if (BAD_SHORTADDR == shortaddr) { ResponseCmndChar_P(PSTR("Unknown device")); return; }
+      Z_Device & device = zigbee_devices.getShortAddr(shortaddr);
+      JsonParserObject inner_data = device_name.getValue().getObject();
+      if (inner_data) {
+        if (!parseDeviceInnerData(device, inner_data)) {
+          return;
+        }
+      }
+    }
+    ResponseCmndDone();
+  } else {
+    // non-JSON, export current data
+    // ZbData 0x1234
+    // ZbData Device_Name
+    uint16_t shortaddr = zigbee_devices.parseDeviceParam(XdrvMailbox.data);
+    if (BAD_SHORTADDR == shortaddr) { ResponseCmndChar_P(PSTR("Unknown device")); return; }
+    const Z_Device & device = zigbee_devices.findShortAddr(shortaddr);
+
+    Z_attribute_list attr_data;
+
+    {   // scope to force object deallocation
+      Z_attribute_list device_attr;
+      device.toAttributes(device_attr);
+      attr_data.addAttribute(F("_00")).setStrRaw(device_attr.toString(true).c_str());
+    }
+
+    // Iterate on data objects
+    for (auto & data_elt : device.data) {
+      Z_attribute_list inner_attr;
+      char key[4];
+      snprintf_P(key, sizeof(key), "?%02X", data_elt.getEndpoint());
+      // The key is in the form "L-01", where 'L' is the type and '01' the endpoint in hex format
+      // 'L' = Light
+      // 'P' = Power
+      //
+      Z_Data_Type data_type = data_elt.getType();
+      switch (data_type) {
+        case Z_Data_Type::Z_Plug:
+          {
+            key[0] = 'P';
+            ((Z_Data_Plug&)data_elt).toAttributes(inner_attr, data_type);
+          }
+          break;
+        case Z_Data_Type::Z_Light:
+          {
+            key[0] = 'L';
+            ((Z_Data_Light&)data_elt).toAttributes(inner_attr, data_type);
+          }
+          break;
+        case Z_Data_Type::Z_OnOff:
+          {
+            key[0] = 'O';
+            ((Z_Data_OnOff&)data_elt).toAttributes(inner_attr, data_type);
+          }
+          break;
+        case Z_Data_Type::Z_Thermo:
+          {
+            key[0] = 'T';
+            ((Z_Data_Thermo&)data_elt).toAttributes(inner_attr, data_type);
+          }
+          break;
+        case Z_Data_Type::Z_Alarm:
+          {
+            key[0] = 'A';
+            ((Z_Data_Alarm&)data_elt).toAttributes(inner_attr, data_type);
+          }
+          break;
+      }
+      if (key[0] != '?') {
+        attr_data.addAttribute(key).setStrRaw(inner_attr.toString(true).c_str());
+      }
+    }
+
+    char hex[8];
+    snprintf_P(hex, sizeof(hex), PSTR("0x%04X"), shortaddr);
+    Response_P(PSTR("{\"%s\":{\"%s\":%s}}"), XdrvMailbox.command, hex, attr_data.toString(true).c_str());
   }
 }
 
@@ -1223,7 +1445,7 @@ void CmndZbConfig(void) {
   uint64_t    zb_ext_panid   = Settings.zb_ext_panid;
   uint64_t    zb_precfgkey_l = Settings.zb_precfgkey_l;
   uint64_t    zb_precfgkey_h = Settings.zb_precfgkey_h;
-  uint8_t     zb_txradio_dbm = Settings.zb_txradio_dbm;
+  int8_t      zb_txradio_dbm = Settings.zb_txradio_dbm;
 
   // if (zigbee.init_phase) { ResponseCmndChar_P(PSTR(D_ZIGBEE_NOT_STARTED)); return; }
   RemoveAllSpaces(XdrvMailbox.data);
@@ -1238,7 +1460,7 @@ void CmndZbConfig(void) {
     zb_ext_panid    = root.getULong(PSTR("ExtPanID"), zb_ext_panid);
     zb_precfgkey_l  = root.getULong(PSTR("KeyL"), zb_precfgkey_l);
     zb_precfgkey_h  = root.getULong(PSTR("KeyH"), zb_precfgkey_h);
-    zb_txradio_dbm  = root.getUInt(PSTR("TxRadio"), zb_txradio_dbm);
+    zb_txradio_dbm  = root.getInt(PSTR("TxRadio"), zb_txradio_dbm);
 
     if (zb_channel < 11) { zb_channel = 11; }
     if (zb_channel > 26) { zb_channel = 26; }
@@ -1431,67 +1653,71 @@ void ZigbeeShow(bool json)
       ), dhm );
 
       // Sensors
-      bool temperature_ok = device.validTemperature();
-      bool tempareture_target_ok = device.validTemperatureTarget();
-      bool th_setpoint_ok = device.validThSetpoint();
-      bool humidity_ok    = device.validHumidity();
-      bool pressure_ok    = device.validPressure();
+      const Z_Data_Thermo & thermo = device.data.find<Z_Data_Thermo>();
 
-      if (temperature_ok || tempareture_target_ok || th_setpoint_ok || humidity_ok || pressure_ok) {
+      if (&thermo != nullptr) {
         WSContentSend_P(PSTR("<tr class='htr'><td colspan=\"4\">&#9478;"));
-        if (temperature_ok) {
+        if (thermo.validTemperature()) {
           char buf[12];
-          dtostrf(device.temperature / 10.0f, 3, 1, buf);
+          dtostrf(thermo.getTemperature() / 100.0f, 3, 1, buf);
           WSContentSend_PD(PSTR(" &#x2600;&#xFE0F; %s°C"), buf);
         }
-        if (tempareture_target_ok) {
+        if (thermo.validTempTarget()) {
           char buf[12];
-          dtostrf(device.temperature_target / 10.0f, 3, 1, buf);
+          dtostrf(thermo.getTempTarget() / 100.0f, 3, 1, buf);
           WSContentSend_PD(PSTR(" &#127919; %s°C"), buf);
         }
-        if (th_setpoint_ok) {
-          WSContentSend_PD(PSTR(" &#9881;&#65039; %d%%"), device.th_setpoint);
+        if (thermo.validThSetpoint()) {
+          WSContentSend_PD(PSTR(" &#9881;&#65039; %d%%"), thermo.getThSetpoint());
         }
-        if (humidity_ok) {
-          WSContentSend_P(PSTR(" &#x1F4A7; %d%%"), device.humidity);
+        if (thermo.validHumidity()) {
+          WSContentSend_P(PSTR(" &#x1F4A7; %d%%"), (uint16_t)(thermo.getHumidity() / 100.0f + 0.5f));
         }
-        if (pressure_ok) {
-          WSContentSend_P(PSTR(" &#x26C5; %d hPa"), device.pressure);
+        if (thermo.validPressure()) {
+          WSContentSend_P(PSTR(" &#x26C5; %d hPa"), thermo.getPressure());
         }
 
         WSContentSend_P(PSTR("{e}"));
       }
 
       // Light, switches and plugs
-      bool power_ok = device.validPower();
-      if (power_ok) {
-        uint8_t channels = device.getLightChannels();
-        if (0xFF == channels) { channels = 5; }     // if number of channel is unknown, display all known attributes
-        WSContentSend_P(PSTR("<tr class='htr'><td colspan=\"4\">&#9478; %s"), device.getPower() ? PSTR(D_ON) : PSTR(D_OFF));
-        if (device.validDimmer() && (channels >= 1)) {
-          WSContentSend_P(PSTR(" &#128261; %d%%"), changeUIntScale(device.dimmer,0,254,0,100));
+      const Z_Data_OnOff & onoff = device.data.find<Z_Data_OnOff>();
+      const Z_Data_Light & light = device.data.find<Z_Data_Light>();
+      bool light_display = (&light != nullptr) ? light.validDimmer() : false;
+      const Z_Data_Plug & plug = device.data.find<Z_Data_Plug>();
+      if ((&onoff != nullptr) || light_display || (&plug != nullptr)) {
+        int8_t channels = device.getLightChannels();
+        if (channels < 0) { channels = 5; }     // if number of channel is unknown, display all known attributes
+        WSContentSend_P(PSTR("<tr class='htr'><td colspan=\"4\">&#9478;"));
+        if (&onoff != nullptr) {
+          WSContentSend_P(PSTR(" %s"), device.getPower() ? PSTR(D_ON) : PSTR(D_OFF));
         }
-        if (device.validCT() && ((channels == 2) || (channels == 5))) {
-          uint32_t ct_k = (((1000000 / device.ct) + 25) / 50) * 50;
-          WSContentSend_P(PSTR(" <span title=\"CT %d\"><small>&#9898; </small>%dK</span>"), device.ct, ct_k);
-        }
-        if (device.validHue() && device.validSat() && (channels >= 3)) {
-          uint8_t r,g,b;
-          uint8_t sat = changeUIntScale(device.sat, 0, 254, 0, 255);    // scale to 0..255
-          LightStateClass::HsToRgb(device.hue, sat, &r, &g, &b);
-          WSContentSend_P(PSTR(" <i class=\"bx\" style=\"--cl:#%02X%02X%02X\"></i>#%02X%02X%02X"), r,g,b,r,g,b);
-        } else if (device.validX() && device.validY() && (channels >= 3)) {
-          uint8_t r,g,b;
-          LightStateClass::XyToRgb(device.x / 65535.0f, device.y / 65535.0f, &r, &g, &b);
-          WSContentSend_P(PSTR(" <i class=\"bx\" style=\"--cl:#%02X%02X%02X\"></i> #%02X%02X%02X"), r,g,b,r,g,b);
-        }
-        if (device.validMainsPower() || device.validMainsVoltage()) {
-          WSContentSend_P(PSTR(" &#9889; "));
-          if (device.validMainsVoltage()) {
-            WSContentSend_P(PSTR(" %dV"), device.mains_voltage);
+        if (&light != nullptr) {
+          if (light.validDimmer() && (channels >= 1)) {
+            WSContentSend_P(PSTR(" &#128261; %d%%"), changeUIntScale(light.getDimmer(),0,254,0,100));
           }
-          if (device.validMainsPower()) {
-            WSContentSend_P(PSTR(" %dW"), device.mains_power);
+          if (light.validCT() && ((channels == 2) || (channels == 5))) {
+            uint32_t ct_k = (((1000000 / light.getCT()) + 25) / 50) * 50;
+            WSContentSend_P(PSTR(" <span title=\"CT %d\"><small>&#9898; </small>%dK</span>"), light.getCT(), ct_k);
+          }
+          if (light.validHue() && light.validSat() && (channels >= 3)) {
+            uint8_t r,g,b;
+            uint8_t sat = changeUIntScale(light.getSat(), 0, 254, 0, 255);    // scale to 0..255
+            LightStateClass::HsToRgb(light.getHue(), sat, &r, &g, &b);
+            WSContentSend_P(PSTR(" <i class=\"bx\" style=\"--cl:#%02X%02X%02X\"></i>#%02X%02X%02X"), r,g,b,r,g,b);
+          } else if (light.validX() && light.validY() && (channels >= 3)) {
+            uint8_t r,g,b;
+            LightStateClass::XyToRgb(light.getX() / 65535.0f, light.getY() / 65535.0f, &r, &g, &b);
+            WSContentSend_P(PSTR(" <i class=\"bx\" style=\"--cl:#%02X%02X%02X\"></i> #%02X%02X%02X"), r,g,b,r,g,b);
+          }
+        }
+        if (&plug != nullptr) {
+          WSContentSend_P(PSTR(" &#9889; "));
+          if (plug.validMainsVoltage()) {
+            WSContentSend_P(PSTR(" %dV"), plug.getMainsVoltage());
+          }
+          if (plug.validMainsPower()) {
+            WSContentSend_P(PSTR(" %dW"), plug.getMainsPower());
           }
         }
         WSContentSend_P(PSTR("{e}"));

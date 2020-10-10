@@ -458,6 +458,10 @@
   #define D_JSON_IRHVAC_CLEAN "Clean"
   #define D_JSON_IRHVAC_SLEEP "Sleep"
   #define D_JSON_IRHVAC_CLOCK "Clock"
+  #define D_JSON_IRHVAC_STATE_MODE "StateMode"
+    #define D_JSON_IRHVAC_STATE_MODE_SEND_ONLY "SendOnly"
+    #define D_JSON_IRHVAC_STATE_MODE_STORE_ONLY "StoreOnly"
+    #define D_JSON_IRHVAC_STATE_MODE_SEND_STORE "SendStore"
 #define D_JSON_IRRECEIVED "IrReceived"
 
 // Commands xdrv_06_snfbridge.ino
@@ -509,6 +513,7 @@
 #define D_CMND_ZIGBEE_STATUS "Status"
 #define D_CMND_ZIGBEE_RESET "Reset"
   #define D_JSON_ZIGBEE_CC2530 "CC2530"
+  #define D_JSON_ZIGBEE_EZSP "EZSP"
 #define D_CMND_ZIGBEEZNPRECEIVE "ZNPReceive"      // only for debug
 #define D_CMND_ZIGBEE_EZSP_RECEIVE "EZSPReceive"      // only for debug
 #define D_CMND_ZIGBEE_EZSP_RECEIVE_RAW "EZSPReceiveRaw"      // only for debug
@@ -568,6 +573,7 @@
 #define D_CMND_ZIGBEE_RESTORE "Restore"
 #define D_CMND_ZIGBEE_CONFIG "Config"
   #define D_JSON_ZIGBEE_CONFIG "Config"
+#define D_CMND_ZIGBEE_DATA "Data"
 
 // Commands xdrv_25_A4988_Stepper.ino
 #define D_CMND_MOTOR "MOTOR"

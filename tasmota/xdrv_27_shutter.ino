@@ -192,7 +192,7 @@ int32_t ShutterPercentToRealPosition(uint32_t percent, uint32_t index)
 uint8_t ShutterRealToPercentPosition(int32_t realpos, uint32_t index)
 {
 	if (Settings.shutter_set50percent[index] != 50) {
-		return (Settings.shuttercoeff[2][index] * 5 > realpos) ? SHT_DIV_ROUND(realpos/10, Settings.shuttercoeff[2][index]) : SHT_DIV_ROUND(realpos/10-Settings.shuttercoeff[0][index]*10, Settings.shuttercoeff[1][index]);
+		return (Settings.shuttercoeff[2][index] * 5 > realpos/10) ? SHT_DIV_ROUND(realpos/10, Settings.shuttercoeff[2][index]) : SHT_DIV_ROUND(realpos/10-Settings.shuttercoeff[0][index]*10, Settings.shuttercoeff[1][index]);
 	} else {
     uint16_t realpercent;
 
@@ -515,6 +515,19 @@ bool ShutterState(uint32_t device)
           (ShutterGlobal.RelayShutterMask & (1 << (Settings.shutter_startrelay[device]-1))) );
 }
 
+void ShutterAllowPreStartProcedure(uint8_t i)
+{
+  uint32_t uptime_Local=0;
+  AddLog_P2(LOG_LEVEL_DEBUG_MORE, PSTR("SHT: Delay Start. var%d <99>=<%s>, max10s?"),i+i, rules_vars[i]);
+  rules_flag.shutter_moving = 1;
+  XdrvRulesProcess();
+  uptime_Local = uptime;
+  while (uptime_Local+10 > uptime && (String)rules_vars[i] == "99") {
+    loop();
+  }
+  AddLog_P2(LOG_LEVEL_DEBUG_MORE, PSTR("SHT: Delay Start. Done"));
+}
+
 void ShutterStartInit(uint32_t i, int32_t direction, int32_t target_pos)
 {
   //AddLog_P2(LOG_LEVEL_DEBUG_MORE, PSTR("SHT: dir %d, delta1 %d, delta2 %d, grant %d"),direction, (Shutter[i].open_max - Shutter[i].real_position) / Shutter[i].close_velocity, Shutter[i].real_position / Shutter[i].close_velocity, 2+Shutter[i].motordelay);
@@ -535,10 +548,11 @@ void ShutterStartInit(uint32_t i, int32_t direction, int32_t target_pos)
     Shutter[i].accelerator = ShutterGlobal.open_velocity_max / (Shutter[i].motordelay>0 ? Shutter[i].motordelay : 1);
     Shutter[i].target_position = target_pos;
     Shutter[i].start_position = Shutter[i].real_position;
-    Shutter[i].time = 0;
-    ShutterGlobal.skip_relay_change = 0;
-    Shutter[i].direction = direction;
     rules_flag.shutter_moving = 1;
+    ShutterAllowPreStartProcedure(i);
+    Shutter[i].time = 0;
+    Shutter[i].direction = direction;
+    ShutterGlobal.skip_relay_change = 0;
     rules_flag.shutter_moved  = 0;
     ShutterGlobal.start_reported = 0;
     //AddLog_P2(LOG_LEVEL_DEBUG_MORE, PSTR("SHT: real %d, start %d, counter %d,freq_max %d, dir %d, freq %d"),Shutter[i].real_position, Shutter[i].start_position ,RtcSettings.pulse_counter[i],ShutterGlobal.open_velocity_max , Shutter[i].direction ,ShutterGlobal.open_velocity_max );

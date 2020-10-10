@@ -375,6 +375,22 @@ char* RemoveSpace(char* p)
   return p;
 }
 
+char* RemoveControlCharacter(char* p)
+{
+  char* write = p;
+  char* read = p;
+  char ch = '.';
+
+  while (ch != '\0') {
+    ch = *read++;
+    if (!iscntrl(ch)) {
+      *write++ = ch;
+    }
+  }
+  if (write != p) { *write-- = '\0'; }
+  return p;
+}
+
 char* ReplaceCommaWithDot(char* p)
 {
   char* write = (char*)p;
@@ -1508,6 +1524,8 @@ bool JsonTemplate(char* dataBuf)
   // Old: {"NAME":"Shelly 2.5","GPIO":[56,0,17,0,21,83,0,0,6,82,5,22,156],"FLAG":2,"BASE":18}
   // New: {"NAME":"Shelly 2.5","GPIO":[320,0,32,0,224,193,0,0,640,192,608,225,3456,4736],"FLAG":0,"BASE":18}
 
+//  AddLog_P2(LOG_LEVEL_DEBUG, PSTR("TPL: |%s|"), dataBuf);
+
   if (strlen(dataBuf) < 9) { return false; }  // Workaround exception if empty JSON like {} - Needs checks
 
   JsonParser parser((char*) dataBuf);
@@ -1570,11 +1588,18 @@ bool JsonTemplate(char* dataBuf)
     if ((0 == base) || !ValidTemplateModule(base -1)) { base = 18; }
     Settings.user_template_base = base -1;  // Default WEMOS
   }
+
+//  AddLog_P2(LOG_LEVEL_DEBUG, PSTR("TPL: Converted"));
+//  AddLogBufferSize(LOG_LEVEL_DEBUG, (uint8_t*)&Settings.user_template, sizeof(Settings.user_template) / 2, 2);
+
   return true;
 }
 
 void TemplateJson(void)
 {
+//  AddLog_P2(LOG_LEVEL_DEBUG, PSTR("TPL: Show"));
+//  AddLogBufferSize(LOG_LEVEL_DEBUG, (uint8_t*)&Settings.user_template, sizeof(Settings.user_template) / 2, 2);
+
   Response_P(PSTR("{\"" D_JSON_NAME "\":\"%s\",\"" D_JSON_GPIO "\":["), SettingsText(SET_TEMPLATE_NAME));
   for (uint32_t i = 0; i < ARRAY_SIZE(Settings.user_template.gp.io); i++) {
     uint16_t gpio = Settings.user_template.gp.io[i];

@@ -427,6 +427,7 @@ bool SettingsUpdateText(uint32_t index, const char* replace_me) {
   uint32_t replace_len = strlen_P(replace_me);
   char replace[replace_len +1];
   memcpy_P(replace, replace_me, sizeof(replace));
+  uint32_t index_save = index;
 
   uint32_t start_pos = 0;
   uint32_t end_pos = 0;
@@ -472,7 +473,11 @@ bool SettingsUpdateText(uint32_t index, const char* replace_me) {
     settings_text_mutex = false;
   }
 
+#ifdef DEBUG_FUNC_SETTINGSUPDATETEXT
+  AddLog_P2(LOG_LEVEL_DEBUG, PSTR(D_LOG_CONFIG "CR %d/%d, Busy %d, Id %02d = \"%s\""), GetSettingsTextLen(), settings_text_size, settings_text_busy_count, index_save, replace);
+#else
   AddLog_P2(LOG_LEVEL_DEBUG, PSTR(D_LOG_CONFIG "CR %d/%d, Busy %d"), GetSettingsTextLen(), settings_text_size, settings_text_busy_count);
+#endif
 
   return true;
 }
@@ -725,6 +730,7 @@ void SettingsDefaultSet2(void)
   SysBitfield5  flag5 = { 0 };
 
 #ifdef ESP8266
+  Settings.gpio16_converted = 0xF5A0;
 //  Settings.config_version = 0;  // ESP8266 (Has been 0 for long time)
 #endif  // ESP8266
 #ifdef ESP32
@@ -1081,7 +1087,7 @@ void SettingsDefaultSet2(void)
   flag4.mqtt_no_retain |= MQTT_NO_RETAIN;
 
 #ifdef USER_TEMPLATE
-  JsonTemplate(USER_TEMPLATE);
+  JsonTemplate((char *)USER_TEMPLATE);
 #endif
 
   Settings.flag = flag;
