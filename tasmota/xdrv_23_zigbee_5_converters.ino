@@ -120,6 +120,7 @@ enum Cx_cluster_short {
   Cx0010, Cx0011, Cx0012, Cx0013, Cx0014, Cx001A, Cx0020, Cx0100,
   Cx0101, Cx0102, Cx0201, Cx0300, Cx0400, Cx0401, Cx0402, Cx0403,
   Cx0404, Cx0405, Cx0406, Cx0500, Cx0702, Cx0B01, Cx0B04, Cx0B05,
+  CxEF00,
 };
 
 const uint16_t Cx_cluster[] PROGMEM = {
@@ -128,6 +129,7 @@ const uint16_t Cx_cluster[] PROGMEM = {
   0x0010, 0x0011, 0x0012, 0x0013, 0x0014, 0x001A, 0x0020, 0x0100,
   0x0101, 0x0102, 0x0201, 0x0300, 0x0400, 0x0401, 0x0402, 0x0403,
   0x0404, 0x0405, 0x0406, 0x0500, 0x0702, 0x0B01, 0x0B04, 0x0B05,
+  0xEF00, 
 };
 
 uint16_t CxToCluster(uint8_t cx) {
@@ -453,7 +455,7 @@ const Z_AttributeConverter Z_PostProcess[] PROGMEM = {
   { Zenum8,   Cx0201, 0x001C,  Z_(SystemMode),           Cm1, 0 },
   // below is Eurotronic specific
   { Zenum8,   Cx0201, 0x4000, Z_(TRVMode),               Cm1, 0 },
-  { Zuint8,   Cx0201, 0x4001, Z_(SetValvePosition),      Cm1, 0 },
+  { Zuint8,   Cx0201, 0x4001, Z_(ValvePosition),         Cm1, 0 },
   { Zuint8,   Cx0201, 0x4002, Z_(EurotronicErrors),      Cm1, 0 },
   { Zint16,   Cx0201, 0x4003, Z_(CurrentTemperatureSetPoint), Cm_100, 0 },
   // below are virtual attributes to simplify ZbData import/export
@@ -578,6 +580,28 @@ const Z_AttributeConverter Z_PostProcess[] PROGMEM = {
   { Zuint8,   Cx0B05, 0x011C,  Z_(LastMessageLQI),       Cm1, 0 },
   { Zuint8,   Cx0B05, 0x011D,  Z_(LastMessageRSSI),      Cm1, 0 },
 
+  // Tuya Moes specific - 0xEF00
+  { Zoctstr,  CxEF00, 0x0070,  Z_(TuyaScheduleWorkdays), Cm1, 0 },
+  { Zoctstr,  CxEF00, 0x0071,  Z_(TuyaScheduleHolidays), Cm1, 0 },
+  { Zuint8,   CxEF00, 0x0107,  Z_(TuyaChildLock),        Cm1, 0 },
+  { Zuint8,   CxEF00, 0x0112,  Z_(TuyaWindowDetection),  Cm1, 0 },
+  { Zuint8,   CxEF00, 0x0114,  Z_(TuyaValveDetection),   Cm1, 0 },
+  { Zuint8,   CxEF00, 0x0174,  Z_(TuyaAutoLock),         Cm1, 0 },
+  { Zint16,   CxEF00, 0x0202,  Z_(TuyaTempTarget),       Cm_10, 0 },
+  { Zint16,   CxEF00, 0x0203,  Z_(LocalTemperature),     Cm_10, 0 },  // will be overwritten by actual LocalTemperature
+  { Zuint8,   CxEF00, 0x0215,  Z_(TuyaBattery),          Cm1, 0 },   // TODO check equivalent?
+  { Zint32,   CxEF00, 0x0266,  Z_(TuyaMinTemp),          Cm1, 0 },
+  { Zint32,   CxEF00, 0x0267,  Z_(TuyaMaxTemp),          Cm1, 0 },
+  { Zint32,   CxEF00, 0x0269,  Z_(TuyaBoostTime),        Cm1, 0 },
+  { Zint32,   CxEF00, 0x026B,  Z_(TuyaComfortTemp),      Cm1, 0 },
+  { Zint32,   CxEF00, 0x026C,  Z_(TuyaEcoTemp),          Cm1, 0 },
+  { Zuint8,   CxEF00, 0x026D,  Z_(TuyaValvePosition),    Cm1, 0 },
+  { Zint32,   CxEF00, 0x0272,  Z_(TuyaAwayTemp),         Cm1, 0 },
+  { Zint32,   CxEF00, 0x0275,  Z_(TuyaAwayDays),         Cm1, 0 },
+  { Zuint8,   CxEF00, 0x0404,  Z_(TuyaPreset),           Cm1, 0 },
+  { Zuint8,   CxEF00, 0x0405,  Z_(TuyaFanMode),          Cm1, 0 },
+  { Zuint8,   CxEF00, 0x046A,  Z_(TuyaForceMode),        Cm1, 0 },
+  { Zuint8,   CxEF00, 0x046F,  Z_(TuyaWeekSelect),       Cm1, 0 },
 };
 #pragma GCC diagnostic pop
 
@@ -1478,12 +1502,12 @@ void ZCLFrame::syntheticAqaraSensor(Z_attribute_list &attr_list, class Z_attribu
       Z_attribute attr;     // temporary attribute
       i += parseSingleAttribute(attr, buf2, i);
       int32_t ival32 = attr.getInt();
-      float fval = attr.getFloat();
+      uint32_t uval32 = attr.getUInt();
       bool translated = false;    // were we able to translate to a known format?
       if (0x01 == attrid) {
-        float batteryvoltage = fval / 100;
+        float batteryvoltage = attr.getFloat() / 100;
         attr_list.addAttribute(0x0001, 0x0020).setFloat(batteryvoltage);
-        uint8_t batterypercentage = toPercentageCR2032(fval);
+        uint8_t batterypercentage = toPercentageCR2032(uval32);
         attr_list.addAttribute(0x0001, 0x0021).setUInt(batterypercentage * 2);
       } else if ((nullptr != modelId) && (0 == getManufCode())) {
         translated = true;
@@ -1495,7 +1519,7 @@ void ZCLFrame::syntheticAqaraSensor(Z_attribute_list &attr_list, class Z_attribu
           if (0x64 == attrid) {
             attr_list.addAttribute(0x0402, 0x0000).setInt(ival32);   // Temperature
           } else if (0x65 == attrid) {
-            attr_list.addAttribute(0x0405, 0x0000).setFloat(fval);         // Humidity * 100
+            attr_list.addAttribute(0x0405, 0x0000).setUInt(uval32);         // Humidity * 100
           } else if (0x66 == attrid) {
             attr_list.addAttribute(0x0403, 0x0000).setUInt((ival32 + 50) / 100);  // Pressure
           }
@@ -1718,6 +1742,7 @@ void ZCLFrame::postProcessAttributes(uint16_t shortaddr, Z_attribute_list& attr_
       Z_Data_Type map_type;
       uint8_t map_offset;
       uint8_t zigbee_type;
+      int8_t conv_multiplier;
       for (uint32_t i = 0; i < ARRAY_SIZE(Z_PostProcess); i++) {
         const Z_AttributeConverter *converter = &Z_PostProcess[i];
         uint16_t conv_cluster = CxToCluster(pgm_read_byte(&converter->cluster_short));
@@ -1725,6 +1750,7 @@ void ZCLFrame::postProcessAttributes(uint16_t shortaddr, Z_attribute_list& attr_
 
         if ((conv_cluster == cluster) &&
             ((conv_attribute == attribute) || (conv_attribute == 0xFFFF)) ) {
+          conv_multiplier = CmToMultiplier(pgm_read_byte(&converter->multiplier_idx));
           zigbee_type = pgm_read_byte(&converter->type);
           uint8_t mapping = pgm_read_byte(&converter->mapping);
           map_type = (Z_Data_Type) ((mapping & 0xF0)>>4);
@@ -1735,7 +1761,6 @@ void ZCLFrame::postProcessAttributes(uint16_t shortaddr, Z_attribute_list& attr_
         }
       }
 
-      // apply multiplier if needed
       float    fval   = attr.getFloat();
       if (found && (map_type != Z_Data_Type::Z_Unknown)) {
         // We apply an automatic mapping to Z_Data_XXX object
@@ -1770,6 +1795,16 @@ void ZCLFrame::postProcessAttributes(uint16_t shortaddr, Z_attribute_list& attr_
         case 0x00010021: zigbee_devices.setBatteryPercent(shortaddr, uval16);         break;
         case 0x00060000:
         case 0x00068000: device.setPower(attr.getBool(), src_ep);                     break;
+      }
+
+      // now apply the multiplier to make it human readable
+      if (found) {
+        if (0 == conv_multiplier)  { attr_list.removeAttribute(&attr); continue; }      // remove attribute if multiplier is zero
+        if (1 != conv_multiplier) {
+          if (conv_multiplier > 0) { fval =  fval * conv_multiplier; }
+          else                     { fval =  fval / (-conv_multiplier); }
+          attr.setFloat(fval);
+        }
       }
 
       // Replace cluster/attribute with name
