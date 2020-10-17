@@ -71,7 +71,6 @@ jobs:
         name: firmware
         path: ./build_output/firmware
  
-
   tasmota-battery:
     needs: tasmota_pull
     runs-on: ubuntu-latest
@@ -279,7 +278,6 @@ jobs:
         name: firmware
         path: ./build_output/firmware
  
-
   tasmota32-battery:
     needs: tasmota_pull
     runs-on: ubuntu-latest
