@@ -15,7 +15,7 @@ Command syntax for flashing Tasmota32 firmware on ESP32 via Esptool (replace COM
 - Tasmota Rules with all the extras enabled
 - Tasmota Thermostat (enabled Thermostat driver and Temp sensors)
 - Tasmota GPS (GPS driver enabled)
-- Scripting included instead of rules (Smart Meter Interface enabled)
+- Tasmota Scripting instead of rules (Smart Meter Interface enabled)
 - Ethernet ESP32 for wired LAN (needs Ethernet hardware module)
 - Odroid-Go [Tasmota config](https://tasmota.github.io/docs/ESP32/#odroid-go), [Hardware info](https://www.hardkernel.com/shop/odroid-go/)
 - Tasmota Battery build for battery powered tuya sensors
