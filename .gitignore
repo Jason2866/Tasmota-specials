@@ -19,6 +19,7 @@ tasmota*.bin.gz
 tasmota*.map
 platformio_override.ini
 platformio_tasmota_cenv.ini
+README.md
 
 ## Visual Studio Code specific ######
 .vscode
