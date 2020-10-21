@@ -8,11 +8,18 @@ All notable changes to this project will be documented in this file.
 - Support for Vietnamese language translations by Tâm.NT
 - Support for timers in case of no-sunset permanent day by cybermaus (#9543)
 - Command ``NoDelay`` for immediate backlog command execution by Erik Montnemery (#9544)
+- Command ``SwitchMode 15`` sending only MQTT message on switch change (#9596)
+- Support for EZO Ph and ORP sensors by Christopher Tremblay (#9567)
+- Support for EZO RTD sensors by Christopher Tremblay (#9585)
+- On ZigbeeBridge support for glowing led when permit join is active (#9581)
+- Support for PWM Dimmer multi-press and ledmask (#9584)
 
 ### Changed
 - Command ``Gpio17`` replaces command ``Adc``
 - Command ``Gpios`` replaces command ``Adcs``
 - Management of serial baudrate (#9554)
+- ``#define MQTT_FINGERPRINT`` from string to hexnumbers (#9570)
+- Rotary driver adjusted accordingly if Mi Desk Lamp module is selected (#9399)
 
 ### Fixed
 - Convert AdcParam parameters from versions before v9.0.0.2
@@ -20,6 +27,7 @@ All notable changes to this project will be documented in this file.
 - Correct Energy period display shortly after midnight by gominoa (#9536)
 - Rule handling of Var or Mem using text regression from v8.5.0.1 (#9540)
 - TuyaMcu energy display regression from v8.5.0.1 (#9547)
+- MQTT data corruption on ``MQTTLog 4`` (#9571)
 
 ## [9.0.0.1] - 20201010
 ### Added
@@ -29,7 +37,7 @@ All notable changes to this project will be documented in this file.
 - Optional support for inverted NeoPixelBus data line by enabling ``#define USE_WS2812_INVERTED`` (#8988)
 - PWM dimmer color/trigger on tap, SO88 led, DGR WITH_LOCAL flag by Paul Diem (#9474)
 - Support for stateful ACs using ``StateMode`` in tasmota-ir.bin by Arik Yavilevich (#9472)
-- Zigbee ``ZbData`` command for better support of device specific data
+- Zigbee command ``ZbData`` for better support of device specific data
 - Support for analog buttons indexed within standard button range
 
 ### Changed
