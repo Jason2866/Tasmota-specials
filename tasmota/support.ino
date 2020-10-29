@@ -1246,8 +1246,8 @@ uint32_t ICACHE_RAM_ATTR Pin(uint32_t gpio, uint32_t index) {
     real_gpio += index;
     mask = 0xFFFF;
   }
-  for (uint32_t i = 0; i < ARRAY_SIZE(gpio_pin); i++) {
-    if ((gpio_pin[i] & mask) == real_gpio) {
+  for (uint32_t i = 0; i < ARRAY_SIZE(TasmotaGlobal.gpio_pin); i++) {
+    if ((TasmotaGlobal.gpio_pin[i] & mask) == real_gpio) {
       return i;              // Pin number configured for gpio
     }
   }
@@ -1260,15 +1260,15 @@ bool PinUsed(uint32_t gpio, uint32_t index) {
 }
 
 uint32_t GetPin(uint32_t lpin) {
-  if (lpin < ARRAY_SIZE(gpio_pin)) {
-    return gpio_pin[lpin];
+  if (lpin < ARRAY_SIZE(TasmotaGlobal.gpio_pin)) {
+    return TasmotaGlobal.gpio_pin[lpin];
   } else {
     return GPIO_NONE;
   }
 }
 
 void SetPin(uint32_t lpin, uint32_t gpio) {
-  gpio_pin[lpin] = gpio;
+  TasmotaGlobal.gpio_pin[lpin] = gpio;
 }
 
 void DigitalWrite(uint32_t gpio_pin, uint32_t index, uint32_t state)
@@ -1928,14 +1928,14 @@ void SetSeriallog(uint32_t loglevel)
 {
   Settings.seriallog_level = loglevel;
   seriallog_level = loglevel;
-  seriallog_timer = 0;
+  TasmotaGlobal.seriallog_timer = 0;
 }
 
 void SetSyslog(uint32_t loglevel)
 {
   Settings.syslog_level = loglevel;
   syslog_level = loglevel;
-  syslog_timer = 0;
+  TasmotaGlobal.syslog_timer = 0;
 }
 
 #ifdef USE_WEBSERVER
@@ -1984,7 +1984,7 @@ void Syslog(void)
     delay(1);  // Add time for UDP handling (#5512)
   } else {
     syslog_level = 0;
-    syslog_timer = SYSLOG_TIMER;
+    TasmotaGlobal.syslog_timer = SYSLOG_TIMER;
     AddLog_P2(LOG_LEVEL_INFO, PSTR(D_LOG_APPLICATION D_SYSLOG_HOST_NOT_FOUND ". " D_RETRY_IN " %d " D_UNIT_SECOND), SYSLOG_TIMER);
   }
 }
