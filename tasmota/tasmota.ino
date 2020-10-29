@@ -78,12 +78,12 @@
 WiFiUDP PortUdp;                            // UDP Syslog and Alexa
 
 struct {
+  uint32_t global_update;                   // Timestamp of last global temperature and humidity update
   uint32_t baudrate;                        // Current Serial baudrate
   uint32_t pulse_timer[MAX_PULSETIMERS];    // Power off timer
   uint32_t blink_timer;                     // Power cycle timer
   uint32_t backlog_delay;                   // Command backlog delay
   uint32_t loop_load_avg;                   // Indicative loop load average
-  uint32_t global_update;                   // Timestamp of last global temperature and humidity update
   uint32_t web_log_index;                   // Index in Web log buffer
   uint32_t uptime;                          // Counting every second until 4294967295 = 130 year
 
@@ -94,17 +94,19 @@ struct {
   power_t blink_powersave;                  // Blink start power save state
   power_t blink_mask;                       // Blink relay active mask
 
+  int serial_in_byte_counter;               // Index in receive buffer
+
   float temperature_celsius;                // Provide a global temperature to be used by some sensors
   float humidity;                           // Provide a global humidity to be used by some sensors
   float pressure_hpa;                       // Provide a global pressure to be used by some sensors
 
+  uint8_t blinks;                           // Number of LED blinks
+  uint8_t restart_flag;                     // Tasmota restart flag
+  uint8_t ota_state_flag;                   // OTA state flag
+  uint8_t wifi_state_flag;                  // Wifi state flag
+
 } TasmotaGlobal;
 
-int serial_in_byte_counter = 0;             // Index in receive buffer
-int ota_state_flag = 0;                     // OTA state flag
-int restart_flag = 0;                       // Tasmota restart flag
-int wifi_state_flag = WIFI_RESTART;         // Wifi state flag
-int blinks = 201;                           // Number of LED blinks
 uint16_t tele_period = 9999;                // Tele period timer
 uint16_t blink_counter = 0;                 // Number of blink cycles
 uint16_t seriallog_timer = 0;               // Timer to disable Seriallog
@@ -186,6 +188,8 @@ void setup(void) {
   memset(&TasmotaGlobal, 0, sizeof(TasmotaGlobal));
   TasmotaGlobal.baudrate = APP_BAUDRATE;
   TasmotaGlobal.temperature_celsius = NAN;
+  TasmotaGlobal.blinks = 201;
+  TasmotaGlobal.wifi_state_flag = WIFI_RESTART;
 
   global_state.data = 0xF;  // Init global state (wifi_down, mqtt_down) to solve possible network issues
 
