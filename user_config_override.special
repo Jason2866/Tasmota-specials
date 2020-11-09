@@ -2001,6 +2001,9 @@ o888o           `YbodP'    o888ooooood8 o888ooooood8 o888o  o888o    `YbodP'    
 //  #define USE_THEO_V2                            // Add support for decoding Theo V2 sensors as documented on https://sidweb.nl using 434MHz RF sensor receiver (+1k4 code)
 //  #define USE_ALECTO_V2                          // Add support for decoding Alecto V2 sensors like ACH2010, WS3000 and DKW2012 weather stations using 868MHz RF sensor receiver (+1k7 code)
 
+#define USE_MI_ESP32                               // ESP32 BLUETOOTH
+
+
 #endif  // CUSTOM_CONFIG_ODROID *******************************************************************
 
 
@@ -2279,7 +2282,7 @@ o8o        o888o o888ooooood8  `Y8bood8P'   o88o     o8888o
 #define CODE_IMAGE_STR "mega"
 
 //#define USE_ARDUINO_OTA                          // Add optional support for Arduino OTA (+13k code)
-//#define USE_DOMOTICZ                             // Enable Domoticz (+6k code, +0.3k mem)
+#define USE_DOMOTICZ                             // Enable Domoticz (+6k code, +0.3k mem)
 #define USE_HOME_ASSISTANT                       // Enable Home Assistant Discovery Support (+7k code)
 
 // #define MQTT_TELE_RETAIN     0                   // Tele messages may send retain flag (0 = off, 1 = on)
@@ -2294,7 +2297,7 @@ o8o        o888o o888ooooood8  `Y8bood8P'   o88o     o8888o
   #define USE_JAVASCRIPT_ES6                     // Enable ECMAScript6 syntax using less JavaScript code bytes (fails on IE11)
 //  #define USE_WEBSEND_RESPONSE                   // Enable command WebSend response message (+1k code)
  #define USE_EMULATION_HUE                      // Enable Hue Bridge emulation for Alexa (+18k code, +2k mem)
- #define USE_EMULATION_WEMO                     // Enable Belkin WeMo emulation for Alexa (+18k code, +2k mem)
+// #define USE_EMULATION_WEMO                     // Enable Belkin WeMo emulation for Alexa (+18k code, +2k mem)
 
 // #define USE_DISCOVERY                            // Enable mDNS for the following services (+8k code, +0.3k mem)
 #define USE_TIMERS                               // Add support for up to 16 timers (+2k2 code)
