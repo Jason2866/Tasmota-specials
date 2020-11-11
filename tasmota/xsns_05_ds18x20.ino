@@ -341,7 +341,7 @@ void Ds18x20Init(void)
       }
     }
   }
-  AddLog_P2(LOG_LEVEL_DEBUG, PSTR(D_LOG_DSB D_SENSORS_FOUND " %d"), ds18x20_sensors);
+  AddLog_P(LOG_LEVEL_DEBUG, PSTR(D_LOG_DSB D_SENSORS_FOUND " %d"), ds18x20_sensors);
 }
 
 void Ds18x20Convert(void)
@@ -457,7 +457,7 @@ void Ds18x20EverySecond(void)
   if (now < w1_power_until)
     return;
 #endif
-  if (uptime & 1
+  if (TasmotaGlobal.uptime & 1
 #ifdef W1_PARASITE_POWER
       // if more than 1 sensor and only parasite power: convert every cycle
       || ds18x20_sensors >= 2
@@ -500,12 +500,12 @@ void Ds18x20Show(bool json)
         }
         ResponseAppend_P(PSTR(",\"%s\":{\"" D_JSON_ID "\":\"%s\",\"" D_JSON_TEMPERATURE "\":%s}"), ds18x20_types, address, temperature);
 #ifdef USE_DOMOTICZ
-        if ((0 == tele_period) && (0 == i)) {
+        if ((0 == TasmotaGlobal.tele_period) && (0 == i)) {
           DomoticzSensor(DZ_TEMP, temperature);
         }
 #endif  // USE_DOMOTICZ
 #ifdef USE_KNX
-        if ((0 == tele_period) && (0 == i)) {
+        if ((0 == TasmotaGlobal.tele_period) && (0 == i)) {
           KnxSensor(KNX_TEMPERATURE, ds18x20_sensor[index].temperature);
         }
 #endif  // USE_KNX

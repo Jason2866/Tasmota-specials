@@ -50,14 +50,14 @@ void IAQ_Read(void)
 {
   uint8_t buf[9];
   buf[2] = IAQ_STATUS_I2C_ERR; // populate entry with error code
-  Wire.requestFrom((uint8_t)I2_ADR_IAQ,sizeof(buf)); 
+  Wire.requestFrom((uint8_t)I2_ADR_IAQ,sizeof(buf));
   for( uint32_t i=0; i<9; i++ ) {
     buf[i]= Wire.read();
   }
-  // AddLog_P2(LOG_LEVEL_DEBUG, "iAQ: buffer %x %x %x %x %x %x %x %x %x ", buf[0], buf[1], buf[2], buf[3], buf[4], buf[5], buf[6], buf[7], buf[8]);
+  // AddLog_P(LOG_LEVEL_DEBUG, "iAQ: buffer %x %x %x %x %x %x %x %x %x ", buf[0], buf[1], buf[2], buf[3], buf[4], buf[5], buf[6], buf[7], buf[8]);
   iAQ.pred = (buf[0]<<8) + buf[1];
   iAQ.status = buf[2];
-  iAQ.resistance =  ((uint32_t)buf[3]<<24) + ((uint32_t)buf[4]<<16) + ((uint32_t)buf[5]<<8) + (uint32_t)buf[6]; 
+  iAQ.resistance =  ((uint32_t)buf[3]<<24) + ((uint32_t)buf[4]<<16) + ((uint32_t)buf[5]<<8) + (uint32_t)buf[6];
   iAQ.Tvoc =  (buf[7]<<8) + buf[8];
 }
 
@@ -80,13 +80,13 @@ void IAQ_Show(uint8_t json)
 
   if (json) {
     if (iAQ.status!=IAQ_STATUS_OK){
-      AddLog_P2(LOG_LEVEL_INFO, PSTR("iAQ: " D_ERROR " %x" ),iAQ.status);
+      AddLog_P(LOG_LEVEL_INFO, PSTR("iAQ: " D_ERROR " %x" ),iAQ.status);
       return;
   }
   else {
     ResponseAppend_P(PSTR(",\"IAQ\":{\"" D_JSON_ECO2 "\":%u,\"" D_JSON_TVOC "\":%u,\"" D_JSON_RESISTANCE "\":%u}"), iAQ.pred, iAQ.Tvoc, iAQ.resistance);
 #ifdef USE_DOMOTICZ
-      if (0 == tele_period) DomoticzSensor(DZ_AIRQUALITY, iAQ.pred);
+      if (0 == TasmotaGlobal.tele_period) DomoticzSensor(DZ_AIRQUALITY, iAQ.pred);
 #endif  // USE_DOMOTICZ
   }
 #ifdef USE_WEBSERVER
@@ -100,7 +100,7 @@ void IAQ_Show(uint8_t json)
           break;
         default:
           WSContentSend_PD(HTTP_SNS_IAQ_ERROR, D_ERROR);
-      }    
+      }
 #endif
   }
 }

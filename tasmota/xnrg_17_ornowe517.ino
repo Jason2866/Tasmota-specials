@@ -82,7 +82,7 @@ void WE517Every250ms(void)
     AddLogBuffer(LOG_LEVEL_DEBUG_MORE, buffer, We517Modbus->ReceiveCount());
 
     if (error) {
-      AddLog_P2(LOG_LEVEL_DEBUG, PSTR("ORNO: WE517 error %d"), error);
+      AddLog_P(LOG_LEVEL_DEBUG, PSTR("ORNO: WE517 error %d"), error);
     } else {
       Energy.data_valid[0] = 0;
       Energy.data_valid[1] = 0;
@@ -188,21 +188,21 @@ void We517SnsInit(void)
   uint8_t result = We517Modbus->Begin(WE517_SPEED);
   if (result) {
       if (2 == result) {
-          AddLog_P2(LOG_LEVEL_DEBUG, PSTR("ORNO: WE517 HW serial init 8E1 at %d baud"), WE517_SPEED);
+          AddLog_P(LOG_LEVEL_DEBUG, PSTR("ORNO: WE517 HW serial init 8E1 at %d baud"), WE517_SPEED);
           Serial.begin(WE517_SPEED, SERIAL_8E1);
           ClaimSerial();
       }
       Energy.phase_count = 3;
       Energy.frequency_common = true; // Use common frequency
   } else {
-      energy_flg = ENERGY_NONE;
+      TasmotaGlobal.energy_driver = ENERGY_NONE;
   }
 }
 
 void We517DrvInit(void)
 {
   if (PinUsed(GPIO_WE517_RX) && PinUsed(GPIO_WE517_TX)) {
-    energy_flg = XNRG_17;
+    TasmotaGlobal.energy_driver = XNRG_17;
   }
 }
 
@@ -216,7 +216,7 @@ bool Xnrg17(uint8_t function)
 
   switch (function) {
     case FUNC_EVERY_250_MSECOND:
-      if (uptime > 4) { WE517Every250ms(); }
+      WE517Every250ms();
       break;
     case FUNC_INIT:
       We517SnsInit();

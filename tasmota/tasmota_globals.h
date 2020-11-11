@@ -33,10 +33,10 @@ extern "C" {
 }
 #endif
 
-//#ifdef USE_KNX  // Enabling this will fail compilation. It has no impact if not used. (20180417)
-#include <esp-knx-ip.h>
+#include <esp-knx-ip.h> // KNX Header files have to be global else compile fails -> lib/headers
+#ifdef USE_KNX 
 void KNX_CB_Action(message_t const &msg, void *arg);
-//#endif  // USE_KNX
+#endif  // USE_KNX
 
 void DomoticzTempHumPressureSensor(float temp, float hum, float baro = -1);
 char* ToHex_P(const unsigned char * in, size_t insz, char * out, size_t outsz, char inbetween = '\0');
@@ -218,6 +218,9 @@ String EthernetMacAddress(void);
 #endif
 #ifndef DEFAULT_DIMMER_MIN
 #define DEFAULT_DIMMER_MIN          0
+#endif
+#ifndef DEFAULT_DIMMER_STEP
+#define DEFAULT_DIMMER_STEP         10
 #endif
 #ifndef DEFAULT_LIGHT_DIMMER
 #define DEFAULT_LIGHT_DIMMER        10

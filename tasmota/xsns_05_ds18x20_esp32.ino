@@ -56,7 +56,7 @@ void Ds18x20Init(void) {
   ds = new OneWire(Pin(GPIO_DSB));
 
   Ds18x20Search();
-  AddLog_P2(LOG_LEVEL_DEBUG, PSTR(D_LOG_DSB D_SENSORS_FOUND " %d"), ds18x20_sensors);
+  AddLog_P(LOG_LEVEL_DEBUG, PSTR(D_LOG_DSB D_SENSORS_FOUND " %d"), ds18x20_sensors);
 }
 
 void Ds18x20Search(void) {
@@ -167,7 +167,7 @@ void Ds18x20EverySecond(void)
 {
   if (!ds18x20_sensors) { return; }
 
-  if (uptime & 1) {
+  if (TasmotaGlobal.uptime & 1) {
     // 2mS
 //    Ds18x20Search();      // Check for changes in sensors number
     Ds18x20Convert();     // Start Conversion, takes up to one second
@@ -203,12 +203,12 @@ void Ds18x20Show(bool json)
         ResponseAppend_P(PSTR(",\"%s\":{\"" D_JSON_ID "\":\"%s\",\"" D_JSON_TEMPERATURE "\":%s}"), ds18x20_types, address, temperature);
         dsxflg++;
 #ifdef USE_DOMOTICZ
-        if ((0 == tele_period) && (1 == dsxflg)) {
+        if ((0 == TasmotaGlobal.tele_period) && (1 == dsxflg)) {
           DomoticzSensor(DZ_TEMP, temperature);
         }
 #endif  // USE_DOMOTICZ
 #ifdef USE_KNX
-        if ((0 == tele_period) && (1 == dsxflg)) {
+        if ((0 == TasmotaGlobal.tele_period) && (1 == dsxflg)) {
           KnxSensor(KNX_TEMPERATURE, t);
         }
 #endif  // USE_KNX

@@ -33,7 +33,7 @@ const char kMultiPress[] PROGMEM =
   "|SINGLE|DOUBLE|TRIPLE|QUAD|PENTA|";
 
 struct BUTTON {
-  unsigned long debounce = 0;                // Button debounce timer
+  uint32_t debounce = 0;                     // Button debounce timer
   uint16_t hold_timer[MAX_KEYS] = { 0 };     // Timer for button hold
   uint16_t dual_code = 0;                    // Sonoff dual received code
 
@@ -61,26 +61,24 @@ struct TOUCH_BUTTON {
 
 /********************************************************************************************/
 
-void ButtonPullupFlag(uint8 button_bit)
-{
+void ButtonPullupFlag(uint32_t button_bit) {
   bitSet(Button.no_pullup_mask, button_bit);
 }
 
-void ButtonInvertFlag(uint8 button_bit)
-{
+void ButtonInvertFlag(uint32_t button_bit) {
   bitSet(Button.inverted_mask, button_bit);
 }
+
 #ifdef ESP32
-void ButtonTouchFlag(uint8 button_bit)
-{
+void ButtonTouchFlag(uint32_t button_bit) {
   bitSet(Button.touch_mask, button_bit);
 }
 #endif // ESP32
-void ButtonInit(void)
-{
+
+void ButtonInit(void) {
   Button.present = 0;
 #ifdef ESP8266
-  if ((SONOFF_DUAL == my_module_type) || (CH4 == my_module_type)) {
+  if ((SONOFF_DUAL == TasmotaGlobal.module_type) || (CH4 == TasmotaGlobal.module_type)) {
     Button.present++;
   }
 #endif  // ESP8266
@@ -101,8 +99,7 @@ void ButtonInit(void)
   }
 }
 
-uint8_t ButtonSerial(uint8_t serial_in_byte)
-{
+uint8_t ButtonSerial(uint8_t serial_in_byte) {
   if (Button.dual_receive_count) {
     Button.dual_receive_count--;
     if (Button.dual_receive_count) {
@@ -133,9 +130,8 @@ uint8_t ButtonSerial(uint8_t serial_in_byte)
  * SetOption73 (0)     - Decouple button from relay and send just mqtt topic
 \*********************************************************************************************/
 
-void ButtonHandler(void)
-{
-  if (uptime < 4) { return; }                                   // Block GPIO for 4 seconds after poweron to workaround Wemos D1 / Obi RTS circuit
+void ButtonHandler(void) {
+  if (TasmotaGlobal.uptime < 4) { return; }                     // Block GPIO for 4 seconds after poweron to workaround Wemos D1 / Obi RTS circuit
 
   uint8_t hold_time_extent = IMMINENT_RESET_FACTOR;             // Extent hold time factor in case of iminnent Reset command
   uint16_t loops_per_second = 1000 / Settings.button_debounce;  // ButtonDebounce (50)
@@ -146,10 +142,10 @@ void ButtonHandler(void)
     uint8_t button_present = 0;
 
 #ifdef ESP8266
-    if (!button_index && ((SONOFF_DUAL == my_module_type) || (CH4 == my_module_type))) {
+    if (!button_index && ((SONOFF_DUAL == TasmotaGlobal.module_type) || (CH4 == TasmotaGlobal.module_type))) {
       button_present = 1;
       if (Button.dual_code) {
-        AddLog_P2(LOG_LEVEL_DEBUG, PSTR(D_LOG_APPLICATION D_BUTTON " " D_CODE " %04X"), Button.dual_code);
+        AddLog_P(LOG_LEVEL_DEBUG, PSTR(D_LOG_APPLICATION D_BUTTON " " D_CODE " %04X"), Button.dual_code);
         button = PRESSED;
         if (0xF500 == Button.dual_code) {                      // Button hold
           Button.hold_timer[button_index] = (loops_per_second * Settings.param[P_HOLD_TIME] / 10) -1;  // SetOption32 (40)
@@ -179,7 +175,7 @@ void ButtonHandler(void)
           Button.touch_hits[button_index] = 0;
         }
         if (bitRead(TOUCH_BUTTON.calibration, button_index+1)) {
-          AddLog_P2(LOG_LEVEL_INFO, PSTR("PLOT: %u, %u, %u,"), button_index+1, _value, Button.touch_hits[button_index]);  // Button number (1..4), value, continuous hits under threshold
+          AddLog_P(LOG_LEVEL_INFO, PSTR("PLOT: %u, %u, %u,"), button_index+1, _value, Button.touch_hits[button_index]);  // Button number (1..4), value, continuous hits under threshold
         }
       } else
 #endif  // ESP32
@@ -204,17 +200,17 @@ void ButtonHandler(void)
         // Serviced
       }
 #ifdef ESP8266
-      else if (SONOFF_4CHPRO == my_module_type) {
+      else if (SONOFF_4CHPRO == TasmotaGlobal.module_type) {
         if (Button.hold_timer[button_index]) { Button.hold_timer[button_index]--; }
 
         bool button_pressed = false;
         if ((PRESSED == button) && (NOT_PRESSED == Button.last_state[button_index])) {
-          AddLog_P2(LOG_LEVEL_DEBUG, PSTR(D_LOG_APPLICATION D_BUTTON "%d " D_LEVEL_10), button_index +1);
+          AddLog_P(LOG_LEVEL_DEBUG, PSTR(D_LOG_APPLICATION D_BUTTON "%d " D_LEVEL_10), button_index +1);
           Button.hold_timer[button_index] = loops_per_second;
           button_pressed = true;
         }
         if ((NOT_PRESSED == button) && (PRESSED == Button.last_state[button_index])) {
-          AddLog_P2(LOG_LEVEL_DEBUG, PSTR(D_LOG_APPLICATION D_BUTTON "%d " D_LEVEL_01), button_index +1);
+          AddLog_P(LOG_LEVEL_DEBUG, PSTR(D_LOG_APPLICATION D_BUTTON "%d " D_LEVEL_01), button_index +1);
           if (!Button.hold_timer[button_index]) { button_pressed = true; }  // Do not allow within 1 second
         }
         if (button_pressed) {
@@ -233,7 +229,7 @@ void ButtonHandler(void)
 
           if (Settings.flag.button_single) {           // SetOption13 (0) - Allow only single button press for immediate action,
             if (!Settings.flag3.mqtt_buttons) {        // SetOption73 (0) - Decouple button from relay and send just mqtt topic
-              AddLog_P2(LOG_LEVEL_DEBUG, PSTR(D_LOG_APPLICATION D_BUTTON "%d " D_IMMEDIATE), button_index +1);
+              AddLog_P(LOG_LEVEL_DEBUG, PSTR(D_LOG_APPLICATION D_BUTTON "%d " D_IMMEDIATE), button_index +1);
               if (!SendKey(KEY_BUTTON, button_index +1, POWER_TOGGLE)) {  // Execute Toggle command via MQTT if ButtonTopic is set
                 ExecuteCommandPower(button_index +1, POWER_TOGGLE, SRC_BUTTON);  // Execute Toggle command internally
               }
@@ -242,10 +238,10 @@ void ButtonHandler(void)
             }
           } else {
             Button.press_counter[button_index] = (Button.window_timer[button_index]) ? Button.press_counter[button_index] +1 : 1;
-            AddLog_P2(LOG_LEVEL_DEBUG, PSTR(D_LOG_APPLICATION D_BUTTON "%d " D_MULTI_PRESS " %d"), button_index +1, Button.press_counter[button_index]);
+            AddLog_P(LOG_LEVEL_DEBUG, PSTR(D_LOG_APPLICATION D_BUTTON "%d " D_MULTI_PRESS " %d"), button_index +1, Button.press_counter[button_index]);
             Button.window_timer[button_index] = loops_per_second / 2;  // 0.5 second multi press window
           }
-          blinks = 201;
+          TasmotaGlobal.blinks = 201;
         }
 
         if (NOT_PRESSED == button) {
@@ -281,18 +277,18 @@ void ButtonHandler(void)
           if (Button.window_timer[button_index]) {
             Button.window_timer[button_index]--;
           } else {
-            if (!restart_flag && !Button.hold_timer[button_index] && (Button.press_counter[button_index] > 0) && (Button.press_counter[button_index] < 7)) {
+            if (!TasmotaGlobal.restart_flag && !Button.hold_timer[button_index] && (Button.press_counter[button_index] > 0) && (Button.press_counter[button_index] < 7)) {
 
               bool single_press = false;
               if (Button.press_counter[button_index] < 3) {  // Single or Double press
 #ifdef ESP8266
-                if ((SONOFF_DUAL_R2 == my_module_type) || (SONOFF_DUAL == my_module_type) || (CH4 == my_module_type)) {
+                if ((SONOFF_DUAL_R2 == TasmotaGlobal.module_type) || (SONOFF_DUAL == TasmotaGlobal.module_type) || (CH4 == TasmotaGlobal.module_type)) {
                   single_press = true;
                 } else
 #endif  // ESP8266
                 {
                   single_press = (Settings.flag.button_swap +1 == Button.press_counter[button_index]);  // SetOption11 (0)
-                  if ((1 == Button.present) && (2 == devices_present)) {  // Single Button with two devices only
+                  if ((1 == Button.present) && (2 == TasmotaGlobal.devices_present)) {  // Single Button with two devices only
                     if (Settings.flag.button_swap) {           // SetOption11 (0)
                       Button.press_counter[button_index] = (single_press) ? 1 : 2;
                     }
@@ -307,7 +303,7 @@ void ButtonHandler(void)
                 } else {
                   if (Button.press_counter[button_index] < 6) { // Single to Penta press
                     if (WifiState() > WIFI_RESTART) {           // Wifimanager active
-                      restart_flag = 1;
+                      TasmotaGlobal.restart_flag = 1;
                     }
                     if (!Settings.flag3.mqtt_buttons) {         // SetOption73 - Detach buttons from relays and enable MQTT action state for multipress
                       if (Button.press_counter[button_index] == 1) {  // By default first press always send a TOGGLE (2)
@@ -317,13 +313,13 @@ void ButtonHandler(void)
                         if (0 == button_index) {               // BUTTON1 can toggle up to 5 relays if present. If a relay is not present will send out the key value (2,11,12,13 and 14) for rules
                           bool valid_relay = PinUsed(GPIO_REL1, Button.press_counter[button_index]-1);
 #ifdef ESP8266
-                          if ((SONOFF_DUAL == my_module_type) || (CH4 == my_module_type)) {
-                            valid_relay = (Button.press_counter[button_index] <= devices_present);
+                          if ((SONOFF_DUAL == TasmotaGlobal.module_type) || (CH4 == TasmotaGlobal.module_type)) {
+                            valid_relay = (Button.press_counter[button_index] <= TasmotaGlobal.devices_present);
                           }
 #endif  // ESP8266
                           if ((Button.press_counter[button_index] > 1) && valid_relay && (Button.press_counter[button_index] <= MAX_RELAY_BUTTON1)) {
                             ExecuteCommandPower(button_index + Button.press_counter[button_index], POWER_TOGGLE, SRC_BUTTON);   // Execute Toggle command internally
-//                            AddLog_P2(LOG_LEVEL_DEBUG, PSTR("DBG: Relay%d found on GPIO%d"), Button.press_counter[button_index], Pin(GPIO_REL1, Button.press_counter[button_index]-1));
+//                            AddLog_P(LOG_LEVEL_DEBUG, PSTR("DBG: Relay%d found on GPIO%d"), Button.press_counter[button_index], Pin(GPIO_REL1, Button.press_counter[button_index]-1));
                           }
                         }
                       }
@@ -355,8 +351,8 @@ void ButtonHandler(void)
   }
 }
 
-void MqttButtonTopic(uint8_t button_id, uint8_t action, uint8_t hold)
-{
+/*
+void MqttButtonTopic(uint8_t button_id, uint8_t action, uint8_t hold) {
   char scommand[CMDSZ];
   char stopic[TOPSZ];
   char mqttstate[7];
@@ -366,14 +362,26 @@ void MqttButtonTopic(uint8_t button_id, uint8_t action, uint8_t hold)
   if (!Settings.flag.hass_discovery) {
     GetTextIndexed(mqttstate, sizeof(mqttstate), action, kMultiPress);
     snprintf_P(scommand, sizeof(scommand), PSTR("BUTTON%d"), button_id);
-    GetTopic_P(stopic, STAT, mqtt_topic, scommand);
+    GetTopic_P(stopic, STAT, TasmotaGlobal.mqtt_topic, scommand);
     Response_P(S_JSON_COMMAND_SVALUE, "ACTION", (hold) ? SettingsText(SET_STATE_TXT4) : mqttstate);
     MqttPublish(stopic);
   }
 }
+*/
 
-void ButtonLoop(void)
-{
+void MqttButtonTopic(uint32_t button_id, uint32_t action, uint32_t hold) {
+  SendKey(KEY_BUTTON, button_id, (hold) ? 3 : action +9);
+
+  if (!Settings.flag.hass_discovery) {                    // SetOption19 - Control Home Assistant automatic discovery (See SetOption59)
+    char scommand[10];
+    snprintf_P(scommand, sizeof(scommand), PSTR(D_JSON_BUTTON "%d"), button_id);
+    char mqttstate[7];
+    Response_P(S_JSON_SVALUE_ACTION_SVALUE, scommand, (hold) ? SettingsText(SET_STATE_TXT4) : GetTextIndexed(mqttstate, sizeof(mqttstate), action, kMultiPress));
+    MqttPublishPrefixTopicRulesProcess_P(RESULT_OR_STAT, scommand);
+  }
+}
+
+void ButtonLoop(void) {
   if (Button.present) {
     if (TimeReached(Button.debounce)) {
       SetNextTimeInterval(Button.debounce, Settings.button_debounce);  // ButtonDebounce (50)

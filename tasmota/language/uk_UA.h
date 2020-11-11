@@ -84,8 +84,10 @@
 #define D_DISABLED "Вимкнено"
 #define D_DISTANCE "Відстань"
 #define D_DNS_SERVER "Сервер DNS"
+#define D_DO "Disolved Oxygen"
 #define D_DONE "Виконано"
 #define D_DST_TIME "Літній час"
+#define D_EC "EC"
 #define D_ECO2 "eCO₂"
 #define D_EMULATION "Емуляція"
 #define D_ENABLED "Увімкнено"
@@ -124,6 +126,7 @@
 #define D_MULTI_PRESS "Багаторазове натискання"
 #define D_NOISE "Шум"
 #define D_NONE "Нічого"
+#define D_O2 "Oxygen"
 #define D_OFF "Вимкнено"
 #define D_OFFLINE "Неактивний"
 #define D_OK "Ок"
@@ -189,6 +192,7 @@
 #define D_UV_POWER "Потужність УФ"
 #define D_VERSION "Версія"
 #define D_VOLTAGE "Напруга"
+#define D_VOLUME "Volume"
 #define D_WEIGHT "Вага"
 #define D_WARMLIGHT "Тепло"
 #define D_WEB_SERVER "Web сервер"
@@ -667,8 +671,10 @@
 #define D_SENSOR_A4988_STP     "A4988 STP"
 #define D_SENSOR_A4988_ENA     "A4988 ENA"
 #define D_SENSOR_A4988_MS1     "A4988 MS1"
-#define D_SENSOR_A4988_MS2     "A4988 MS2"
-#define D_SENSOR_A4988_MS3     "A4988 MS3"
+#define D_SENSOR_OUTPUT_HI     "Output Hi"
+#define D_SENSOR_OUTPUT_LO     "Output Lo"
+#define D_SENSOR_AS608_TX      "AS608 Tx"
+#define D_SENSOR_AS608_RX      "AS608 Rx"
 #define D_SENSOR_DDS2382_TX    "DDS238-2 Tx"
 #define D_SENSOR_DDS2382_RX    "DDS238-2 Rx"
 #define D_SENSOR_DDSU666_TX    "DDSU666 Tx"
@@ -743,11 +749,15 @@
 #define D_UNIT_KILOMETER_PER_HOUR        "км/г" // or "km/h"
 #define D_UNIT_KILOOHM                   "㏀"
 #define D_UNIT_KILOWATTHOUR              "кВт/г"
+#define D_UNIT_LITERS                    "L"
+#define D_UNIT_LITERS_PER_MIN            "L/m"
 #define D_UNIT_LUX                       "лк"
 #define D_UNIT_MICROGRAM_PER_CUBIC_METER "µг/м³"
 #define D_UNIT_MICROMETER                "µм"
 #define D_UNIT_MICROSECOND               "µС"
+#define D_UNIT_MICROSIEMENS_PER_CM       "µS/cm"
 #define D_UNIT_MILLIAMPERE               "мА"
+#define D_UNIT_MILLILITERS               "ml"
 #define D_UNIT_MILLIMETER                "мм"
 #define D_UNIT_MILLIMETER_MERCURY        "ммHg"
 #define D_UNIT_MILLISECOND               "мС"
@@ -852,5 +862,39 @@
 #define D_OVERLOAD        "ADPS"
 #define D_MAX_POWER       "Max Power"
 #define D_MAX_CURRENT     "Max Current"
+
+// xsns_79_as608.ino
+#define D_FP_ENROLL_PLACEFINGER "Place finger"
+#define D_FP_ENROLL_REMOVEFINGER "Remove finger"
+#define D_FP_ENROLL_PLACESAMEFINGER "Place same finger again"
+#define D_FP_ENROLL_RETRY "Error so retry"
+#define D_FP_ENROLL_RESTART "Restart"
+#define D_FP_ENROLL_ERROR "Error"
+#define D_FP_ENROLL_RESET "Reset"
+#define D_FP_ENROLL_ACTIVE "Active"
+#define D_FP_ENROLL_INACTIVE "Inactive"
+// Indexed by Adafruit_Fingerprint.h defines
+#define D_FP_PACKETRECIEVEERR "Comms error"    // 0x01 Error when receiving data package
+#define D_FP_NOFINGER ""                       // 0x02 No finger on the sensor
+#define D_FP_IMAGEFAIL "Imaging error"         // 0x03 Failed to enroll the finger
+#define D_FP_IMAGEMESS "Image too messy"       // 0x06 Failed to generate character file due to overly disorderly fingerprint image
+#define D_FP_FEATUREFAIL "Fingerprint too small" // 0x07 Failed to generate character file due to the lack of character point or small fingerprint image
+#define D_FP_NOMATCH "No match"                // 0x08 Finger doesn't match
+#define D_FP_NOTFOUND "Did not find a match"   // 0x09 Failed to find matching finger
+#define D_FP_ENROLLMISMATCH "Fingerprint did not match" // 0x0A Failed to combine the character files
+#define D_FP_BADLOCATION "Bad location"        // 0x0B Addressed PageID is beyond the finger library
+#define D_FP_DBRANGEFAIL "DB range error"      // 0x0C Error when reading template from library or invalid template
+#define D_FP_UPLOADFEATUREFAIL "Upload feature error" // 0x0D Error when uploading template
+#define D_FP_PACKETRESPONSEFAIL "Packet response error" // 0x0E Module failed to receive the following data packages
+#define D_FP_UPLOADFAIL "Upload error"         // 0x0F Error when uploading image
+#define D_FP_DELETEFAIL "Delete error"         // 0x10 Failed to delete the template
+#define D_FP_DBCLEARFAIL "DB Clear error"      // 0x11 Failed to clear finger library
+#define D_FP_PASSFAIL "Password error"         // 0x13 Find whether the fingerprint passed or failed
+#define D_FP_INVALIDIMAGE "Image invalid"      // 0x15 Failed to generate image because of lac of valid primary image
+#define D_FP_FLASHERR "Flash write error"      // 0x18 Error when writing flash
+#define D_FP_INVALIDREG "Invalid number"       // 0x1A Invalid register number
+#define D_FP_ADDRCODE "Address code"           // 0x20 Address code
+#define D_FP_PASSVERIFY "Password verified"    // 0x21 Verify the fingerprint passed
+#define D_FP_UNKNOWNERROR "Error"              // Any other error
 
 #endif // _LANGUAGE_UK_UA_H_

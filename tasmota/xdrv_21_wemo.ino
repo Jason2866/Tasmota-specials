@@ -74,8 +74,8 @@ void WemoRespondToMSearch(int echo_type)
   } else {
     snprintf_P(message, sizeof(message), PSTR(D_FAILED_TO_SEND_RESPONSE));
   }
-  // Do not use AddLog_P2 here (interrupt routine) if syslog or mqttlog is enabled. UDP/TCP will force exception 9
-  PrepLog_P2(LOG_LEVEL_DEBUG, PSTR(D_LOG_UPNP D_WEMO " " D_JSON_TYPE " %d, %s " D_TO " %s:%d"),
+  // Do not use AddLog_P( here (interrupt routine) if syslog or mqttlog is enabled. UDP/TCP will force exception 9
+  PrepLog_P(LOG_LEVEL_DEBUG, PSTR(D_LOG_UPNP D_WEMO " " D_JSON_TYPE " %d, %s " D_TO " %s:%d"),
     echo_type, message, udp_remote_ip.toString().c_str(), udp_remote_port);
 
   udp_response_mutex = false;
@@ -268,7 +268,7 @@ const char WEMO_SETUP_XML[] PROGMEM =
 /********************************************************************************************/
 
 void LogUpnpWithClient(const char *msg) {
-  AddLog_P2(LOG_LEVEL_DEBUG, PSTR(D_LOG_HTTP "%s from %s"), msg, Webserver->client().remoteIP().toString().c_str());
+  AddLog_P(LOG_LEVEL_DEBUG, PSTR(D_LOG_HTTP "%s from %s"), msg, Webserver->client().remoteIP().toString().c_str());
 }
 
 void HandleUpnpEvent(void)
@@ -278,7 +278,7 @@ void HandleUpnpEvent(void)
   char event[500];
   strlcpy(event, Webserver->arg(0).c_str(), sizeof(event));
 
-//  AddLog_P2(LOG_LEVEL_DEBUG_MORE, PSTR("\n%s"), event);
+//  AddLog_P(LOG_LEVEL_DEBUG_MORE, PSTR("\n%s"), event);
 
   //differentiate get and set state
   char state = 'G';
@@ -292,15 +292,15 @@ void HandleUpnpEvent(void)
       power = POWER_OFF;
     }
     if (power != POWER_TOGGLE) {
-      uint8_t device = (light_type) ? devices_present : 1;  // Select either a configured light or relay1
+      uint8_t device = (TasmotaGlobal.light_type) ? TasmotaGlobal.devices_present : 1;  // Select either a configured light or relay1
       ExecuteCommandPower(device, power, SRC_WEMO);
     }
   }
 
 #ifdef USE_UNISHOX_COMPRESSION
-  snprintf_P(event, sizeof(event), Decompress(WEMO_RESPONSE_STATE_SOAP, WEMO_RESPONSE_STATE_SOAP_SIZE).c_str(), state, bitRead(power, devices_present -1), state);
+  snprintf_P(event, sizeof(event), Decompress(WEMO_RESPONSE_STATE_SOAP, WEMO_RESPONSE_STATE_SOAP_SIZE).c_str(), state, bitRead(TasmotaGlobal.power, TasmotaGlobal.devices_present -1), state);
 #else
-  snprintf_P(event, sizeof(event), WEMO_RESPONSE_STATE_SOAP, state, bitRead(power, devices_present -1), state);
+  snprintf_P(event, sizeof(event), WEMO_RESPONSE_STATE_SOAP, state, bitRead(TasmotaGlobal.power, TasmotaGlobal.devices_present -1), state);
 #endif
   WSSend(200, CT_XML, event);
 }
@@ -350,7 +350,7 @@ bool Xdrv21(uint8_t function)
 {
   bool result = false;
 
-  if (devices_present && (EMUL_WEMO == Settings.flag2.emulation)) {
+  if (TasmotaGlobal.devices_present && (EMUL_WEMO == Settings.flag2.emulation)) {
     switch (function) {
       case FUNC_WEB_ADD_HANDLER:
         WebServer_on(PSTR("/upnp/control/basicevent1"), HandleUpnpEvent, HTTP_POST);

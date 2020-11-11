@@ -213,57 +213,6 @@ void SetFlashModeDout(void)
 #endif  // ESP8266
 }
 
-bool VersionCompatible(void)
-{
-#ifdef ESP8266
-
-  if (Settings.flag3.compatibility_check) {
-    return true;
-  }
-
-  eboot_command ebcmd;
-  eboot_command_read(&ebcmd);
-  uint32_t start_address = ebcmd.args[0];
-  uint32_t end_address = start_address + (ebcmd.args[2] & 0xFFFFF000) + FLASH_SECTOR_SIZE;
-  uint32_t* buffer = new uint32_t[FLASH_SECTOR_SIZE / 4];
-
-  uint32_t version[3] = { 0 };
-  bool found = false;
-  for (uint32_t address = start_address; address < end_address; address = address + FLASH_SECTOR_SIZE) {
-    ESP.flashRead(address, (uint32_t*)buffer, FLASH_SECTOR_SIZE);
-    if ((address == start_address) && (0x1F == (buffer[0] & 0xFF))) {
-      version[1] = 0xFFFFFFFF;  // Ota file is gzipped and can not be checked for compatibility
-      found = true;
-    } else {
-      for (uint32_t i = 0; i < (FLASH_SECTOR_SIZE / 4); i++) {
-        version[0] = version[1];
-        version[1] = version[2];
-        version[2] = buffer[i];
-        if ((MARKER_START == version[0]) && (MARKER_END == version[2])) {
-          found = true;
-          break;
-        }
-      }
-    }
-    if (found) { break; }
-  }
-  delete[] buffer;
-
-  if (!found) { version[1] = 0; }
-
-  AddLog_P2(LOG_LEVEL_DEBUG, PSTR("OTA: Version 0x%08X, Compatible 0x%08X"), version[1], VERSION_COMPATIBLE);
-
-  if (version[1] < VERSION_COMPATIBLE) {
-    uint32_t eboot_magic = 0;  // Abandon OTA result
-    ESP.rtcUserMemoryWrite(0, (uint32_t*)&eboot_magic, sizeof(eboot_magic));
-    return false;
-  }
-
-#endif  // ESP8266
-
-  return true;
-}
-
 void SettingsBufferFree(void)
 {
   if (settings_buffer != nullptr) {
@@ -321,7 +270,7 @@ uint32_t GetSettingsCrc32(void)
 void SettingsSaveAll(void)
 {
   if (Settings.flag.save_state) {
-    Settings.power = power;
+    Settings.power = TasmotaGlobal.power;
   } else {
     Settings.power = 0;
   }
@@ -356,7 +305,7 @@ void UpdateQuickPowerCycle(bool update) {
     } else {
       qpc_buffer[0] = 0;
       ESP.flashWrite(qpc_location + (counter * 4), (uint32*)&qpc_buffer, 4);
-      AddLog_P2(LOG_LEVEL_INFO, PSTR("QPC: Count %d"), counter);
+      AddLog_P(LOG_LEVEL_INFO, PSTR("QPC: Count %d"), counter);
     }
   }
   else if ((qpc_buffer[0] != QPC_SIGNATURE) || (0 == qpc_buffer[1])) {
@@ -364,7 +313,7 @@ void UpdateQuickPowerCycle(bool update) {
     // Assume flash is default all ones and setting a bit to zero does not need an erase
     if (ESP.flashEraseSector(qpc_sector)) {
       ESP.flashWrite(qpc_location, (uint32*)&qpc_buffer, 4);
-      AddLog_P2(LOG_LEVEL_INFO, PSTR("QPC: Reset"));
+      AddLog_P(LOG_LEVEL_INFO, PSTR("QPC: Reset"));
     }
   }
 #else // ESP32
@@ -380,13 +329,13 @@ void UpdateQuickPowerCycle(bool update) {
     } else {
       pc_register = 0xFFA55AF0 | counter;
       QPCWrite(&pc_register, sizeof(pc_register));
-      AddLog_P2(LOG_LEVEL_INFO, PSTR("QPC: Count %d"), counter);
+      AddLog_P(LOG_LEVEL_INFO, PSTR("QPC: Count %d"), counter);
     }
   }
   else if (pc_register != QPC_SIGNATURE) {
     pc_register = QPC_SIGNATURE;
     QPCWrite(&pc_register, sizeof(pc_register));
-    AddLog_P2(LOG_LEVEL_INFO, PSTR("QPC: Reset"));
+    AddLog_P(LOG_LEVEL_INFO, PSTR("QPC: Reset"));
   }
 #endif  // ESP8266 or ESP32
 
@@ -447,12 +396,12 @@ bool SettingsUpdateText(uint32_t index, const char* replace_me) {
   uint32_t current_len = end_pos - start_pos;
   int diff = replace_len - current_len;
 
-//  AddLog_P2(LOG_LEVEL_DEBUG, PSTR("TST: start %d, end %d, len %d, current %d, replace %d, diff %d"),
+//  AddLog_P(LOG_LEVEL_DEBUG, PSTR("TST: start %d, end %d, len %d, current %d, replace %d, diff %d"),
 //    start_pos, end_pos, char_len, current_len, replace_len, diff);
 
   int too_long = (char_len + diff) - settings_text_size;
   if (too_long > 0) {
-    AddLog_P2(LOG_LEVEL_INFO, PSTR(D_LOG_CONFIG "Text overflow by %d char(s)"), too_long);
+    AddLog_P(LOG_LEVEL_INFO, PSTR(D_LOG_CONFIG "Text overflow by %d char(s)"), too_long);
     return false;  // Replace text too long
   }
 
@@ -474,9 +423,9 @@ bool SettingsUpdateText(uint32_t index, const char* replace_me) {
   }
 
 #ifdef DEBUG_FUNC_SETTINGSUPDATETEXT
-  AddLog_P2(LOG_LEVEL_DEBUG, PSTR(D_LOG_CONFIG "CR %d/%d, Busy %d, Id %02d = \"%s\""), GetSettingsTextLen(), settings_text_size, settings_text_busy_count, index_save, replace);
+  AddLog_P(LOG_LEVEL_DEBUG, PSTR(D_LOG_CONFIG "CR %d/%d, Busy %d, Id %02d = \"%s\""), GetSettingsTextLen(), settings_text_size, settings_text_busy_count, index_save, replace);
 #else
-  AddLog_P2(LOG_LEVEL_DEBUG, PSTR(D_LOG_CONFIG "CR %d/%d, Busy %d"), GetSettingsTextLen(), settings_text_size, settings_text_busy_count);
+  AddLog_P(LOG_LEVEL_DEBUG, PSTR(D_LOG_CONFIG "CR %d/%d, Busy %d"), GetSettingsTextLen(), settings_text_size, settings_text_busy_count);
 #endif
 
   return true;
@@ -526,12 +475,12 @@ void SettingsSave(uint8_t rotate)
   UpdateBackwardCompatibility();
   if ((GetSettingsCrc32() != settings_crc32) || rotate) {
     if (1 == rotate) {   // Use eeprom flash slot only and disable flash rotate from now on (upgrade)
-      stop_flash_rotate = 1;
+      TasmotaGlobal.stop_flash_rotate = 1;
     }
     if (2 == rotate) {   // Use eeprom flash slot and erase next flash slots if stop_flash_rotate is off (default)
       settings_location = SETTINGS_LOCATION +1;
     }
-    if (stop_flash_rotate) {
+    if (TasmotaGlobal.stop_flash_rotate) {
       settings_location = SETTINGS_LOCATION;
     } else {
       settings_location--;
@@ -555,16 +504,16 @@ void SettingsSave(uint8_t rotate)
       ESP.flashWrite(settings_location * SPI_FLASH_SEC_SIZE, (uint32*)&Settings, sizeof(Settings));
     }
 
-    if (!stop_flash_rotate && rotate) {
+    if (!TasmotaGlobal.stop_flash_rotate && rotate) {
       for (uint32_t i = 1; i < CFG_ROTATES; i++) {
         ESP.flashEraseSector(settings_location -i);  // Delete previous configurations by resetting to 0xFF
         delay(1);
       }
     }
-    AddLog_P2(LOG_LEVEL_DEBUG, PSTR(D_LOG_CONFIG D_SAVED_TO_FLASH_AT " %X, " D_COUNT " %d, " D_BYTES " %d"), settings_location, Settings.save_flag, sizeof(Settings));
+    AddLog_P(LOG_LEVEL_DEBUG, PSTR(D_LOG_CONFIG D_SAVED_TO_FLASH_AT " %X, " D_COUNT " %d, " D_BYTES " %d"), settings_location, Settings.save_flag, sizeof(Settings));
 #else  // ESP32
     SettingsWrite(&Settings, sizeof(Settings));
-    AddLog_P2(LOG_LEVEL_DEBUG, PSTR(D_LOG_CONFIG "Saved, " D_COUNT " %d, " D_BYTES " %d"), Settings.save_flag, sizeof(Settings));
+    AddLog_P(LOG_LEVEL_DEBUG, PSTR(D_LOG_CONFIG "Saved, " D_COUNT " %d, " D_BYTES " %d"), Settings.save_flag, sizeof(Settings));
 #endif  // ESP8266
 
     settings_crc32 = Settings.cfg_crc32;
@@ -596,11 +545,11 @@ void SettingsLoad(void) {
   }
   if (settings_location > 0) {
     ESP.flashRead(settings_location * SPI_FLASH_SEC_SIZE, (uint32*)&Settings, sizeof(Settings));
-    AddLog_P2(LOG_LEVEL_NONE, PSTR(D_LOG_CONFIG D_LOADED_FROM_FLASH_AT " %X, " D_COUNT " %lu"), settings_location, Settings.save_flag);
+    AddLog_P(LOG_LEVEL_NONE, PSTR(D_LOG_CONFIG D_LOADED_FROM_FLASH_AT " %X, " D_COUNT " %lu"), settings_location, Settings.save_flag);
   }
 #else  // ESP32
   SettingsRead(&Settings, sizeof(Settings));
-  AddLog_P2(LOG_LEVEL_NONE, PSTR(D_LOG_CONFIG "Loaded, " D_COUNT " %lu"), Settings.save_flag);
+  AddLog_P(LOG_LEVEL_NONE, PSTR(D_LOG_CONFIG "Loaded, " D_COUNT " %lu"), Settings.save_flag);
 #endif  // ESP8266 - ESP32
 
 #ifndef FIRMWARE_MINIMAL
@@ -613,9 +562,14 @@ void SettingsLoad(void) {
   RtcSettingsLoad();
 }
 
+// Used in TLS - returns the timestamp of the last Flash settings write
+uint32_t CfgTime(void) {
+  return Settings.cfg_timestamp;
+}
+
 void EspErase(uint32_t start_sector, uint32_t end_sector)
 {
-  bool serial_output = (LOG_LEVEL_DEBUG_MORE <= seriallog_level);
+  bool serial_output = (LOG_LEVEL_DEBUG_MORE <= TasmotaGlobal.seriallog_level);
   for (uint32_t sector = start_sector; sector < end_sector; sector++) {
 
     bool result = ESP.flashEraseSector(sector);  // Arduino core - erases flash as seen by SDK
@@ -681,7 +635,7 @@ void SettingsErase(uint8_t type)
     return;
   }
 
-  AddLog_P2(LOG_LEVEL_DEBUG, PSTR(D_LOG_APPLICATION D_ERASE " from 0x%08X to 0x%08X"), _sectorStart * SPI_FLASH_SEC_SIZE, (_sectorEnd * SPI_FLASH_SEC_SIZE) -1);
+  AddLog_P(LOG_LEVEL_DEBUG, PSTR(D_LOG_APPLICATION D_ERASE " from 0x%08X to 0x%08X"), _sectorStart * SPI_FLASH_SEC_SIZE, (_sectorEnd * SPI_FLASH_SEC_SIZE) -1);
 
 //  EspErase(_sectorStart, _sectorEnd);                                     // Arduino core and SDK - erases flash as seen by SDK
   EsptoolErase(_sectorStart, _sectorEnd);                                 // Esptool - erases flash completely
@@ -717,6 +671,10 @@ void SettingsDefaultSet1(void)
 //  Settings.bootcount = 0;
 //  Settings.cfg_crc = 0;
 }
+
+// default Fingerprints in PROGMEM
+const uint8_t default_fingerprint1[] PROGMEM = { MQTT_FINGERPRINT1 };
+const uint8_t default_fingerprint2[] PROGMEM = { MQTT_FINGERPRINT2 };
 
 void SettingsDefaultSet2(void)
 {
@@ -874,10 +832,8 @@ void SettingsDefaultSet2(void)
   SettingsUpdateText(SET_STATE_TXT2, MQTT_STATUS_ON);
   SettingsUpdateText(SET_STATE_TXT3, MQTT_CMND_TOGGLE);
   SettingsUpdateText(SET_STATE_TXT4, MQTT_CMND_HOLD);
-  static const uint8_t fingerprint1[] PROGMEM = { MQTT_FINGERPRINT1 };
-  static const uint8_t fingerprint2[] PROGMEM = { MQTT_FINGERPRINT2 };
-  memcpy_P(Settings.mqtt_fingerprint[0], fingerprint1, sizeof(fingerprint1));
-  memcpy_P(Settings.mqtt_fingerprint[1], fingerprint2, sizeof(fingerprint2));
+  memcpy_P(Settings.mqtt_fingerprint[0], default_fingerprint1, sizeof(default_fingerprint1));
+  memcpy_P(Settings.mqtt_fingerprint[1], default_fingerprint2, sizeof(default_fingerprint2));
   Settings.tele_period = TELE_PERIOD;
   Settings.mqttlog_level = MQTT_LOG_LEVEL;
 
@@ -1012,6 +968,8 @@ void SettingsDefaultSet2(void)
 
   Settings.dimmer_hw_max = DEFAULT_DIMMER_MAX;
   Settings.dimmer_hw_min = DEFAULT_DIMMER_MIN;
+
+  Settings.dimmer_step = DEFAULT_DIMMER_STEP;
 
   // Display
 //  Settings.display_model = 0;
@@ -1294,6 +1252,9 @@ void SettingsDelta(void)
       SettingsUpdateText(SET_ADC_PARAM1, parameters);
     }
 #endif  // ESP8266
+    if (Settings.version < 0x09010000) {
+      Settings.dimmer_step = DEFAULT_DIMMER_STEP;
+    }
 
     Settings.version = VERSION;
     SettingsSave(1);

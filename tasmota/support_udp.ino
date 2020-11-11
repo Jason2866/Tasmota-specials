@@ -79,7 +79,7 @@ bool UdpDisconnect(void)
 
 bool UdpConnect(void)
 {
-  if (!udp_connected && !restart_flag) {
+  if (!udp_connected && !TasmotaGlobal.restart_flag) {
     // Simple Service Discovery Protocol (SSDP)
 #ifdef ESP8266
     UdpCtx.reset();
@@ -125,15 +125,15 @@ void PollUdp(void)
       int32_t len = PortUdp.read(packet_buffer, UDP_BUFFER_SIZE -1);
       packet_buffer[len] = 0;
 #endif
-      AddLog_P2(LOG_LEVEL_DEBUG_MORE, PSTR("UDP: Packet (%d)"), len);
-      // AddLog_P2(LOG_LEVEL_DEBUG_MORE, PSTR("\n%s"), packet_buffer);
+      AddLog_P(LOG_LEVEL_DEBUG_MORE, PSTR("UDP: Packet (%d)"), len);
+      // AddLog_P(LOG_LEVEL_DEBUG_MORE, PSTR("\n%s"), packet_buffer);
 
       // Simple Service Discovery Protocol (SSDP)
       if (Settings.flag2.emulation) {
 #if defined(USE_SCRIPT_HUE) || defined(USE_ZIGBEE)
         if (!udp_response_mutex && (strstr_P(packet_buffer, PSTR("M-SEARCH")) != nullptr)) {
 #else
-        if (devices_present && !udp_response_mutex && (strstr_P(packet_buffer, PSTR("M-SEARCH")) != nullptr)) {
+        if (TasmotaGlobal.devices_present && !udp_response_mutex && (strstr_P(packet_buffer, PSTR("M-SEARCH")) != nullptr)) {
 #endif
           udp_response_mutex = true;
 
@@ -145,7 +145,7 @@ void PollUdp(void)
           udp_remote_port = PortUdp.remotePort();
 #endif
 
-          // AddLog_P2(LOG_LEVEL_DEBUG_MORE, PSTR("UDP: M-SEARCH Packet from %s:%d\n%s"),
+          // AddLog_P(LOG_LEVEL_DEBUG_MORE, PSTR("UDP: M-SEARCH Packet from %s:%d\n%s"),
           //   udp_remote_ip.toString().c_str(), udp_remote_port, packet_buffer);
 
           uint32_t response_delay = UDP_MSEARCH_SEND_DELAY + ((millis() &0x7) * 100);  // 1500 - 2200 msec

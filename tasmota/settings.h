@@ -44,7 +44,7 @@ typedef union {                            // Restricted by MISRA-C Rule 18.4 bu
     uint32_t ws_clock_reverse : 1;         // bit 16 (v5.8.1)    - SetOption16 - Switch between clockwise or counter-clockwise
     uint32_t decimal_text : 1;             // bit 17 (v5.8.1)    - SetOption17 - Switch between decimal or hexadecimal output (0 = hexadecimal, 1 = decimal)
     uint32_t light_signal : 1;             // bit 18 (v5.10.0c)  - SetOption18 - Pair light signal with CO2 sensor
-    uint32_t hass_discovery : 1;           // bit 19 (v5.11.1a)  - SetOption19 - Control Home Assistantautomatic discovery (See SetOption59)
+    uint32_t hass_discovery : 1;           // bit 19 (v5.11.1a)  - SetOption19 - Control Home Assistant automatic discovery (See SetOption59)
     uint32_t not_power_linked : 1;         // bit 20 (v5.11.1f)  - SetOption20 - Control power in relation to Dimmer/Color/Ct changes
     uint32_t no_power_on_check : 1;        // bit 21 (v5.11.1i)  - SetOption21 - Show voltage even if powered off
     uint32_t mqtt_serial : 1;              // bit 22 (v5.12.0f)  - CMND_SERIALSEND and CMND_SERIALLOG
@@ -132,14 +132,15 @@ typedef union {                            // Restricted by MISRA-C Rule 18.4 bu
     uint32_t zb_disable_autobind : 1;      // bit 28 (v8.5.0.1)  - SetOption110 - disable Zigbee auto-config when pairing new devices
     uint32_t buzzer_freq_mode : 1;         // bit 29 (v8.5.0.1)  - SetOption111 - Use frequency output for buzzer pin instead of on/off signal
     uint32_t zb_topic_fname : 1;           // bit 30 (v8.5.0.1)  - SetOption112 - Use friendly name in zigbee topic (use with SetOption89)
-    uint32_t spare31 : 1;                  // bit 31
+    uint32_t rotary_poweron_dimlow : 1;    // bit 31 (v9.0.0.2)  - SetOption113 - Set dimmer low on rotary dial after power off
   };
 } SysBitfield4;
 
 typedef union {                            // Restricted by MISRA-C Rule 18.4 but so useful...
   uint32_t data;                           // Allow bit manipulation using SetOption
   struct {                                 // SetOption114 .. SetOption145
-    uint32_t spare00 : 1;                  // bit 0
+    uint32_t mqtt_switches : 1;            // bit 0 (V9.0.0.3)  - SetOption114 - Detach Switches from relays and enable MQTT action state for all the SwitchModes
+    //uint32_t spare00 : 1;                  // bit 0
     uint32_t spare01 : 1;                  // bit 1
     uint32_t spare02 : 1;                  // bit 2
     uint32_t spare03 : 1;                  // bit 3
@@ -634,8 +635,9 @@ struct {
   uint8_t       shutter_mode;              // F43
   uint16_t      energy_power_delta[3];     // F44
   uint16_t      shutter_pwmrange[2][MAX_SHUTTERS];  // F4A
-
-  uint8_t       free_f5a[89];             // F5A  Decrement if adding new Setting variables just above and below
+  uint8_t       dimmer_step;               // F5A
+  
+  uint8_t       free_f5b[88];              // F5B - Decrement if adding new Setting variables just above and below
 
   // Only 32 bit boundary variables below
   SysBitfield5  flag5;                     // FB4

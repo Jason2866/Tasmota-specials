@@ -68,7 +68,7 @@ void CseReceived(void) {
 
   uint8_t header = Cse.rx_buffer[0];
   if ((header & 0xFC) == 0xFC) {
-    AddLog_P2(LOG_LEVEL_DEBUG, PSTR("CSE: Abnormal hardware"));
+    AddLog_P(LOG_LEVEL_DEBUG, PSTR("CSE: Abnormal hardware"));
     return;
   }
 
@@ -165,7 +165,7 @@ void CseSerialInput(void) {
             Cse.byte_counter--;
           } while ((Cse.byte_counter > 2) && (0x5A != Cse.rx_buffer[1]));
           if (0x5A != Cse.rx_buffer[1]) {
-            AddLog_P2(LOG_LEVEL_DEBUG, PSTR("CSE: " D_CHECKSUM_FAILURE));
+            AddLog_P(LOG_LEVEL_DEBUG, PSTR("CSE: " D_CHECKSUM_FAILURE));
             Cse.received = false;
             Cse.byte_counter = 0;
           }
@@ -208,7 +208,7 @@ void CseEverySecond(void) {
           Energy.kWhtoday_delta += delta;
         }
         else {
-          AddLog_P2(LOG_LEVEL_DEBUG, PSTR("CSE: Overload"));
+          AddLog_P(LOG_LEVEL_DEBUG, PSTR("CSE: Overload"));
           Cse.cf_pulses_last_time = CSE_PULSES_NOT_INITIALIZED;
         }
         EnergyUpdateToday();
@@ -231,7 +231,7 @@ void CseSnsInit(void) {
     }
     Cse.power_invalid = Settings.param[P_CSE7766_INVALID_POWER];
   } else {
-    energy_flg = ENERGY_NONE;
+    TasmotaGlobal.energy_driver = ENERGY_NONE;
   }
 }
 
@@ -240,7 +240,7 @@ void CseDrvInit(void) {
   if (PinUsed(GPIO_CSE7766_RX)) {
     Cse.rx_buffer = (uint8_t*)(malloc(CSE_BUFFER_SIZE));
     if (Cse.rx_buffer != nullptr) {
-      energy_flg = XNRG_02;
+      TasmotaGlobal.energy_driver = XNRG_02;
     }
   }
 }

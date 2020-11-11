@@ -32,7 +32,7 @@ const uint32_t ARILUX_RF_SEPARATION_LIMIT = 4300;      // Microseconds
 const uint32_t ARILUX_RF_RECEIVE_TOLERANCE = 60;       // Percentage
 
 struct ARILUX {
-  unsigned int rf_timings[ARILUX_RF_MAX_CHANGES];
+  int rf_timings[ARILUX_RF_MAX_CHANGES];
 
   unsigned long rf_received_value = 0;
   unsigned long rf_last_received_value = 0;
@@ -52,15 +52,15 @@ void AriluxRfInterrupt(void) ICACHE_RAM_ATTR;  // As iram is tight and it works 
 void AriluxRfInterrupt(void)
 {
   unsigned long time = micros();
-  unsigned int duration = time - Arilux.rf_lasttime;
+  int duration = time - Arilux.rf_lasttime;
 
   if (duration > ARILUX_RF_SEPARATION_LIMIT) {
     if (abs(duration - Arilux.rf_timings[0]) < 200) {
       Arilux.rf_repeat_count++;
       if (Arilux.rf_repeat_count == 2) {
         unsigned long code = 0;
-        const unsigned int delay = Arilux.rf_timings[0] / 31;
-        const unsigned int delayTolerance = delay * ARILUX_RF_RECEIVE_TOLERANCE / 100;
+        const int delay = Arilux.rf_timings[0] / 31;
+        const int delayTolerance = delay * ARILUX_RF_RECEIVE_TOLERANCE / 100;
         for (unsigned int i = 1; i < Arilux.rf_change_count -1; i += 2) {
           code <<= 1;
           if (abs(Arilux.rf_timings[i] - (delay *3)) < delayTolerance && abs(Arilux.rf_timings[i +1] - delay) < delayTolerance) {
@@ -97,7 +97,8 @@ void AriluxRfHandler(void)
     }
     uint16_t stored_hostcode = Settings.rf_code[1][6] << 8 | Settings.rf_code[1][7];
 
-    DEBUG_DRIVER_LOG(PSTR(D_LOG_RFR D_HOST D_CODE " 0x%04X, " D_RECEIVED " 0x%06X"), stored_hostcode, Arilux.rf_received_value);
+//    DEBUG_DRIVER_LOG(PSTR(D_LOG_RFR D_HOST D_CODE " 0x%04X, " D_RECEIVED " 0x%06X"), stored_hostcode, Arilux.rf_received_value);
+    AddLog_P(LOG_LEVEL_DEBUG, PSTR(D_LOG_RFR D_HOST D_CODE " 0x%04X, " D_RECEIVED " 0x%06X"), stored_hostcode, Arilux.rf_received_value);
 
     if (hostcode == stored_hostcode) {
       char command[33];
@@ -146,10 +147,9 @@ void AriluxRfHandler(void)
 void AriluxRfInit(void)
 {
   if (PinUsed(GPIO_ARIRFRCV) && PinUsed(GPIO_ARIRFSEL)) {
-    if (Settings.last_module != Settings.module) {
+    if (TasmotaGlobal.module_changed) {
       Settings.rf_code[1][6] = 0;
       Settings.rf_code[1][7] = 0;
-      Settings.last_module = Settings.module;
     }
     Arilux.rf_received_value = 0;
 
@@ -179,7 +179,7 @@ bool Xdrv26(uint8_t function)
       if (PinUsed(GPIO_ARIRFRCV)) { AriluxRfHandler(); }
       break;
     case FUNC_EVERY_SECOND:
-      if (10 == uptime) { AriluxRfInit(); }  // Needs rest before enabling RF interrupts
+      if (10 == TasmotaGlobal.uptime) { AriluxRfInit(); }  // Needs rest before enabling RF interrupts
       break;
   }
   return result;

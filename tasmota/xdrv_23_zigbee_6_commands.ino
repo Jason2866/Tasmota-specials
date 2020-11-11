@@ -136,6 +136,8 @@ const Z_CommandConverter Z_Commands[] PROGMEM = {
   { Z_(GetSceneMembership),0x0005, 0x06, 0x82,Z_(xxyyzzzz) },     // specific
   // Tuya - Moes specific
   { Z_(),               0xEF00, 0xFF, 0x83,   Z_() },             // capture any command in 0xEF00 cluster
+  // Terncy specific
+  { Z_(),               0xFCCC, 0x00, 0x82,   Z_(xxyy) },         // Terncy button (multi-)press
 };
 
 /*********************************************************************************************\
@@ -197,7 +199,7 @@ void Z_ReadAttrCallback(uint16_t shortaddr, uint16_t groupaddr, uint16_t cluster
 // This callback is registered after a an attribute read command was made to a light, and fires if we don't get any response after 1000 ms
 void Z_Unreachable(uint16_t shortaddr, uint16_t groupaddr, uint16_t cluster, uint8_t endpoint, uint32_t value) {
   if (BAD_SHORTADDR != shortaddr) {
-    zigbee_devices.setReachable(shortaddr, false);     // mark device as reachable
+    zigbee_devices.getShortAddr(shortaddr).setReachable(false);     // mark device as reachable
   }
 }
 
@@ -275,7 +277,7 @@ void convertClusterSpecific(class Z_attribute_list &attr_list, uint16_t cluster,
   uint8_t conv_direction;
   Z_XYZ_Var xyz;
 
-//AddLog_P2(LOG_LEVEL_INFO, PSTR(">>> len = %d - %02X%02X%02X"), payload.len(), payload.get8(0), payload.get8(1), payload.get8(2));
+//AddLog_P(LOG_LEVEL_INFO, PSTR(">>> len = %d - %02X%02X%02X"), payload.len(), payload.get8(0), payload.get8(1), payload.get8(2));
   for (uint32_t i = 0; i < sizeof(Z_Commands) / sizeof(Z_Commands[0]); i++) {
     const Z_CommandConverter *conv = &Z_Commands[i];
     uint16_t conv_cluster = pgm_read_word(&conv->cluster);
@@ -291,18 +293,18 @@ void convertClusterSpecific(class Z_attribute_list &attr_list, uint16_t cluster,
           //  - payload exactly matches conv->param (conv->param may be longer)
           //  - payload matches conv->param until 'x', 'y' or 'z'
           const char * p = Z_strings + pgm_read_word(&conv->param_offset);
-  //AddLog_P2(LOG_LEVEL_INFO, PSTR(">>>++1 param = %s"), p);
+  //AddLog_P(LOG_LEVEL_INFO, PSTR(">>>++1 param = %s"), p);
           bool match = true;
           for (uint8_t i = 0; i < payload.len(); i++) {
             const char c1 = pgm_read_byte(p);
             const char c2 = pgm_read_byte(p+1);
-  //AddLog_P2(LOG_LEVEL_INFO, PSTR(">>>++2 c1 = %c, c2 = %c"), c1, c2);
+  //AddLog_P(LOG_LEVEL_INFO, PSTR(">>>++2 c1 = %c, c2 = %c"), c1, c2);
             if ((0x00 == c1) || isXYZ(c1)) {
               break;
             }
             const char * p2 = p;
             uint32_t nextbyte = parseHex_P(&p2, 2);
-  //AddLog_P2(LOG_LEVEL_INFO, PSTR(">>>++3 parseHex_P = %02X"), nextbyte);
+  //AddLog_P(LOG_LEVEL_INFO, PSTR(">>>++3 parseHex_P = %02X"), nextbyte);
             if (nextbyte != payload.get8(i)) {
               match = false;
               break;
@@ -344,17 +346,24 @@ void convertClusterSpecific(class Z_attribute_list &attr_list, uint16_t cluster,
       // IAS
       switch (cccc00mm) {
       case 0x05000000:        // "ZoneStatusChange"
-        attr_list.addAttribute(command_name, true).setUInt(xyz.x);
-        if (0 != xyz.y) {
-          attr_list.addAttribute(command_name, PSTR("Ext")).setUInt(xyz.y);
+        {
+          attr_list.addAttribute(command_name, true).setUInt(xyz.x);
+          if (0 != xyz.y) {
+            attr_list.addAttribute(command_name, PSTR("Ext")).setUInt(xyz.y);
+          }
+          if ((0 != xyz.z) && (0xFF != xyz.z)) {
+            attr_list.addAttribute(command_name, PSTR("Zone")).setUInt(xyz.z);
+          }
+          // Convert to "Occupancy" or to "Contact" if the device is PIR or Contact sensor
+          const Z_Data_Alarm & alarm = (const Z_Data_Alarm&) zigbee_devices.getShortAddr(shortaddr).data.find(Z_Data_Type::Z_Alarm, srcendpoint);
+          if (&alarm != nullptr) {
+            if (alarm.isPIR()) {                  // set Occupancy
+              attr_list.addAttribute(0x0406, 0x0000).setUInt((xyz.x) & 0x01 ? 1 : 0);
+            } else if (alarm.isContact()) {       // set Contact
+              attr_list.addAttribute(0x0500, 0xFFF0).setUInt((xyz.x) & 0x01 ? 1 : 0);
+            }
+          }
         }
-        if ((0 != xyz.z) && (0xFF != xyz.z)) {
-          attr_list.addAttribute(command_name, PSTR("Zone")).setUInt(xyz.z);
-        }
-        // for now convert alamrs 1 and 2 to Occupancy
-        // TODO we may only do this conversion to ZoneType == 0x000D 'Motion Sensor'
-        // Occupancy is 0406/0000 of type Zmap8
-        attr_list.addAttribute(0x0406, 0x0000).setUInt((xyz.x) & 0x01 ? 1 : 0);
         break;
       case 0x00040000:
       case 0x00040001:
@@ -368,7 +377,7 @@ void convertClusterSpecific(class Z_attribute_list &attr_list, uint16_t cluster,
         attr_list.addAttribute(command_name, PSTR("Count")).setUInt(xyz.y);
         {
 
-          Z_json_array group_list;
+          JsonGeneratorArray group_list;
           for (uint32_t i = 0; i < xyz.y; i++) {
             group_list.add(payload.get16(2 + 2*i));
           }
@@ -419,13 +428,17 @@ void convertClusterSpecific(class Z_attribute_list &attr_list, uint16_t cluster,
           attr_list.removeAttribute(&attr_raw);   // remove raw command
         }
         break;
+      case 0xFCCC0000:      // Terncy button (multi-)press
+        attr_list.addAttribute(PSTR("TerncyPress"), true).setUInt(xyz.y);
+        attr_list.addAttribute(PSTR("TerncyCount"), true).setUInt(xyz.x);
+        break;
       }
     } else {  // general case
       // do we send command with endpoint suffix
       char command_suffix[4] = { 0x00 };  // empty string by default
       // if SO101 and multiple endpoints, append endpoint number
       if (Settings.flag4.zb_index_ep) {
-        if (zigbee_devices.countEndpoints(shortaddr) > 0) {
+        if (zigbee_devices.getShortAddr(shortaddr).countEndpoints() > 0) {
           snprintf_P(command_suffix, sizeof(command_suffix), PSTR("%d"), srcendpoint);
         }
       }
@@ -435,7 +448,7 @@ void convertClusterSpecific(class Z_attribute_list &attr_list, uint16_t cluster,
         attr_list.addAttribute(command_name, command_suffix).setUInt(xyz.x);
       } else {
         // multiple answers, create an array
-        Z_json_array arr;
+        JsonGeneratorArray arr;
         arr.add(xyz.x);
         arr.add(xyz.y);
         if (xyz.z_type) {
@@ -532,7 +545,7 @@ String zigbeeCmdAddParams(const char *zcl_cmd_P, uint32_t x, uint32_t y, uint32_
     }
     p++;
   }
-  AddLog_P2(LOG_LEVEL_DEBUG, PSTR("SendZCLCommand_P: zcl_cmd = %s"), zcl_cmd);
+  AddLog_P(LOG_LEVEL_DEBUG, PSTR("SendZCLCommand_P: zcl_cmd = %s"), zcl_cmd);
 
   return String(zcl_cmd);
 }

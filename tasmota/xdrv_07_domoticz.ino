@@ -112,7 +112,7 @@ void DomoticzUpdateFanState(void) {
 void MqttPublishDomoticzPowerState(uint8_t device) {
   if (Settings.flag.mqtt_enabled) {  // SetOption3 - Enable MQTT
     if (device < 1) { device = 1; }
-    if ((device > devices_present) || (device > MAX_DOMOTICZ_IDX)) { return; }
+    if ((device > TasmotaGlobal.devices_present) || (device > MAX_DOMOTICZ_IDX)) { return; }
     if (Settings.domoticz_relay_idx[device -1]) {
 #ifdef USE_SHUTTER
       if (domoticz_is_shutter) {
@@ -127,7 +127,7 @@ void MqttPublishDomoticzPowerState(uint8_t device) {
         char svalue[8];  // Dimmer value
 
         snprintf_P(svalue, sizeof(svalue), PSTR("%d"), Settings.light_dimmer);
-        Response_P(DOMOTICZ_MESSAGE, (int)Settings.domoticz_relay_idx[device -1], (power & (1 << (device -1))) ? 1 : 0, (light_type) ? svalue : "", DomoticzBatteryQuality(), DomoticzRssiQuality());
+        Response_P(DOMOTICZ_MESSAGE, (int)Settings.domoticz_relay_idx[device -1], (TasmotaGlobal.power & (1 << (device -1))) ? 1 : 0, (TasmotaGlobal.light_type) ? svalue : "", DomoticzBatteryQuality(), DomoticzRssiQuality());
         MqttPublish(domoticz_in_topic);
 #ifdef USE_SONOFF_IFAN
       }
@@ -151,7 +151,7 @@ void DomoticzMqttUpdate(void) {
     domoticz_update_timer--;
     if (domoticz_update_timer <= 0) {
       domoticz_update_timer = Settings.domoticz_update_timer;
-      for (uint32_t i = 1; i <= devices_present; i++) {
+      for (uint32_t i = 1; i <= TasmotaGlobal.devices_present; i++) {
 #ifdef USE_SHUTTER
         if (domoticz_is_shutter)
         {
@@ -175,7 +175,7 @@ void DomoticzMqttUpdate(void) {
 }
 
 void DomoticzMqttSubscribe(void) {
-  uint8_t maxdev = (devices_present > MAX_DOMOTICZ_IDX) ? MAX_DOMOTICZ_IDX : devices_present;
+  uint8_t maxdev = (TasmotaGlobal.devices_present > MAX_DOMOTICZ_IDX) ? MAX_DOMOTICZ_IDX : TasmotaGlobal.devices_present;
   for (uint32_t i = 0; i < maxdev; i++) {
     if (Settings.domoticz_relay_idx[i]) {
       domoticz_subscribe = true;
@@ -219,11 +219,11 @@ bool DomoticzMqttData(void) {
   uint32_t idx = domoticz.getUInt(PSTR("idx"), 0);
   int16_t nvalue = domoticz.getInt(PSTR("nvalue"), -1);
 
-  AddLog_P2(LOG_LEVEL_DEBUG_MORE, PSTR(D_LOG_DOMOTICZ "idx %d, nvalue %d"), idx, nvalue);
+  AddLog_P(LOG_LEVEL_DEBUG_MORE, PSTR(D_LOG_DOMOTICZ "idx %d, nvalue %d"), idx, nvalue);
 
   bool found = false;
   if ((idx > 0) && (nvalue >= 0) && (nvalue <= 15)) {
-    uint8_t maxdev = (devices_present > MAX_DOMOTICZ_IDX) ? MAX_DOMOTICZ_IDX : devices_present;
+    uint8_t maxdev = (TasmotaGlobal.devices_present > MAX_DOMOTICZ_IDX) ? MAX_DOMOTICZ_IDX : TasmotaGlobal.devices_present;
     for (uint32_t i = 0; i < maxdev; i++) {
       if (idx == Settings.domoticz_relay_idx[i]) {
         bool iscolordimmer = strcmp_P(domoticz.getStr(PSTR("dtype")), PSTR("Color Switch")) == 0;
@@ -293,7 +293,7 @@ bool DomoticzMqttData(void) {
           } else {
             return true;  // Invalid data
           }
-          if (light_type && (Settings.light_dimmer == nvalue) && ((power >> i) &1)) {
+          if (TasmotaGlobal.light_type && (Settings.light_dimmer == nvalue) && ((TasmotaGlobal.power >> i) &1)) {
             return true;  // State already set
           }
           snprintf_P(XdrvMailbox.topic, XdrvMailbox.index, PSTR("/" D_CMND_DIMMER));
@@ -302,10 +302,10 @@ bool DomoticzMqttData(void) {
         } else
 #endif  // USE_LIGHT
         if (1 == nvalue || 0 == nvalue) {
-          if (((power >> i) &1) == (power_t)nvalue) {
+          if (((TasmotaGlobal.power >> i) &1) == (power_t)nvalue) {
             return true;  // Stop loop
           }
-          snprintf_P(XdrvMailbox.topic, XdrvMailbox.index, PSTR("/" D_CMND_POWER "%s"), (devices_present > 1) ? stemp1 : "");
+          snprintf_P(XdrvMailbox.topic, XdrvMailbox.index, PSTR("/" D_CMND_POWER "%s"), (TasmotaGlobal.devices_present > 1) ? stemp1 : "");
           snprintf_P(XdrvMailbox.data, XdrvMailbox.data_len, PSTR("%d"), nvalue);
           found = true;
         }
@@ -315,7 +315,7 @@ bool DomoticzMqttData(void) {
   }
   if (!found) { return true; }  // No command received
 
-  AddLog_P2(LOG_LEVEL_DEBUG_MORE, PSTR(D_LOG_DOMOTICZ D_RECEIVED_TOPIC " %s, " D_DATA " %s"), XdrvMailbox.topic, XdrvMailbox.data);
+  AddLog_P(LOG_LEVEL_DEBUG_MORE, PSTR(D_LOG_DOMOTICZ D_RECEIVED_TOPIC " %s, " D_DATA " %s"), XdrvMailbox.topic, XdrvMailbox.data);
 
   domoticz_update_flag = false;
   return false;  // Process new data
@@ -381,9 +381,9 @@ void DomoticzSensor(uint8_t idx, char *data) {
   if (Settings.domoticz_sensor_idx[idx]) {
     char dmess[128];  // {"idx":26700,"nvalue":0,"svalue":"22330.1;10234.4;22000.5;10243.4;1006;3000","Battery":100,"RSSI":10}
 
-    memcpy(dmess, mqtt_data, sizeof(dmess));
+    memcpy(dmess, TasmotaGlobal.mqtt_data, sizeof(dmess));
     DomoticzSendData(idx, Settings.domoticz_sensor_idx[idx], data);
-    memcpy(mqtt_data, dmess, sizeof(dmess));
+    memcpy(TasmotaGlobal.mqtt_data, dmess, sizeof(dmess));
   }
 }
 
@@ -448,7 +448,7 @@ void CmndDomoticzIdx(void) {
   if ((XdrvMailbox.index > 0) && (XdrvMailbox.index <= MAX_DOMOTICZ_IDX)) {
     if (XdrvMailbox.payload >= 0) {
       Settings.domoticz_relay_idx[XdrvMailbox.index -1] = XdrvMailbox.payload;
-      restart_flag = 2;
+      TasmotaGlobal.restart_flag = 2;
     }
     ResponseCmndIdxNumber(Settings.domoticz_relay_idx[XdrvMailbox.index -1]);
   }
@@ -497,7 +497,7 @@ void CmndDomoticzSend(void) {
 
   if ((XdrvMailbox.index > 0) && (XdrvMailbox.index <= 5)) {
     if (XdrvMailbox.data_len > 0) {
-      if (strstr(XdrvMailbox.data, ",") != nullptr) {  // Process parameter entry
+      if (strchr(XdrvMailbox.data, ',') != nullptr) {  // Process parameter entry
         char *data;
         uint32_t index = strtoul(strtok_r(XdrvMailbox.data, ",", &data), nullptr, 10);
         if ((index > 0) && (data != nullptr)) {
@@ -524,8 +524,6 @@ void CmndDomoticzSend(void) {
 
 #define WEB_HANDLE_DOMOTICZ "dm"
 
-const char S_CONFIGURE_DOMOTICZ[] PROGMEM = D_CONFIGURE_DOMOTICZ;
-
 const char HTTP_BTN_MENU_DOMOTICZ[] PROGMEM =
   "<p><form action='" WEB_HANDLE_DOMOTICZ "' method='get'><button>" D_CONFIGURE_DOMOTICZ "</button></form></p>";
 
@@ -546,7 +544,7 @@ const char HTTP_FORM_DOMOTICZ_TIMER[] PROGMEM =
 void HandleDomoticzConfiguration(void) {
   if (!HttpCheckPriviledgedAccess()) { return; }
 
-  AddLog_P(LOG_LEVEL_DEBUG, S_LOG_HTTP, S_CONFIGURE_DOMOTICZ);
+  AddLog_P(LOG_LEVEL_DEBUG, PSTR(D_LOG_HTTP D_CONFIGURE_DOMOTICZ));
 
   if (Webserver->hasArg("save")) {
     DomoticzSaveSettings();
@@ -556,11 +554,11 @@ void HandleDomoticzConfiguration(void) {
 
   char stemp[40];
 
-  WSContentStart_P(S_CONFIGURE_DOMOTICZ);
+  WSContentStart_P(PSTR(D_CONFIGURE_DOMOTICZ));
   WSContentSendStyle();
   WSContentSend_P(HTTP_FORM_DOMOTICZ);
   for (uint32_t i = 0; i < MAX_DOMOTICZ_IDX; i++) {
-    if (i < devices_present) {
+    if (i < TasmotaGlobal.devices_present) {
       WSContentSend_P(HTTP_FORM_DOMOTICZ_RELAY,
         i +1, i, Settings.domoticz_relay_idx[i],
         i +1, i, Settings.domoticz_key_idx[i]);
@@ -610,7 +608,7 @@ void DomoticzSaveSettings(void) {
   WebGetArg("ut", tmp, sizeof(tmp));
   Settings.domoticz_update_timer = (!strlen(tmp)) ? DOMOTICZ_UPDATE_TIMER : atoi(tmp);
 
-  AddLog_P2(LOG_LEVEL_INFO, PSTR(D_LOG_DOMOTICZ D_CMND_IDX " %d,%d,%d,%d, " D_CMND_KEYIDX " %d,%d,%d,%d, " D_CMND_SWITCHIDX " %d,%d,%d,%d, " D_CMND_SENSORIDX " %s, " D_CMND_UPDATETIMER " %d"),
+  AddLog_P(LOG_LEVEL_INFO, PSTR(D_LOG_DOMOTICZ D_CMND_IDX " %d,%d,%d,%d, " D_CMND_KEYIDX " %d,%d,%d,%d, " D_CMND_SWITCHIDX " %d,%d,%d,%d, " D_CMND_SENSORIDX " %s, " D_CMND_UPDATETIMER " %d"),
     Settings.domoticz_relay_idx[0], Settings.domoticz_relay_idx[1], Settings.domoticz_relay_idx[2], Settings.domoticz_relay_idx[3],
     Settings.domoticz_key_idx[0], Settings.domoticz_key_idx[1], Settings.domoticz_key_idx[2], Settings.domoticz_key_idx[3],
     Settings.domoticz_switch_idx[0], Settings.domoticz_switch_idx[1], Settings.domoticz_switch_idx[2], Settings.domoticz_switch_idx[3],

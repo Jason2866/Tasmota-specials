@@ -420,7 +420,10 @@ struct SCRIPT_MEM {
 #ifdef USE_SCRIPT_GLOBVARS
     UDP_FLAGS udp_flags;
 #endif
+    char web_mode;
 } glob_script_mem;
+
+
 
 bool event_handeled = false;
 
@@ -509,7 +512,7 @@ void ScriptEverySecond(void) {
 }
 
 void RulesTeleperiod(void) {
-  if (bitRead(Settings.rule_enabled, 0) && mqtt_data[0]) Run_Scripter(">T", 2, mqtt_data);
+  if (bitRead(Settings.rule_enabled, 0) && TasmotaGlobal.mqtt_data[0]) Run_Scripter(">T", 2, TasmotaGlobal.mqtt_data);
 }
 
 // EEPROM MACROS
@@ -768,8 +771,14 @@ char *script;
     script_mem += size;
 
 #ifdef SCRIPT_LARGE_VNBUFF
-    glob_script_mem.vnp_offset = (uint16_t*)script_mem;
-    size = vars*sizeof(uint16_t);
+    uint32_t alignedmem = (uint32_t)script_mem;
+    if (alignedmem&1) {
+      alignedmem++;
+      size = vars*sizeof(uint16_t)+1;
+    } else {
+      size = vars*sizeof(uint16_t);
+    }
+    glob_script_mem.vnp_offset = (uint16_t*)alignedmem;
 #else
     glob_script_mem.vnp_offset = (uint8_t*)script_mem;
     size = vars*sizeof(uint8_t);
@@ -811,7 +820,7 @@ char *script;
         }
     }
     // variables usage info
-    AddLog_P2(LOG_LEVEL_INFO, PSTR("Script: nv=%d, tv=%d, vns=%d, ram=%d"), nvars, svars, index, glob_script_mem.script_mem_size);
+    AddLog_P(LOG_LEVEL_INFO, PSTR("Script: nv=%d, tv=%d, vns=%d, ram=%d"), nvars, svars, index, glob_script_mem.script_mem_size);
 
     // copy string variables
     char *cp1 = glob_script_mem.glob_snp;
@@ -1010,7 +1019,7 @@ void Script_Stop_UDP(void) {
 }
 
 void Script_Init_UDP() {
-  if (global_state.network_down) return;
+  if (TasmotaGlobal.global_state.network_down) return;
   if (!glob_script_mem.udp_flags.udp_used) return;
   if (glob_script_mem.udp_flags.udp_connected) return;
 
@@ -1024,7 +1033,7 @@ void Script_Init_UDP() {
 }
 
 void Script_PollUdp(void) {
-  if (global_state.network_down) return;
+  if (TasmotaGlobal.global_state.network_down) return;
   if (!glob_script_mem.udp_flags.udp_used) return;
   if (glob_script_mem.udp_flags.udp_connected ) {
     while (Script_PortUdp.parsePacket()) {
@@ -1032,7 +1041,7 @@ void Script_PollUdp(void) {
       int32_t len = Script_PortUdp.read(packet_buffer, SCRIPT_UDP_BUFFER_SIZE - 1);
       packet_buffer[len] = 0;
       script_udp_remote_ip = Script_PortUdp.remoteIP();
-      AddLog_P2(LOG_LEVEL_DEBUG, PSTR("UDP: Packet %s - %d - %s"), packet_buffer, len, script_udp_remote_ip.toString().c_str());
+      AddLog_P(LOG_LEVEL_DEBUG, PSTR("UDP: Packet %s - %d - %s"), packet_buffer, len, script_udp_remote_ip.toString().c_str());
       char *lp=packet_buffer;
       if (!strncmp(lp,"=>", 2)) {
         lp += 2;
@@ -1051,10 +1060,10 @@ void Script_PollUdp(void) {
           uint32_t index;
           uint32_t res = match_vars(vnam, &fp, &sp, &index);
           if (res == NUM_RES) {
-            AddLog_P2(LOG_LEVEL_DEBUG, PSTR("num var found - %s - %d - %d"), vnam, res, index);
+            AddLog_P(LOG_LEVEL_DEBUG, PSTR("num var found - %s - %d - %d"), vnam, res, index);
             *fp=CharToFloat(cp + 1);
           } else if (res == STR_RES) {
-            AddLog_P2(LOG_LEVEL_DEBUG, PSTR("string var found - %s - %d - %d"), vnam, res, index);
+            AddLog_P(LOG_LEVEL_DEBUG, PSTR("string var found - %s - %d - %d"), vnam, res, index);
             strlcpy(sp, cp + 1, SCRIPT_MAXSSIZE);
           } else {
             // error var not found
@@ -1088,10 +1097,10 @@ void script_udp_sendvar(char *vname,float *fp,char *sp) {
     char flstr[16];
     dtostrfd(*fp, 8, flstr);
     strcat(sbuf, flstr);
-    AddLog_P2(LOG_LEVEL_DEBUG, PSTR("num var updated - %s"), sbuf);
+    AddLog_P(LOG_LEVEL_DEBUG, PSTR("num var updated - %s"), sbuf);
   } else {
     strcat(sbuf, sp);
-    AddLog_P2(LOG_LEVEL_DEBUG, PSTR("string var updated - %s"), sbuf);
+    AddLog_P(LOG_LEVEL_DEBUG, PSTR("string var updated - %s"), sbuf);
   }
   Script_PortUdp.beginPacket(IPAddress(239, 255, 255, 250), SCRIPT_UDP_PORT);
   //  Udp.print(String("RET UC: ") + String(recv_Packet));
@@ -1817,8 +1826,8 @@ chknext:
 
       case 'b':
         if (!strncmp(vname, "boot", 4)) {
-          if (rules_flag.system_boot) {
-            rules_flag.system_boot = 0;
+          if (TasmotaGlobal.rules_flag.system_boot) {
+            TasmotaGlobal.rules_flag.system_boot = 0;
             fvar = 1;
           }
           goto exit;
@@ -1975,7 +1984,7 @@ chknext:
             if (!glob_script_mem.file_flags[cnt].is_open) {
               if (mode==0) {
 #ifdef DEBUG_FS
-                AddLog_P2(LOG_LEVEL_INFO, PSTR("open file for read %d"), cnt);
+                AddLog_P(LOG_LEVEL_INFO, PSTR("open file for read %d"), cnt);
 #endif
                 glob_script_mem.files[cnt] = fsp->open(str, FILE_READ);
                 if (glob_script_mem.files[cnt].isDirectory()) {
@@ -1989,12 +1998,12 @@ chknext:
                 if (mode==1) {
                   glob_script_mem.files[cnt] = fsp->open(str,FILE_WRITE);
 #ifdef DEBUG_FS
-                  AddLog_P2(LOG_LEVEL_INFO, PSTR("open file for write %d"), cnt);
+                  AddLog_P(LOG_LEVEL_INFO, PSTR("open file for write %d"), cnt);
 #endif
                 } else {
                   glob_script_mem.files[cnt] = fsp->open(str,FILE_APPEND);
 #ifdef DEBUG_FS
-                  AddLog_P2(LOG_LEVEL_INFO, PSTR("open file for append %d"), cnt);
+                  AddLog_P(LOG_LEVEL_INFO, PSTR("open file for append %d"), cnt);
 #endif
                 }
               }
@@ -2017,7 +2026,7 @@ chknext:
             uint8_t ind = fvar;
             if (ind>=SFS_MAX) ind = SFS_MAX - 1;
 #ifdef DEBUG_FS
-            AddLog_P2(LOG_LEVEL_INFO, PSTR("closing file %d"), ind);
+            AddLog_P(LOG_LEVEL_INFO, PSTR("closing file %d"), ind);
 #endif
             glob_script_mem.files[ind].close();
             glob_script_mem.file_flags[ind].is_open = 0;
@@ -2153,7 +2162,7 @@ chknext:
             } else {
               fvar = 0;
             }
-            //AddLog_P2(LOG_LEVEL_INFO, PSTR("picture save: %d"), len);
+            //AddLog_P(LOG_LEVEL_INFO, PSTR("picture save: %d"), len);
           } else {
             fvar = 0;
           }
@@ -2334,15 +2343,15 @@ chknext:
         break;
       case 'g':
         if (!strncmp(vname, "gtmp", 4)) {
-          fvar = global_temperature_celsius;
+          fvar = TasmotaGlobal.temperature_celsius;
           goto exit;
         }
         if (!strncmp(vname, "ghum", 4)) {
-          fvar = global_humidity;
+          fvar = TasmotaGlobal.humidity;
           goto exit;
         }
         if (!strncmp(vname, "gprs", 4)) {
-          fvar = global_pressure_hpa;
+          fvar = TasmotaGlobal.pressure_hpa;
           goto exit;
         }
         if (!strncmp(vname, "gtopic", 6)) {
@@ -2525,21 +2534,21 @@ chknext:
           goto exit;
         }
         if (!strncmp(vname, "mqttc", 5)) {
-          if (rules_flag.mqtt_connected) {
-            rules_flag.mqtt_connected = 0;
+          if (TasmotaGlobal.rules_flag.mqtt_connected) {
+            TasmotaGlobal.rules_flag.mqtt_connected = 0;
             fvar = 1;
           }
           goto exit;
         }
         if (!strncmp(vname, "mqttd", 5)) {
-          if (rules_flag.mqtt_disconnected) {
-            rules_flag.mqtt_disconnected = 0;
+          if (TasmotaGlobal.rules_flag.mqtt_disconnected) {
+            TasmotaGlobal.rules_flag.mqtt_disconnected = 0;
             fvar = 1;
           }
           goto exit;
         }
         if (!strncmp(vname, "mqtts", 5)) {
-          fvar = !global_state.mqtt_down;
+          fvar = !TasmotaGlobal.global_state.mqtt_down;
           goto exit;
         }
         if (!strncmp(vname, "mp(", 3)) {
@@ -2628,8 +2637,8 @@ chknext:
             }
           }
 */
-          if ((gpiopin < ARRAY_SIZE(gpio_pin)) && (gpio_pin[gpiopin] > 0)) {
-            fvar = gpio_pin[gpiopin];
+          if ((gpiopin < ARRAY_SIZE(TasmotaGlobal.gpio_pin)) && (TasmotaGlobal.gpio_pin[gpiopin] > 0)) {
+            fvar = TasmotaGlobal.gpio_pin[gpiopin];
             // skip ] bracket
             len++;
             goto exit;
@@ -2671,8 +2680,8 @@ chknext:
         if (!strncmp(vname, "pwr[", 4)) {
           GetNumericArgument(vname + 4, OPER_EQU, &fvar, 0);
           uint8_t index = fvar;
-          if (index<=devices_present) {
-            fvar = bitRead(power, index - 1);
+          if (index<=TasmotaGlobal.devices_present) {
+            fvar = bitRead(TasmotaGlobal.power, index - 1);
           } else {
             fvar = -1;
           }
@@ -2845,7 +2854,7 @@ chknext:
         if (!strncmp(vname, "sht[", 4)) {
           GetNumericArgument(vname + 4, OPER_EQU, &fvar, 0);
           uint8_t index = fvar;
-          if (index<=shutters_present) {
+          if (index<=TasmotaGlobal.shutters_present) {
             fvar = Settings.shutter_position[index - 1];
           } else {
             fvar = -1;
@@ -2928,11 +2937,11 @@ chknext:
           goto exit_settable;
         }
         if (!strncmp(vname, "tinit", 5)) {
-          fvar = rules_flag.time_init;
+          fvar = TasmotaGlobal.rules_flag.time_init;
           goto exit;
         }
         if (!strncmp(vname, "tset", 4)) {
-          fvar = rules_flag.time_set;
+          fvar = TasmotaGlobal.rules_flag.time_set;
           goto exit;
         }
         if (!strncmp(vname, "tstamp", 6)) {
@@ -3003,7 +3012,7 @@ chknext:
           goto exit;
         }
         if (!strncmp(vname, "upsecs", 6)) {
-          fvar = uptime;
+          fvar = TasmotaGlobal.uptime;
           goto exit;
         }
         if (!strncmp(vname, "upd[", 4)) {
@@ -3107,27 +3116,30 @@ chknext:
           goto exit;
         }
 #endif // USE_FT5206
-
+        if (!strncmp(vname, "wm", 2)) {
+          fvar = glob_script_mem.web_mode;
+          goto exit;
+        }
         if (!strncmp(vname, "wday", 4)) {
           fvar = RtcTime.day_of_week;
           goto exit;
         }
         if (!strncmp(vname, "wific", 5)) {
-          if (rules_flag.wifi_connected) {
-            rules_flag.wifi_connected = 0;
+          if (TasmotaGlobal.rules_flag.wifi_connected) {
+            TasmotaGlobal.rules_flag.wifi_connected = 0;
             fvar = 1;
           }
           goto exit;
         }
         if (!strncmp(vname, "wifid", 5)) {
-          if (rules_flag.wifi_disconnected) {
-            rules_flag.wifi_disconnected = 0;
+          if (TasmotaGlobal.rules_flag.wifi_disconnected) {
+            TasmotaGlobal.rules_flag.wifi_disconnected = 0;
             fvar = 1;
           }
           goto exit;
         }
         if (!strncmp(vname, "wifis", 5)) {
-          fvar = !global_state.wifi_down;
+          fvar = !TasmotaGlobal.global_state.wifi_down;
           goto exit;
         }
         break;
@@ -3543,7 +3555,7 @@ void toLogN(const char *cp, uint8_t len) {
 void toLogEOL(const char *s1,const char *str) {
   if (!str) return;
   uint8_t index = 0;
-  char *cp = log_data;
+  char *cp = TasmotaGlobal.log_data;
   strcpy(cp, s1);
   cp += strlen(s1);
   while (*str) {
@@ -3717,6 +3729,29 @@ void esp32_beep(int32_t freq ,uint32_t len) {
 #endif // ESP32
 
 //#define IFTHEN_DEBUG
+
+char *scripter_sub(char *lp, uint8_t fromscriptcmd) {
+  lp += 1;
+  char *slp = lp;
+  uint8_t plen = 0;
+  while (*lp) {
+    if (*lp=='\n'|| *lp=='\r'|| *lp=='(') {
+      break;
+    }
+    lp++;
+    plen++;
+  }
+  if (fromscriptcmd) {
+    char *sp = glob_script_mem.scriptptr;
+    glob_script_mem.scriptptr = glob_script_mem.scriptptr_bu;
+    Run_Scripter(slp, plen, 0);
+    glob_script_mem.scriptptr = sp;
+  } else {
+    Run_Scripter(slp, plen, 0);
+  }
+  lp = slp;
+  return lp;
+}
 
 #define IF_NEST 8
 // execute section of scripter
@@ -4107,7 +4142,16 @@ int16_t Run_script_sub(const char *type, int8_t tlen, JsonParserObject *jo) {
               goto next_line;
             }
 #endif //ESP32
-
+            else if (!strncmp(lp, "wcs", 3)) {
+              lp+=4;
+              // skip one space after cmd
+              char tmp[256];
+              Replace_Cmd_Vars(lp ,1 , tmp, sizeof(tmp));
+              WSContentFlush();
+              WSContentSend_P(PSTR("%s"),tmp);
+              WSContentFlush();
+              goto next_line;
+            }
             else if (!strncmp(lp,"=>",2) || !strncmp(lp,"->",2) || !strncmp(lp,"+>",2) || !strncmp(lp,"print",5)) {
                 // execute cmd
                 uint8_t sflag = 0,pflg = 0,svmqtt,swll;
@@ -4147,7 +4191,7 @@ int16_t Run_script_sub(const char *type, int8_t tlen, JsonParserObject *jo) {
                   } else {
                     if (!sflag) {
                       tasm_cmd_activ = 1;
-                      AddLog_P2(glob_script_mem.script_loglevel&0x7f, PSTR("Script: performs \"%s\""), tmp);
+                      AddLog_P(glob_script_mem.script_loglevel&0x7f, PSTR("Script: performs \"%s\""), tmp);
                     } else if (sflag==2) {
                       // allow recursive call
                     } else {
@@ -4170,25 +4214,7 @@ int16_t Run_script_sub(const char *type, int8_t tlen, JsonParserObject *jo) {
                 goto next_line;
             } else if (!strncmp(lp, "=#", 2)) {
                 // subroutine
-                lp += 1;
-                char *slp = lp;
-                uint8_t plen = 0;
-                while (*lp) {
-                  if (*lp=='\n'|| *lp=='\r'|| *lp=='(') {
-                    break;
-                  }
-                  lp++;
-                  plen++;
-                }
-                if (fromscriptcmd) {
-                  char *sp = glob_script_mem.scriptptr;
-                  glob_script_mem.scriptptr = glob_script_mem.scriptptr_bu;
-                  Run_Scripter(slp, plen, 0);
-                  glob_script_mem.scriptptr = sp;
-                } else {
-                  Run_Scripter(slp, plen, 0);
-                }
-                lp = slp;
+                lp = scripter_sub(lp, fromscriptcmd);
                 goto next_line;
             } else if (!strncmp(lp, "=(", 2)) {
                 lp += 2;
@@ -4469,16 +4495,16 @@ uint8_t script_xsns_index = 0;
 
 void ScripterEvery100ms(void) {
 
-  if (Settings.rule_enabled && (uptime > 4)) {
-    mqtt_data[0] = '\0';
-    uint16_t script_tele_period_save = tele_period;
-    tele_period = 2;
+  if (Settings.rule_enabled && (TasmotaGlobal.uptime > 4)) {
+    ResponseClear();
+    uint16_t script_tele_period_save = TasmotaGlobal.tele_period;
+    TasmotaGlobal.tele_period = 2;
     XsnsNextCall(FUNC_JSON_APPEND, script_xsns_index);
-    tele_period = script_tele_period_save;
-    if (strlen(mqtt_data)) {
-      mqtt_data[0] = '{';
-      snprintf_P(mqtt_data, sizeof(mqtt_data), PSTR("%s}"), mqtt_data);
-      Run_Scripter(">T", 2, mqtt_data);
+    TasmotaGlobal.tele_period = script_tele_period_save;
+    if (strlen(TasmotaGlobal.mqtt_data)) {
+      TasmotaGlobal.mqtt_data[0] = '{';
+      snprintf_P(TasmotaGlobal.mqtt_data, sizeof(TasmotaGlobal.mqtt_data), PSTR("%s}"), TasmotaGlobal.mqtt_data);
+      Run_Scripter(">T", 2, TasmotaGlobal.mqtt_data);
     }
   }
   if (Settings.rule_enabled) {
@@ -4540,8 +4566,6 @@ void Scripter_save_pvars(void) {
 #ifdef USE_WEBSERVER
 
 #define WEB_HANDLE_SCRIPT "s10"
-
-const char S_CONFIGURE_SCRIPT[] PROGMEM = D_CONFIGURE_SCRIPT;
 
 const char HTTP_BTN_MENU_RULES[] PROGMEM =
   "<p><form action='" WEB_HANDLE_SCRIPT "' method='get'><button>" D_CONFIGURE_SCRIPT "</button></form></p>";
@@ -4696,7 +4720,7 @@ void script_upload_start(void) {
   if (upload.status == UPLOAD_FILE_START) {
     //AddLog_P(LOG_LEVEL_INFO, PSTR("HTP: upload start"));
     script_ex_ptr = (uint8_t*)glob_script_mem.script_ram;
-    //AddLog_P2(LOG_LEVEL_INFO, PSTR("HTP: upload file %s, %d"),upload.filename.c_str(),upload.totalSize);
+    //AddLog_P(LOG_LEVEL_INFO, PSTR("HTP: upload file %s, %d"),upload.filename.c_str(),upload.totalSize);
 
     if (strcmp(upload.filename.c_str(), "execute_script")) {
       Web.upload_error = 1;
@@ -4728,7 +4752,7 @@ void script_upload_start(void) {
         script_ex_ptr += csiz;
         uplsize += csiz;
       }
-      //AddLog_P2(LOG_LEVEL_INFO, PSTR("HTP: write %d - %d"),csiz,uplsize);
+      //AddLog_P(LOG_LEVEL_INFO, PSTR("HTP: write %d - %d"),csiz,uplsize);
     }
 
     //if (upload_file) upload_file.write(upload.buf,upload.currentSize);
@@ -4816,7 +4840,7 @@ void ListDir(char *path, uint8_t depth) {
       if (lcp) {
         ep = lcp + 1;
       }
-      //AddLog_P2(LOG_LEVEL_INFO, PSTR("entry: %s"),ep);
+      //AddLog_P(LOG_LEVEL_INFO, PSTR("entry: %s"),ep);
       time_t tm = entry.getLastWrite();
       char tstr[24];
       strftime(tstr, 22, "%d-%m-%Y - %H:%M:%S ", localtime(&tm));
@@ -4894,7 +4918,7 @@ void Script_FileUploadConfiguration(void) {
 }
 
 void ScriptFileUploadSuccess(void) {
-  WSContentStart_P(S_INFORMATION);
+  WSContentStart_P(PSTR(D_INFORMATION));
   WSContentSendStyle();
   WSContentSend_P(PSTR("<div style='text-align:center;'><b>" D_UPLOAD " <font color='#"));
   WSContentSend_P(PSTR("%06x'>" D_SUCCESSFUL "</font></b><br/>"), WebColor(COL_TEXT_SUCCESS));
@@ -5012,7 +5036,7 @@ void HandleScriptConfiguration(void) {
 
     if (!HttpCheckPriviledgedAccess()) { return; }
 
-    AddLog_P(LOG_LEVEL_DEBUG, S_LOG_HTTP, S_CONFIGURE_SCRIPT);
+    AddLog_P(LOG_LEVEL_DEBUG, PSTR(D_LOG_HTTP D_CONFIGURE_SCRIPT));
 
 #ifdef USE_SCRIPT_FATFS
     if (Webserver->hasArg("d1")) {
@@ -5026,7 +5050,7 @@ void HandleScriptConfiguration(void) {
     }
 #endif
 
-    WSContentStart_P(S_CONFIGURE_SCRIPT);
+    WSContentStart_P(PSTR(D_CONFIGURE_SCRIPT));
     WSContentSendStyle();
     WSContentSend_P(HTTP_FORM_SCRIPT);
 
@@ -5133,7 +5157,7 @@ void ScriptSaveSettings(void) {
     strlcpy(glob_script_mem.script_ram, str.c_str(), glob_script_mem.script_size);
 
     if (glob_script_mem.script_ram[0]!='>' && glob_script_mem.script_ram[1]!='D') {
-      AddLog_P2(LOG_LEVEL_INFO, PSTR("script error: must start with >D"));
+      AddLog_P(LOG_LEVEL_INFO, PSTR("script error: must start with >D"));
       bitWrite(Settings.rule_enabled, 0, 0);
     }
 
@@ -5158,13 +5182,13 @@ void SaveScriptEnd(void) {
   }
 
 #ifdef USE_SCRIPT_COMPRESSION
-  //AddLog_P2(LOG_LEVEL_INFO,PSTR("in string: %s len = %d"),glob_script_mem.script_ram,strlen(glob_script_mem.script_ram));
+  //AddLog_P(LOG_LEVEL_INFO,PSTR("in string: %s len = %d"),glob_script_mem.script_ram,strlen(glob_script_mem.script_ram));
   uint32_t len_compressed = SCRIPT_COMPRESS(glob_script_mem.script_ram, strlen(glob_script_mem.script_ram), Settings.rules[0], MAX_SCRIPT_SIZE-1);
   if (len_compressed > 0) {
     Settings.rules[0][len_compressed] = 0;
-    AddLog_P2(LOG_LEVEL_INFO,PSTR("script compressed to %d bytes = %d %%"),len_compressed,len_compressed * 100 / strlen(glob_script_mem.script_ram));
+    AddLog_P(LOG_LEVEL_INFO,PSTR("script compressed to %d bytes = %d %%"),len_compressed,len_compressed * 100 / strlen(glob_script_mem.script_ram));
   } else {
-    AddLog_P2(LOG_LEVEL_INFO, PSTR("script compress error: %d"), len_compressed);
+    AddLog_P(LOG_LEVEL_INFO, PSTR("script compress error: %d"), len_compressed);
   }
 #endif // USE_SCRIPT_COMPRESSION
 
@@ -5174,7 +5198,7 @@ void SaveScriptEnd(void) {
 
     int16_t res = Init_Scripter();
     if (res) {
-      AddLog_P2(LOG_LEVEL_INFO, PSTR("script init error: %d"), res);
+      AddLog_P(LOG_LEVEL_INFO, PSTR("script init error: %d"), res);
       return;
     }
 
@@ -5491,16 +5515,16 @@ void Script_Check_Hue(String *response) {
       }
       // append response
       if (response) {
-        if (devices_present) {
+        if (TasmotaGlobal.devices_present) {
           *response += ",\"";
         }
         else {
           if (hue_devs>0) *response += ",\"";
           else *response += "\"";
         }
-        *response += String(EncodeLightId(hue_devs + devices_present + 1))+"\":";
+        *response += String(EncodeLightId(hue_devs + TasmotaGlobal.devices_present + 1))+"\":";
         Script_HueStatus(response, hue_devs);
-        //AddLog_P2(LOG_LEVEL_INFO, PSTR("Hue: %s - %d "),response->c_str(), hue_devs);
+        //AddLog_P(LOG_LEVEL_INFO, PSTR("Hue: %s - %d "),response->c_str(), hue_devs);
       }
 
       hue_devs++;
@@ -5515,7 +5539,7 @@ void Script_Check_Hue(String *response) {
   }
 #if 0
   if (response) {
-    AddLog_P2(LOG_LEVEL_DEBUG, PSTR("Hue: %d"), hue_devs);
+    AddLog_P(LOG_LEVEL_DEBUG, PSTR("Hue: %d"), hue_devs);
     toLog(">>>>");
     toLog(response->c_str());
     toLog(response->c_str()+LOGSZ);
@@ -5545,7 +5569,7 @@ void Script_Handle_Hue(String *path) {
   bool resp = false;
 
   uint8_t device = DecodeLightId(atoi(path->c_str()));
-  uint8_t index = device - devices_present - 1;
+  uint8_t index = device - TasmotaGlobal.devices_present - 1;
 
   if (Webserver->args()) {
     response = "[";
@@ -5660,7 +5684,7 @@ void Script_Handle_Hue(String *path) {
   } else {
     response = FPSTR(sHUE_ERROR_JSON);
   }
-  AddLog_P2(LOG_LEVEL_DEBUG_MORE, PSTR(D_LOG_HTTP D_HUE " Result (%s)"), response.c_str());
+  AddLog_P(LOG_LEVEL_DEBUG_MORE, PSTR(D_LOG_HTTP D_HUE " Result (%s)"), response.c_str());
   WSSend(code, CT_JSON, response);
   if (resp) {
     Run_Scripter(">E", 2, 0);
@@ -5700,7 +5724,7 @@ bool Script_SubCmd(void) {
   }
   //toLog(cmdbuff);
   uint32_t res = Run_Scripter(cmdbuff, tlen + 1, 0);
-  //AddLog_P2(LOG_LEVEL_INFO,">>%d",res);
+  //AddLog_P(LOG_LEVEL_INFO,">>%d",res);
   if (res) return false;
   else {
     if (pl>=0) {
@@ -5758,7 +5782,7 @@ bool ScriptCommand(void) {
     } else {
       if ('>' == XdrvMailbox.data[0]) {
         // execute script
-        snprintf_P (mqtt_data, sizeof(mqtt_data), PSTR("{\"%s\":\"%s\"}"), command,XdrvMailbox.data);
+        snprintf_P (TasmotaGlobal.mqtt_data, sizeof(TasmotaGlobal.mqtt_data), PSTR("{\"%s\":\"%s\"}"), command,XdrvMailbox.data);
         if (bitRead(Settings.rule_enabled, 0)) {
           for (uint8_t count = 0; count<XdrvMailbox.data_len; count++) {
             if (XdrvMailbox.data[count]==';') XdrvMailbox.data[count] = '\n';
@@ -5777,15 +5801,15 @@ bool ScriptCommand(void) {
         if (glob_script_mem.glob_error==1) {
           // was string, not number
           GetStringArgument(lp, OPER_EQU, str, 0);
-          snprintf_P (mqtt_data, sizeof(mqtt_data), PSTR("{\"script\":{\"%s\":\"%s\"}}"), lp, str);
+          snprintf_P (TasmotaGlobal.mqtt_data, sizeof(TasmotaGlobal.mqtt_data), PSTR("{\"script\":{\"%s\":\"%s\"}}"), lp, str);
         } else {
           dtostrfd(fvar, 6, str);
-          snprintf_P (mqtt_data, sizeof(mqtt_data), PSTR("{\"script\":{\"%s\":%s}}"), lp, str);
+          snprintf_P (TasmotaGlobal.mqtt_data, sizeof(TasmotaGlobal.mqtt_data), PSTR("{\"script\":{\"%s\":%s}}"), lp, str);
         }
       }
       return serviced;
     }
-    snprintf_P (mqtt_data, sizeof(mqtt_data), PSTR("{\"%s\":\"%s\",\"Free\":%d}"),command, GetStateText(bitRead(Settings.rule_enabled, 0)), glob_script_mem.script_size - strlen(glob_script_mem.script_ram));
+    snprintf_P (TasmotaGlobal.mqtt_data, sizeof(TasmotaGlobal.mqtt_data), PSTR("{\"%s\":\"%s\",\"Free\":%d}"),command, GetStateText(bitRead(Settings.rule_enabled, 0)), glob_script_mem.script_size - strlen(glob_script_mem.script_ram));
 #ifdef SUPPORT_MQTT_EVENT
   } else if (CMND_SUBSCRIBE == command_code) {			//MQTT Subscribe command. Subscribe <Event>, <Topic> [, <Key>]
       String result = ScriptSubscribe(XdrvMailbox.data, XdrvMailbox.data_len);
@@ -5848,13 +5872,13 @@ bool ScriptMqttData(void)
   }
   String sTopic = XdrvMailbox.topic;
   String sData = XdrvMailbox.data;
-  //AddLog_P2(LOG_LEVEL_DEBUG, PSTR("Script: MQTT Topic %s, Event %s"), XdrvMailbox.topic, XdrvMailbox.data);
+  //AddLog_P(LOG_LEVEL_DEBUG, PSTR("Script: MQTT Topic %s, Event %s"), XdrvMailbox.topic, XdrvMailbox.data);
   MQTT_Subscription event_item;
   //Looking for matched topic
   for (uint32_t index = 0; index < subscriptions.size(); index++) {
     event_item = subscriptions.get(index);
 
-    //AddLog_P2(LOG_LEVEL_DEBUG, PSTR("Script: Match MQTT message Topic %s with subscription topic %s"), sTopic.c_str(), event_item.Topic.c_str());
+    //AddLog_P(LOG_LEVEL_DEBUG, PSTR("Script: Match MQTT message Topic %s with subscription topic %s"), sTopic.c_str(), event_item.Topic.c_str());
     if (sTopic.startsWith(event_item.Topic)) {
       //This topic is subscribed by us, so serve it
       serviced = true;
@@ -5937,7 +5961,7 @@ String ScriptSubscribe(const char *data, int data_len)
         }
       }
     }
-    //AddLog_P2(LOG_LEVEL_DEBUG, PSTR("Script: Subscribe command with parameters: %s, %s, %s."), event_name.c_str(), topic.c_str(), key.c_str());
+    //AddLog_P(LOG_LEVEL_DEBUG, PSTR("Script: Subscribe command with parameters: %s, %s, %s."), event_name.c_str(), topic.c_str(), key.c_str());
     //event_name.toUpperCase();
     if (event_name.length() > 0 && topic.length() > 0) {
       //Search all subscriptions
@@ -5958,7 +5982,7 @@ String ScriptSubscribe(const char *data, int data_len)
           topic.concat("/#");
         }
       }
-      //AddLog_P2(LOG_LEVEL_DEBUG, PSTR("Script: New topic: %s."), topic.c_str());
+      //AddLog_P(LOG_LEVEL_DEBUG, PSTR("Script: New topic: %s."), topic.c_str());
       //MQTT Subscribe
       subscription_item.Event = event_name;
       subscription_item.Topic = topic.substring(0, topic.length() - 2);   //Remove "/#" so easy to match
@@ -6474,10 +6498,10 @@ uint32_t cnt;
 }
 
 void ScriptWebShow(char mc) {
-  uint8_t web_script,xflg = 0;
+  uint8_t web_script;
+  glob_script_mem.web_mode = mc;
   if (mc=='w' || mc=='x') {
     if (mc=='x') {
-      xflg = 1;
       mc='$';
     }
     web_script = Run_Scripter(">w", -2, 0);
@@ -6543,11 +6567,22 @@ void ScriptWebShow(char mc) {
           } else {
             goto nextwebline;
           }
+        } else if (!strncmp(lp, "%=#", 3)) {
+          // subroutine
+          lp = scripter_sub(lp + 1, 0);
+          goto nextwebline;
         }
 
         Replace_Cmd_Vars(lp, 1, tmp, sizeof(tmp));
         char *lin = tmp;
         if ((!mc && (*lin!='$')) || (mc=='w' && (*lin!='$'))) {
+        /*if (!mc || mc=='w') {
+          if (*lin=='$') {
+            lin++;
+            if (!strncmp(lin,"gc(", 3)) {
+              goto exgc;
+            }
+          }*/
           // normal web section
           if (*lin=='@') {
             lin++;
@@ -7194,7 +7229,7 @@ uint32_t scripter_create_task(uint32_t num, uint32_t time, uint32_t core, uint32
 
 // get tesla powerwall info page json string
 uint32_t call2https(const char *host, const char *path) {
-  if (global_state.wifi_down) return 1;
+  if (TasmotaGlobal.global_state.wifi_down) return 1;
   uint32_t status = 0;
 #ifdef ESP32
   WiFiClientSecure *httpsClient;
@@ -7285,7 +7320,7 @@ bool Xdrv10(uint8_t function)
       if (len_decompressed>0) glob_script_mem.script_ram[len_decompressed] = 0;
       // indicates scripter use compression
       bitWrite(Settings.rule_once, 6, 1);
-      //AddLog_P2(LOG_LEVEL_INFO, PSTR("decompressed script len %d"),len_decompressed);
+      //AddLog_P(LOG_LEVEL_INFO, PSTR("decompressed script len %d"),len_decompressed);
 #else  // USE_SCRIPT_COMPRESSION
       // indicates scripter does not use compression
       bitWrite(Settings.rule_once, 6, 0);
@@ -7444,7 +7479,7 @@ bool Xdrv10(uint8_t function)
       break;
     case FUNC_RULES_PROCESS:
       if (bitRead(Settings.rule_enabled, 0)) {
-        Run_Scripter(">E", 2, mqtt_data);
+        Run_Scripter(">E", 2, TasmotaGlobal.mqtt_data);
         result = event_handeled;
       }
       break;

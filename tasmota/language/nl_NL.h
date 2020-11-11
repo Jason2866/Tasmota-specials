@@ -28,7 +28,7 @@
  * Use online command StateText to translate ON, OFF, HOLD and TOGGLE.
  * Use online command Prefix to translate cmnd, stat and tele.
  *
- * Updated until v8.0.0
+ * Updated until v9.1.0
 \*********************************************************************/
 
 //#define LANGUAGE_MODULE_NAME         // Enable to display "Module Generic" (ie Spanish), Disable to display "Generic Module" (ie English)
@@ -84,8 +84,10 @@
 #define D_DISABLED "Uitgeschakeld"
 #define D_DISTANCE "Afstand"
 #define D_DNS_SERVER "DNS Server"
+#define D_DO "Opgelost zuurstof"
 #define D_DONE "Klaar"
 #define D_DST_TIME "ZT"
+#define D_EC "EC"
 #define D_ECO2 "eCO₂"
 #define D_EMULATION "Emulatie"
 #define D_ENABLED "Geactiveerd"
@@ -119,11 +121,12 @@
 #define D_LWT "LWT"
 #define D_LQI "LQI"                  // Zigbee Link Quality Index
 #define D_MODULE "Module"
-#define D_MOISTURE "Moisture"
+#define D_MOISTURE "Vochtigheid"
 #define D_MQTT "MQTT"
 #define D_MULTI_PRESS "meervoudig"
 #define D_NOISE "Lawaai"
 #define D_NONE "Geen"
+#define D_O2 "Zuurstof"
 #define D_OFF "Uit"
 #define D_OFFLINE "Offline"
 #define D_OK "Ok"
@@ -189,6 +192,7 @@
 #define D_UV_POWER "UV intensiteit"
 #define D_VERSION "Versie"
 #define D_VOLTAGE "Spanning"
+#define D_VOLUME "Volume"
 #define D_WEIGHT "Gewicht"
 #define D_WARMLIGHT "Warm"
 #define D_WEB_SERVER "Webserver"
@@ -496,12 +500,12 @@
 #define D_PARTICALS_BEYOND "Stofdeeltjes"
 
 // xsns_27_apds9960.ino
-#define D_GESTURE "Gesture"
-#define D_COLOR_RED "Red"
-#define D_COLOR_GREEN "Green"
-#define D_COLOR_BLUE "Blue"
+#define D_GESTURE "Gebaar"
+#define D_COLOR_RED "Rood"
+#define D_COLOR_GREEN "Groen"
+#define D_COLOR_BLUE "Blauw"
 #define D_CCT "CCT"
-#define D_PROXIMITY "Proximity"
+#define D_PROXIMITY "Nabijheid"
 
 // xsns_32_mpu6050.ino
 #define D_AX_AXIS "Versn. X-as"
@@ -535,23 +539,23 @@
 #define D_TX20_WEST "W"
 
 // xsns_53_sml.ino
-#define D_TPWRIN "Energy Total-In"
-#define D_TPWROUT "Energy Total-Out"
-#define D_TPWRCURR "Active Power-In/Out"
-#define D_TPWRCURR1 "Active Power-In p1"
-#define D_TPWRCURR2 "Active Power-In p2"
-#define D_TPWRCURR3 "Active Power-In p3"
-#define D_Strom_L1 "Current L1"
-#define D_Strom_L2 "Current L2"
-#define D_Strom_L3 "Current L3"
+#define D_TPWRIN "Totaal energie-In"
+#define D_TPWROUT "Totaal energie-Uit"
+#define D_TPWRCURR "Werkelijk vermogen-In/Uit"
+#define D_TPWRCURR1 "Werkelijk vermogen-In p1"
+#define D_TPWRCURR2 "Werkelijk vermogen-In p2"
+#define D_TPWRCURR3 "Werkelijk vermogen-In p3"
+#define D_Strom_L1 "Stroom L1"
+#define D_Strom_L2 "Stroom L2"
+#define D_Strom_L3 "Stroom L3"
 #define D_Spannung_L1 "Voltage L1"
 #define D_Spannung_L2 "Voltage L2"
 #define D_Spannung_L3 "Voltage L3"
-#define D_METERNR "Meter_number"
+#define D_METERNR "Meter_nummer"
 #define D_METERSID "Service ID"
-#define D_GasIN "Counter"
-#define D_H2oIN "Counter"
-#define D_StL1L2L3 "Current L1+L2+L3"
+#define D_GasIN "Teller"
+#define D_H2oIN "Teller"
+#define D_StL1L2L3 "Stroom L1+L2+L3"
 #define D_SpL1L2L3 "Voltage L1+L2+L3/3"
 
 // tasmota_template.h - keep them as short as possible to be able to fit them in GUI drop down box
@@ -667,8 +671,10 @@
 #define D_SENSOR_A4988_STP     "A4988 STP"
 #define D_SENSOR_A4988_ENA     "A4988 ENA"
 #define D_SENSOR_A4988_MS1     "A4988 MS1"
-#define D_SENSOR_A4988_MS2     "A4988 MS2"
-#define D_SENSOR_A4988_MS3     "A4988 MS3"
+#define D_SENSOR_OUTPUT_HI     "Output Hi"
+#define D_SENSOR_OUTPUT_LO     "Output Lo"
+#define D_SENSOR_AS608_TX      "AS608 Tx"
+#define D_SENSOR_AS608_RX      "AS608 Rx"
 #define D_SENSOR_DDS2382_TX    "DDS238-2 Tx"
 #define D_SENSOR_DDS2382_RX    "DDS238-2 Rx"
 #define D_SENSOR_DDSU666_TX    "DDSU666 Tx"
@@ -677,9 +683,9 @@
 #define D_SENSOR_SM2135_DAT    "SM2135 Dat"
 #define D_SENSOR_DEEPSLEEP     "DeepSleep"
 #define D_SENSOR_EXS_ENABLE    "EXS Enable"
-#define D_SENSOR_CLIENT_TX      "Client TX"
-#define D_SENSOR_CLIENT_RX      "Client RX"
-#define D_SENSOR_CLIENT_RESET   "Client RST"
+#define D_SENSOR_CLIENT_TX     "Client TX"
+#define D_SENSOR_CLIENT_RX     "Client RX"
+#define D_SENSOR_CLIENT_RESET  "Client RST"
 #define D_SENSOR_GPS_RX        "GPS RX"
 #define D_SENSOR_GPS_TX        "GPS TX"
 #define D_SENSOR_HM10_RX       "HM10 RX"
@@ -743,11 +749,15 @@
 #define D_UNIT_KILOMETER_PER_HOUR "km/h"  // or "km/h"
 #define D_UNIT_KILOOHM "kΩ"
 #define D_UNIT_KILOWATTHOUR "kWh"
+#define D_UNIT_LITERS "L"
+#define D_UNIT_LITERS_PER_MIN "L/m"
 #define D_UNIT_LUX "lx"
 #define D_UNIT_MICROGRAM_PER_CUBIC_METER "µg/m³"
 #define D_UNIT_MICROMETER "µm"
 #define D_UNIT_MICROSECOND "µs"
+#define D_UNIT_MICROSIEMENS_PER_CM "µS/cm"
 #define D_UNIT_MILLIAMPERE "mA"
+#define D_UNIT_MILLILITERS "ml"
 #define D_UNIT_MILLIMETER "mm"
 #define D_UNIT_MILLIMETER_MERCURY "mmHg"
 #define D_UNIT_MILLISECOND "ms"
@@ -776,7 +786,7 @@
 #define D_TOTAL_REACTIVE  "Totaal blind"
 #define D_UNIT_KWARH      "kVArh"
 #define D_UNIT_ANGLE      "Deg"
-#define D_TOTAL_ACTIVE    "Total Active"
+#define D_TOTAL_ACTIVE    "Totaal werkelijk"
 
 //SOLAXX1
 #define D_PV1_VOLTAGE     "PV1 spanning"
@@ -852,5 +862,39 @@
 #define D_OVERLOAD        "ADPS"
 #define D_MAX_POWER       "Max Power"
 #define D_MAX_CURRENT     "Max Current"
+
+// xsns_79_as608.ino
+#define D_FP_ENROLL_PLACEFINGER "Place finger"
+#define D_FP_ENROLL_REMOVEFINGER "Remove finger"
+#define D_FP_ENROLL_PLACESAMEFINGER "Place same finger again"
+#define D_FP_ENROLL_RETRY "Error so retry"
+#define D_FP_ENROLL_RESTART "Restart"
+#define D_FP_ENROLL_ERROR "Error"
+#define D_FP_ENROLL_RESET "Reset"
+#define D_FP_ENROLL_ACTIVE "Active"
+#define D_FP_ENROLL_INACTIVE "Inactive"
+// Indexed by Adafruit_Fingerprint.h defines
+#define D_FP_PACKETRECIEVEERR "Comms error"    // 0x01 Error when receiving data package
+#define D_FP_NOFINGER ""                       // 0x02 No finger on the sensor
+#define D_FP_IMAGEFAIL "Imaging error"         // 0x03 Failed to enroll the finger
+#define D_FP_IMAGEMESS "Image too messy"       // 0x06 Failed to generate character file due to overly disorderly fingerprint image
+#define D_FP_FEATUREFAIL "Fingerprint too small" // 0x07 Failed to generate character file due to the lack of character point or small fingerprint image
+#define D_FP_NOMATCH "No match"                // 0x08 Finger doesn't match
+#define D_FP_NOTFOUND "Did not find a match"   // 0x09 Failed to find matching finger
+#define D_FP_ENROLLMISMATCH "Fingerprint did not match" // 0x0A Failed to combine the character files
+#define D_FP_BADLOCATION "Bad location"        // 0x0B Addressed PageID is beyond the finger library
+#define D_FP_DBRANGEFAIL "DB range error"      // 0x0C Error when reading template from library or invalid template
+#define D_FP_UPLOADFEATUREFAIL "Upload feature error" // 0x0D Error when uploading template
+#define D_FP_PACKETRESPONSEFAIL "Packet response error" // 0x0E Module failed to receive the following data packages
+#define D_FP_UPLOADFAIL "Upload error"         // 0x0F Error when uploading image
+#define D_FP_DELETEFAIL "Delete error"         // 0x10 Failed to delete the template
+#define D_FP_DBCLEARFAIL "DB Clear error"      // 0x11 Failed to clear finger library
+#define D_FP_PASSFAIL "Password error"         // 0x13 Find whether the fingerprint passed or failed
+#define D_FP_INVALIDIMAGE "Image invalid"      // 0x15 Failed to generate image because of lac of valid primary image
+#define D_FP_FLASHERR "Flash write error"      // 0x18 Error when writing flash
+#define D_FP_INVALIDREG "Invalid number"       // 0x1A Invalid register number
+#define D_FP_ADDRCODE "Address code"           // 0x20 Address code
+#define D_FP_PASSVERIFY "Password verified"    // 0x21 Verify the fingerprint passed
+#define D_FP_UNKNOWNERROR "Error"              // Any other error
 
 #endif  // _LANGUAGE_NL_NL_H_

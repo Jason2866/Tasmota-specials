@@ -172,13 +172,13 @@ void CpuLoadLoop(void)
     CPU_loops ++;
     if ((CPU_last_millis + (CPU_load_check *1000)) <= CPU_last_loop_time) {
 #if defined(F_CPU) && (F_CPU == 160000000L)
-      int CPU_load = 100 - ( (CPU_loops*(1 + 30*ssleep)) / (CPU_load_check *800) );
+      int CPU_load = 100 - ( (CPU_loops*(1 + 30*TasmotaGlobal.sleep)) / (CPU_load_check *800) );
       CPU_loops = CPU_loops / CPU_load_check;
-      AddLog_P2(LOG_LEVEL_DEBUG, PSTR(D_LOG_DEBUG "FreeRam %d, CPU %d%%(160MHz), Loops/sec %d"), ESP.getFreeHeap(), CPU_load, CPU_loops);
+      AddLog_P(LOG_LEVEL_DEBUG, PSTR(D_LOG_DEBUG "FreeRam %d, CPU %d%%(160MHz), Loops/sec %d"), ESP.getFreeHeap(), CPU_load, CPU_loops);
 #else
-      int CPU_load = 100 - ( (CPU_loops*(1 + 30*ssleep)) / (CPU_load_check *400) );
+      int CPU_load = 100 - ( (CPU_loops*(1 + 30*TasmotaGlobal.sleep)) / (CPU_load_check *400) );
       CPU_loops = CPU_loops / CPU_load_check;
-      AddLog_P2(LOG_LEVEL_DEBUG, PSTR(D_LOG_DEBUG "FreeRam %d, CPU %d%%(80MHz), Loops/sec %d"), ESP.getFreeHeap(), CPU_load, CPU_loops);
+      AddLog_P(LOG_LEVEL_DEBUG, PSTR(D_LOG_DEBUG "FreeRam %d, CPU %d%%(80MHz), Loops/sec %d"), ESP.getFreeHeap(), CPU_load, CPU_loops);
 #endif
       CPU_last_millis = CPU_last_loop_time;
       CPU_loops = 0;
@@ -202,7 +202,7 @@ void DebugFreeMem(void)
 {
   register uint32_t *sp asm("a1");
 
-  AddLog_P2(LOG_LEVEL_DEBUG, PSTR(D_LOG_DEBUG "FreeRam %d, FreeStack %d (%s)"), ESP.getFreeHeap(), 4 * (sp - g_pcont->stack), XdrvMailbox.data);
+  AddLog_P(LOG_LEVEL_DEBUG, PSTR(D_LOG_DEBUG "FreeRam %d, FreeStack %d (%s)"), ESP.getFreeHeap(), 4 * (sp - g_pcont->stack), XdrvMailbox.data);
 }
 
 #else  // ESP32
@@ -211,7 +211,7 @@ void DebugFreeMem(void)
 {
   register uint8_t *sp asm("a1");
 
-  AddLog_P2(LOG_LEVEL_DEBUG, PSTR(D_LOG_DEBUG "FreeRam %d, FreeStack %d (%s)"), ESP.getFreeHeap(), sp - pxTaskGetStackStart(NULL), XdrvMailbox.data);
+  AddLog_P(LOG_LEVEL_DEBUG, PSTR(D_LOG_DEBUG "FreeRam %d, FreeStack %d (%s)"), ESP.getFreeHeap(), sp - pxTaskGetStackStart(NULL), XdrvMailbox.data);
 }
 
 #endif  // ESP8266 - ESP32
@@ -245,7 +245,7 @@ void DebugRtcDump(char* parms)
   uint16_t srow = strtol(parms, &p, 16) / CFG_COLS;
   uint16_t mrow = strtol(p, &p, 10);
 
-//  AddLog_P2(LOG_LEVEL_DEBUG, PSTR("Cnfg: Parms %s, Start row %d, rows %d"), parms, srow, mrow);
+//  AddLog_P(LOG_LEVEL_DEBUG, PSTR("Cnfg: Parms %s, Start row %d, rows %d"), parms, srow, mrow);
 
   if (0 == mrow) {  // Default only 8 lines
     mrow = 8;
@@ -259,21 +259,21 @@ void DebugRtcDump(char* parms)
 
   for (row = srow; row < maxrow; row++) {
     idx = row * CFG_COLS;
-    snprintf_P(log_data, sizeof(log_data), PSTR("%03X:"), idx);
+    snprintf_P(TasmotaGlobal.log_data, sizeof(TasmotaGlobal.log_data), PSTR("%03X:"), idx);
     for (col = 0; col < CFG_COLS; col++) {
       if (!(col%4)) {
-        snprintf_P(log_data, sizeof(log_data), PSTR("%s "), log_data);
+        snprintf_P(TasmotaGlobal.log_data, sizeof(TasmotaGlobal.log_data), PSTR("%s "), TasmotaGlobal.log_data);
       }
-      snprintf_P(log_data, sizeof(log_data), PSTR("%s %02X"), log_data, buffer[idx + col]);
+      snprintf_P(TasmotaGlobal.log_data, sizeof(TasmotaGlobal.log_data), PSTR("%s %02X"), TasmotaGlobal.log_data, buffer[idx + col]);
     }
-    snprintf_P(log_data, sizeof(log_data), PSTR("%s |"), log_data);
+    snprintf_P(TasmotaGlobal.log_data, sizeof(TasmotaGlobal.log_data), PSTR("%s |"), TasmotaGlobal.log_data);
     for (col = 0; col < CFG_COLS; col++) {
 //      if (!(col%4)) {
-//        snprintf_P(log_data, sizeof(log_data), PSTR("%s "), log_data);
+//        snprintf_P(TasmotaGlobal.log_data, sizeof(TasmotaGlobal.log_data), PSTR("%s "), TasmotaGlobal.log_data);
 //      }
-      snprintf_P(log_data, sizeof(log_data), PSTR("%s%c"), log_data, ((buffer[idx + col] > 0x20) && (buffer[idx + col] < 0x7F)) ? (char)buffer[idx + col] : ' ');
+      snprintf_P(TasmotaGlobal.log_data, sizeof(TasmotaGlobal.log_data), PSTR("%s%c"), TasmotaGlobal.log_data, ((buffer[idx + col] > 0x20) && (buffer[idx + col] < 0x7F)) ? (char)buffer[idx + col] : ' ');
     }
-    snprintf_P(log_data, sizeof(log_data), PSTR("%s|"), log_data);
+    snprintf_P(TasmotaGlobal.log_data, sizeof(TasmotaGlobal.log_data), PSTR("%s|"), TasmotaGlobal.log_data);
     AddLog(LOG_LEVEL_INFO);
   }
 #endif  // ESP8266
@@ -297,7 +297,7 @@ void DebugCfgDump(char* parms)
   uint16_t srow = strtol(parms, &p, 16) / CFG_COLS;
   uint16_t mrow = strtol(p, &p, 10);
 
-//  AddLog_P2(LOG_LEVEL_DEBUG, PSTR("Cnfg: Parms %s, Start row %d, rows %d"), parms, srow, mrow);
+//  AddLog_P(LOG_LEVEL_DEBUG, PSTR("Cnfg: Parms %s, Start row %d, rows %d"), parms, srow, mrow);
 
   if (0 == mrow) {  // Default only 8 lines
     mrow = 8;
@@ -311,21 +311,21 @@ void DebugCfgDump(char* parms)
 
   for (row = srow; row < maxrow; row++) {
     idx = row * CFG_COLS;
-    snprintf_P(log_data, sizeof(log_data), PSTR("%03X:"), idx);
+    snprintf_P(TasmotaGlobal.log_data, sizeof(TasmotaGlobal.log_data), PSTR("%03X:"), idx);
     for (col = 0; col < CFG_COLS; col++) {
       if (!(col%4)) {
-        snprintf_P(log_data, sizeof(log_data), PSTR("%s "), log_data);
+        snprintf_P(TasmotaGlobal.log_data, sizeof(TasmotaGlobal.log_data), PSTR("%s "), TasmotaGlobal.log_data);
       }
-      snprintf_P(log_data, sizeof(log_data), PSTR("%s %02X"), log_data, buffer[idx + col]);
+      snprintf_P(TasmotaGlobal.log_data, sizeof(TasmotaGlobal.log_data), PSTR("%s %02X"), TasmotaGlobal.log_data, buffer[idx + col]);
     }
-    snprintf_P(log_data, sizeof(log_data), PSTR("%s |"), log_data);
+    snprintf_P(TasmotaGlobal.log_data, sizeof(TasmotaGlobal.log_data), PSTR("%s |"), TasmotaGlobal.log_data);
     for (col = 0; col < CFG_COLS; col++) {
 //      if (!(col%4)) {
-//        snprintf_P(log_data, sizeof(log_data), PSTR("%s "), log_data);
+//        snprintf_P(TasmotaGlobal.log_data, sizeof(TasmotaGlobal.log_data), PSTR("%s "), TasmotaGlobal.log_data);
 //      }
-      snprintf_P(log_data, sizeof(log_data), PSTR("%s%c"), log_data, ((buffer[idx + col] > 0x20) && (buffer[idx + col] < 0x7F)) ? (char)buffer[idx + col] : ' ');
+      snprintf_P(TasmotaGlobal.log_data, sizeof(TasmotaGlobal.log_data), PSTR("%s%c"), TasmotaGlobal.log_data, ((buffer[idx + col] > 0x20) && (buffer[idx + col] < 0x7F)) ? (char)buffer[idx + col] : ' ');
     }
-    snprintf_P(log_data, sizeof(log_data), PSTR("%s|"), log_data);
+    snprintf_P(TasmotaGlobal.log_data, sizeof(TasmotaGlobal.log_data), PSTR("%s|"), TasmotaGlobal.log_data);
     AddLog(LOG_LEVEL_INFO);
     delay(1);
   }
@@ -344,15 +344,15 @@ void DebugCfgPeek(char* parms)
   uint16_t data16 = (buffer[address +1] << 8) + buffer[address];
   uint32_t data32 = (buffer[address +3] << 24) + (buffer[address +2] << 16) + data16;
 
-  snprintf_P(log_data, sizeof(log_data), PSTR("%03X:"), address);
+  snprintf_P(TasmotaGlobal.log_data, sizeof(TasmotaGlobal.log_data), PSTR("%03X:"), address);
   for (uint32_t i = 0; i < 4; i++) {
-    snprintf_P(log_data, sizeof(log_data), PSTR("%s %02X"), log_data, buffer[address +i]);
+    snprintf_P(TasmotaGlobal.log_data, sizeof(TasmotaGlobal.log_data), PSTR("%s %02X"), TasmotaGlobal.log_data, buffer[address +i]);
   }
-  snprintf_P(log_data, sizeof(log_data), PSTR("%s |"), log_data);
+  snprintf_P(TasmotaGlobal.log_data, sizeof(TasmotaGlobal.log_data), PSTR("%s |"), TasmotaGlobal.log_data);
   for (uint32_t i = 0; i < 4; i++) {
-    snprintf_P(log_data, sizeof(log_data), PSTR("%s%c"), log_data, ((buffer[address +i] > 0x20) && (buffer[address +i] < 0x7F)) ? (char)buffer[address +i] : ' ');
+    snprintf_P(TasmotaGlobal.log_data, sizeof(TasmotaGlobal.log_data), PSTR("%s%c"), TasmotaGlobal.log_data, ((buffer[address +i] > 0x20) && (buffer[address +i] < 0x7F)) ? (char)buffer[address +i] : ' ');
   }
-  snprintf_P(log_data, sizeof(log_data), PSTR("%s| 0x%02X (%d), 0x%04X (%d), 0x%0LX (%lu)"), log_data, data8, data8, data16, data16, data32, data32);
+  snprintf_P(TasmotaGlobal.log_data, sizeof(TasmotaGlobal.log_data), PSTR("%s| 0x%02X (%d), 0x%04X (%d), 0x%0LX (%lu)"), TasmotaGlobal.log_data, data8, data8, data16, data16, data32, data32);
   AddLog(LOG_LEVEL_INFO);
 }
 
@@ -374,7 +374,7 @@ void DebugCfgPoke(char* parms)
 
   uint32_t ndata32 = (buffer[address +3] << 24) + (buffer[address +2] << 16) + (buffer[address +1] << 8) + buffer[address];
 
-  AddLog_P2(LOG_LEVEL_INFO, PSTR("%03X: 0x%0LX (%lu) poked to 0x%0LX (%lu)"), address, data32, data32, ndata32, ndata32);
+  AddLog_P(LOG_LEVEL_INFO, PSTR("%03X: 0x%0LX (%lu) poked to 0x%0LX (%lu)"), address, data32, data32, ndata32, ndata32);
 }
 
 void SetFlashMode(uint8_t mode)
@@ -404,7 +404,7 @@ void SetFlashMode(uint8_t mode)
 
 void CmndHelp(void)
 {
-  AddLog_P(LOG_LEVEL_INFO, PSTR("HLP: "), kDebugCommands);
+  AddLog_P(LOG_LEVEL_INFO, PSTR("HLP: %s"), kDebugCommands);
   ResponseCmndDone();
 }
 
@@ -487,7 +487,7 @@ void CmndSetSensor(void)
     if (XdrvMailbox.payload >= 0) {
       bitWrite(Settings.sensors[XdrvMailbox.index / 32], XdrvMailbox.index % 32, XdrvMailbox.payload &1);
       if (1 == XdrvMailbox.payload) {
-        restart_flag = 2;  // To safely re-enable a sensor currently most sensor need to follow complete restart init cycle
+        TasmotaGlobal.restart_flag = 2;  // To safely re-enable a sensor currently most sensor need to follow complete restart init cycle
       }
     }
     Response_P(PSTR("{\"" D_CMND_SETSENSOR "\":"));
@@ -539,7 +539,7 @@ void CmndFlashDump(void)
 
   for (uint32_t pos = start; pos < end; pos += bytes_per_cols) {
     uint32_t* values = (uint32_t*)(pos);
-    AddLog_P2(LOG_LEVEL_INFO, PSTR("%06X:  %08X %08X %08X %08X  %08X %08X %08X %08X"), pos - flash_start,
+    AddLog_P(LOG_LEVEL_INFO, PSTR("%06X:  %08X %08X %08X %08X  %08X %08X %08X %08X"), pos - flash_start,
       DebugSwap32(values[0]), DebugSwap32(values[1]), DebugSwap32(values[2]), DebugSwap32(values[3]),
       DebugSwap32(values[4]), DebugSwap32(values[5]), DebugSwap32(values[6]), DebugSwap32(values[7]));
   }
@@ -551,7 +551,7 @@ void CmndFlashDump(void)
 void CmndI2cWrite(void)
 {
   // I2cWrite <address>,<data>..
-  if (i2c_flg) {
+  if (TasmotaGlobal.i2c_enabled) {
     char* parms = XdrvMailbox.data;
     uint8_t buffer[100];
     uint32_t index = 0;
@@ -571,7 +571,7 @@ void CmndI2cWrite(void)
         Wire.write(buffer[i]);
       }
       int result = Wire.endTransmission();
-      AddLog_P2(LOG_LEVEL_INFO, PSTR("I2C: Result %d"), result);
+      AddLog_P(LOG_LEVEL_INFO, PSTR("I2C: Result %d"), result);
     }
   }
   ResponseCmndDone();
@@ -580,7 +580,7 @@ void CmndI2cWrite(void)
 void CmndI2cRead(void)
 {
   // I2cRead <address>,<size>
-  if (i2c_flg) {
+  if (TasmotaGlobal.i2c_enabled) {
     char* parms = XdrvMailbox.data;
     uint8_t buffer[100];
     uint32_t index = 0;
@@ -613,7 +613,7 @@ void CmndI2cRead(void)
 void CmndI2cStretch(void)
 {
 #ifdef ESP8266
-  if (i2c_flg && (XdrvMailbox.payload > 0)) {
+  if (TasmotaGlobal.i2c_enabled && (XdrvMailbox.payload > 0)) {
     Wire.setClockStretchLimit(XdrvMailbox.payload);
   }
   ResponseCmndDone();
@@ -622,7 +622,7 @@ void CmndI2cStretch(void)
 
 void CmndI2cClock(void)
 {
-  if (i2c_flg && (XdrvMailbox.payload > 0)) {
+  if (TasmotaGlobal.i2c_enabled && (XdrvMailbox.payload > 0)) {
     Wire.setClock(XdrvMailbox.payload);
   }
   ResponseCmndDone();
