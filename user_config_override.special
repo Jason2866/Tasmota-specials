@@ -1,22 +1,9 @@
-#ifndef _USER_CONFIG_OVERRIDE_H_
+﻿#ifndef _USER_CONFIG_OVERRIDE_H_
 #define _USER_CONFIG_OVERRIDE_H_
 
-// force the compiler to show a warning to confirm that this file is inlcuded
+// Force the compiler to show a warning to confirm that this file is inlcuded.
 #warning **** Using Settings from this File ***
 
-#define CUSTOM_CONFIG
-//#define CUSTOM_CONFIG_REMOVALS
-
-//#define CUSTOM_CONFIG_ZIGBEE
-//#define CUSTOM_CONFIG_BATTERY
-//#define CUSTOM_CONFIG_SCRIPTING
-
-// Settings applied globally to any binary
-
-#ifdef CUSTOM_CONFIG  // ****************************************************************************
-
-
-#endif  // CUSTOM_CONFIG ****************************************************************************
 
 
 // THIS SECTION IS USED TO REMOVE EVERYTHING LISTED FROM DEFAULT BINARY
@@ -1835,6 +1822,7 @@ o888o           `YbodP'    o888ooooood8 o888ooooood8 o888o  o888o    `YbodP'    
 
 #ifdef CUSTOM_CONFIG_ODROID  // *******************************************************************
 
+
 #undef CODE_IMAGE_STR
 #define CODE_IMAGE_STR "odroid"
 
@@ -1862,9 +1850,6 @@ o888o           `YbodP'    o888ooooood8 o888ooooood8 o888o  o888o    `YbodP'    
 
 // -- Counter input -------------------------------
 #define USE_COUNTER                              // Enable inputs as counter (+0k8 code)
-
-// -- Internal Analog input -----------------------
-//#define USE_ADC_VCC                              // Display Vcc in Power status. Disable for use as Analog input on selected devices
 
 // -- One wire sensors ----------------------------
 #define USE_DS18x20                              // Add support for DS18x20 sensors with id sort, single scan and read retry (+2k6 code)
@@ -1928,10 +1913,10 @@ o888o           `YbodP'    o888ooooood8 o888ooooood8 o888o  o888o    `YbodP'    
 #endif  // USE_I2C
 
 // -- SPI sensors ---------------------------------
-#define USE_DISPLAY                            // Add I2C Display Support (+2k code)
-#define USE_DISPLAY_MODES1TO5                // Enable display mode 1 to 5 in addition to mode 0
-#define USE_SPI                                  // Hardware SPI using GPIO12(MISO), GPIO13(MOSI) and GPIO14(CLK) in addition to two user selectable GPIOs(CS and DC)
-#define USE_DISPLAY_ILI9341                // [DisplayModel 4] Enable ILI9341 Tft 480x320 display (+19k code)
+#define USE_SPI                                    // Hardware SPI
+#define USE_DISPLAY                                // Add I2C Display Support (+2k code)
+#define USE_DISPLAY_MODES1TO5                      // Enable display mode 1 to 5 in addition to mode 0
+#define USE_DISPLAY_ILI9341                        // [DisplayModel 4] Enable ILI9341 Tft 480x320 display (+19k code)
 
 
 // -- Serial sensors ------------------------------
@@ -2000,6 +1985,26 @@ o888o           `YbodP'    o888ooooood8 o888ooooood8 o888o  o888o    `YbodP'    
 //#define USE_RF_SENSOR                            // Add support for RF sensor receiver (434MHz or 868MHz) (+0k8 code)
 //  #define USE_THEO_V2                            // Add support for decoding Theo V2 sensors as documented on https://sidweb.nl using 434MHz RF sensor receiver (+1k4 code)
 //  #define USE_ALECTO_V2                          // Add support for decoding Alecto V2 sensors like ACH2010, WS3000 and DKW2012 weather stations using 868MHz RF sensor receiver (+1k7 code)
+
+
+//#define USE_ETHERNET                             // Add support for ethernet (Currently fixed for Olimex ESP32-PoE)
+  // Olimex ESP32-PoE
+  #define ETH_TYPE          0                    // [EthType] 0 = ETH_PHY_LAN8720, 1 = ETH_PHY_TLK110, 2 = ETH_PHY_IP101
+  #define ETH_ADDR          0                    // [EthAddress] 0 = PHY0 .. 31 = PHY31
+  #define ETH_CLKMODE       3                    // [EthClockMode] 0 = ETH_CLOCK_GPIO0_IN, 1 = ETH_CLOCK_GPIO0_OUT, 2 = ETH_CLOCK_GPIO16_OUT, 3 = ETH_CLOCK_GPIO17_OUT
+  // wESP32-PoE
+//  #define ETH_TYPE          0                    // [EthType] 0 = ETH_PHY_LAN8720, 1 = ETH_PHY_TLK110, 2 = ETH_PHY_IP101
+//  #define ETH_ADDR          0                    // [EthAddress] 0 = PHY0 .. 31 = PHY31
+//  #define ETH_CLKMODE       0                    // [EthClockMode] 0 = ETH_CLOCK_GPIO0_IN, 1 = ETH_CLOCK_GPIO0_OUT, 2 = ETH_CLOCK_GPIO16_OUT, 3 = ETH_CLOCK_GPIO17_OUT
+  // Wireless-Tag WT32-ETH01
+//  #define ETH_TYPE          0                    // [EthType] 0 = ETH_PHY_LAN8720, 1 = ETH_PHY_TLK110, 2 = ETH_PHY_IP101
+//  #define ETH_ADDR          1                    // [EthAddress] 0 = PHY0 .. 31 = PHY31
+//  #define ETH_CLKMODE       0                    // [EthClockMode] 0 = ETH_CLOCK_GPIO0_IN, 1 = ETH_CLOCK_GPIO0_OUT, 2 = ETH_CLOCK_GPIO16_OUT, 3 = ETH_CLOCK_GPIO17_OUT
+
+#define USE_ADC                                  // Add support for ADC on GPIO32 to GPIO39
+#define USE_MI_ESP32                             // Add support for ESP32 as a BLE-bridge (+9k2 mem, +292k flash)
+
+
 
 #endif  // CUSTOM_CONFIG_ODROID *******************************************************************
 
@@ -2278,7 +2283,6 @@ o8o        o888o o888ooooood8  `Y8bood8P'   o88o     o8888o
 #undef CODE_IMAGE_STR
 #define CODE_IMAGE_STR "mega"
 
-//#define USE_ARDUINO_OTA                          // Add optional support for Arduino OTA (+13k code)
 #define USE_DOMOTICZ                             // Enable Domoticz (+6k code, +0.3k mem)
 #define USE_HOME_ASSISTANT                       // Enable Home Assistant Discovery Support (+7k code)
 
@@ -2292,9 +2296,9 @@ o8o        o888o o888ooooood8  `Y8bood8P'   o88o     o8888o
 //#define USE_KNX                                  // Enable KNX IP Protocol Support (+9.4k code, +3k7 mem)
 #define USE_WEBSERVER                            // Enable web server and Wifi Manager (+66k code, +8k mem)
   #define USE_JAVASCRIPT_ES6                     // Enable ECMAScript6 syntax using less JavaScript code bytes (fails on IE11)
-//  #define USE_WEBSEND_RESPONSE                   // Enable command WebSend response message (+1k code)
- #define USE_EMULATION_HUE                      // Enable Hue Bridge emulation for Alexa (+18k code, +2k mem)
- #define USE_EMULATION_WEMO                     // Enable Belkin WeMo emulation for Alexa (+18k code, +2k mem)
+  #define USE_WEBSEND_RESPONSE                   // Enable command WebSend response message (+1k code)
+#define USE_EMULATION_HUE                      // Enable Hue Bridge emulation for Alexa (+18k code, +2k mem)
+#define USE_EMULATION_WEMO                     // Enable Belkin WeMo emulation for Alexa (+18k code, +2k mem)
 
 // #define USE_DISCOVERY                            // Enable mDNS for the following services (+8k code, +0.3k mem)
 #define USE_TIMERS                               // Add support for up to 16 timers (+2k2 code)
@@ -2315,24 +2319,29 @@ o8o        o888o o888ooooood8  `Y8bood8P'   o88o     o8888o
 // -- Optional modules ----------------------------
 #define ROTARY_V1                                // Add support for Rotary Encoder as used in MI Desk Lamp (+0k8 code)
   #define ROTARY_MAX_STEPS     10                // Rotary step boundary
-#define USE_SONOFF_RF                            // Add support for Sonoff Rf Bridge
- #define USE_RF_FLASH                           // Add support for flashing the EFM8BB1 chip on the Sonoff RF Bridge. C2CK must be connected to GPIO4, C2D to GPIO5 on the PCB (+3k code)
-#define USE_SONOFF_SC                            // Add support for Sonoff Sc (+1k1 code)
+
+#ifdef  ESP8266
+    #define USE_SONOFF_RF                        // Add support for Sonoff Rf Bridge
+    #define USE_RF_FLASH                         // Add support for flashing the EFM8BB1 chip on the Sonoff RF Bridge. C2CK must be connected to GPIO4, C2D to GPIO5 on the PCB (+3k code)
+    #define USE_SONOFF_IFAN                      // Add support for Sonoff iFan02 and iFan03 (+2k code)
+    #define USE_SONOFF_SC                        // Add support for Sonoff Sc (+1k1 code)
+    #define USE_ARMTRONIX_DIMMERS                // Add support for Armtronix Dimmers (+1k4 code)
+    #define USE_PS_16_DZ                         // Add support for PS-16-DZ Dimmer and Sonoff L1 (+2k code)
+    #define USE_ARILUX_RF                        // Add support for Arilux RF remote controller (+1k code, 252 iram (non 2.3.0))
+    #define USE_EXS_DIMMER                       // Add support for ES-Store WiFi Dimmer (+2k6 code)
+    #define USE_SONOFF_D1                        // Add support for Sonoff D1 Dimmer
+    #define USE_PWM_DIMMER                       // Add support for MJ-SD01/acenx/NTONPOWER PWM dimmers (+4k5 code)
+    #define USE_PWM_DIMMER_REMOTE                // Add support for remote switches to PWM Dimmer, also adds device groups support (+0k7 code, also includes device groups)
+#endif
+
 #define USE_TUYA_MCU                             // Add support for Tuya Serial Dimmer
-#define USE_ARMTRONIX_DIMMERS                    // Add support for Armtronix Dimmers (+1k4 code)
-#define USE_PS_16_DZ                             // Add support for PS-16-DZ Dimmer and Sonoff L1 (+2k code)
-#define USE_SONOFF_IFAN                          // Add support for Sonoff iFan02 and iFan03 (+2k code)
 #define USE_BUZZER                               // Add support for a buzzer (+0k6 code)
-#define USE_ARILUX_RF                            // Add support for Arilux RF remote controller (+1k code, 252 iram (non 2.3.0))
 #define USE_SHUTTER                              // Add Shutter support for up to 4 shutter with different motortypes (+6k code)
 #define USE_DEEPSLEEP                            // Add support for deepsleep (+1k code)
-#define USE_EXS_DIMMER                           // Add support for ES-Store WiFi Dimmer (+2k6 code)
 #define USE_HOTPLUG                              // Add support for HotPlug
-#define USE_DEVICE_GROUPS                      // Add support for device groups (+4k code)
-#define USE_PWM_DIMMER                           // Add support for MJ-SD01/acenx/NTONPOWER PWM dimmers (+4k5 code)
- #define USE_PWM_DIMMER_REMOTE                  // Add support for remote switches to PWM Dimmer, also adds device groups support (+0k7 code, also includes device groups)
+#define USE_DEVICE_GROUPS                        // Add support for device groups (+4k code)
 #define USE_KEELOQ                               // Add support for Jarolift rollers by Keeloq algorithm (+4k5 code)
-#define USE_SONOFF_D1                            // Add support for Sonoff D1 Dimmer
+
 
 // -- Optional light modules ----------------------
 #define USE_WS2812                               // WS2812 Led string using library NeoPixelBus (+5k code, +1k mem, 232 iram) - Disable by //
@@ -2384,7 +2393,7 @@ o8o        o888o o888ooooood8  `Y8bood8P'   o88o     o8888o
  #define USE_MPU6050                            // Enable MPU6050 sensor (I2C address 0x68 AD0 low or 0x69 AD0 high) (+2k6 code)
  #define USE_DS3231                             // Enable DS3231 external RTC in case no Wifi is avaliable. See docs in the source file (+1k2 code)
    #define USE_RTC_ADDR  0x68                   // Default I2C address 0x68
- #define USE_MGC3130                            // Enable MGC3130 Electric Field Effect Sensor (I2C address 0x42) (+2k7 code, 0k3 mem)
+ //#define USE_MGC3130                            // Enable MGC3130 Electric Field Effect Sensor (I2C address 0x42) (+2k7 code, 0k3 mem)
  #define USE_MAX44009                           // Enable MAX44009 Ambient Light sensor (I2C addresses 0x4A and 0x4B) (+0k8 code)
  #define USE_SCD30                              // Enable Sensiron SCd30 CO2 sensor (I2C address 0x61) (+3k3 code)
  
@@ -2541,10 +2550,6 @@ o888o        o888ooooood8 o88o     o8888o     o888o     o888o o8o        `8     
                                     
 #undef CODE_IMAGE_STR
 #define CODE_IMAGE_STR "platinum"
-
-#ifdef  ESP8266
-//#define USE_ARDUINO_OTA                          // Add optional support for Arduino OTA (+13k code)
-#endif
 
 #define USE_DOMOTICZ                             // Enable Domoticz (+6k code, +0.3k mem)
 #define USE_HOME_ASSISTANT                       // Enable Home Assistant Discovery Support (+7k code)
