@@ -164,6 +164,7 @@ ooooo     ooo ooooo      ooo oooooooooo.   oooooooooooo oooooooooooo ooooo ooooo
 #undef USE_GPS                                  // Disable support for GPS and NTP Server for becoming Stratus 1 Time Source (+ 3.1kb flash, +132 bytes RAM)
   #undef USE_FLOG                               // Disable support for GPS logging in OTA's Flash (Experimental) (+ 2.9kb flash, +8 bytes RAM)
 #undef USE_HM10                                 // Disable support for HM-10 as a BLE-bridge for the LYWSD03 (+5k1 code)
+#undef USE_MI_ESP32                             // (ESP32 only) Disable support for ESP32 as a BLE-bridge (+9k2 mem, +292k flash)
 #undef USE_HRXL                                 // Disable support for MaxBotix HRXL-MaxSonar ultrasonic range finders (+0k7)
 
 // Power monitoring sensors ----------------------
