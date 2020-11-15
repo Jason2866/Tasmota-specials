@@ -21,6 +21,10 @@
 #ifdef USE_SHELLY_DIMMER
 /*********************************************************************************************\
  * Shelly WiFi Dimmer v1 and v2 (ESP8266 w/ separate co-processor dimmer)
+ *
+ * {"NAME":"Shelly Dimmer 1","GPIO":[0,3200,0,3232,5568,5600,0,0,192,0,193,288,0,4736],"FLAG":0,"BASE":18}
+ * {"NAME":"Shelly Dimmer 2","GPIO":[0,3200,0,3232,5568,5600,0,0,193,0,192,0,320,4736],"FLAG":0,"BASE":18}
+ *
  * https://shelly.cloud/wifi-smart-home-automation-shelly-dimmer/
  * https://shelly.cloud/products/shelly-dimmer-2-smart-home-light-controller/
 \*********************************************************************************************/
@@ -819,17 +823,17 @@ void CmndShdWarmupTime(void)
 \*********************************************************************************************/
 
 #ifdef USE_ENERGY_SENSOR
-bool Xnrg31(uint8_t function)
-{
+bool Xnrg31(uint8_t function) {
   bool result = false;
 
-  if (function == FUNC_PRE_INIT)
-  {
+  if (Shd.present) {
+    if (FUNC_PRE_INIT == function) {
 #ifndef SHELLY_VOLTAGE_MON
-        Energy.current_available = false;
-        Energy.voltage_available = false;
+      Energy.current_available = false;
+      Energy.voltage_available = false;
 #endif // SHELLY_VOLTAGE_MON
-        TasmotaGlobal.energy_driver = XNRG_31;
+      TasmotaGlobal.energy_driver = XNRG_31;
+    }
   }
   return result;
 }
