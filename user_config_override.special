@@ -68,6 +68,10 @@ ooooo     ooo ooooo      ooo oooooooooo.   oooooooooooo oooooooooooo ooooo ooooo
 #undef USE_DEVICE_GROUPS                        // Add support for device groups (+4k code)
 #undef USE_PWM_DIMMER                           // Add support for MJ-SD01/acenx/NTONPOWER PWM dimmers (+4k5 code)
   #undef USE_PWM_DIMMER_REMOTE                  // Add support for remote switches to PWM Dimmer, also adds device groups support (+0k7 code, also includes device groups)
+#undef USE_SHELLY_DIMMER                        // Add support for Shelly Dimmer (+3k code)
+  #undef SHELLY_CMDS                            // Add command to send co-processor commands (+0k3 code)
+#undef SHELLY_FW_UPGRADE                        // Add firmware upgrade option for co-processor (+3k4 code)
+  #undef SHELLY_VOLTAGE_MON                     // Add support for reading voltage and current measurment (-0k0 code)
 #undef USE_KEELOQ                               // Add support for controling Jarolift rollers by Keeloq algorithm
 #undef USE_SONOFF_D1                            // Add support for Sonoff D1 Dimmer
 
