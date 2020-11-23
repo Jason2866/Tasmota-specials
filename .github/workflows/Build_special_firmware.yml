@@ -532,7 +532,7 @@ jobs:
     - name: Commit files  # transfer the new binaries back into the repository
       run: |
         git config --local user.name "Platformio BUILD"
-        git rm -r --cached .
+        git rm -r # --cached .
         git add ./README.md
         git add -f ./firmware/*.*
         git commit -m "Tasmota ESP Binaries http://tasmota.com"
