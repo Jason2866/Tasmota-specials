@@ -17,6 +17,7 @@ Command syntax for flashing Tasmota32 firmware on ESP32 via Esptool (replace COM
 - Tasmota GPS (GPS driver enabled)
 - Tasmota Scripting instead of rules (Smart Meter Interface enabled)
 - Ethernet ESP32 for wired LAN (needs Ethernet hardware module)
+- Tasmota ESP32-solo1 (experimental version for ESP32-solo1 MCU)
 - Webcam with RTSP Server on Port 8554 enabled
 - Odroid-Go [Tasmota config](https://tasmota.github.io/docs/ESP32/#odroid-go), [Hardware info](https://www.hardkernel.com/shop/odroid-go/)
 - Tasmota Battery build for battery powered tuya sensors

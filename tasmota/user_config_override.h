@@ -1,4 +1,4 @@
-﻿#ifndef _USER_CONFIG_OVERRIDE_H_
+#ifndef _USER_CONFIG_OVERRIDE_H_
 #define _USER_CONFIG_OVERRIDE_H_
 
 // Force the compiler to show a warning to confirm that this file is inlcuded.
@@ -2485,8 +2485,9 @@ o8o        o888o o888ooooood8  `Y8bood8P'   o88o     o8888o
 #define USE_HRXL                                 // Add support for MaxBotix HRXL-MaxSonar ultrasonic range finders (+0k7)
 
 // Power monitoring sensors -----------------------
+#define USE_ENERGY_SENSOR
 #define USE_ENERGY_MARGIN_DETECTION              // Add support for Energy Margin detection (+1k6 code)
- #define USE_ENERGY_POWER_LIMIT                 // Add additional support for Energy Power Limit detection (+1k2 code)
+ #define USE_ENERGY_POWER_LIMIT                  // Add additional support for Energy Power Limit detection (+1k2 code)
 #define USE_PZEM004T                             // Add support for PZEM004T Energy monitor (+2k code)
 #define USE_PZEM_AC                              // Add support for PZEM014,016 Energy monitor (+1k1 code)
 #define USE_PZEM_DC                              // Add support for PZEM003,017 Energy monitor (+1k1 code)
@@ -2584,24 +2585,27 @@ o888o        o888ooooood8 o88o     o8888o     o888o     o888o o8o        `8     
   #define ROTARY_MAX_STEPS     10                // Rotary step boundary
 //#endif
 
-#define USE_SONOFF_RF                            // Add support for Sonoff Rf Bridge
- #define USE_RF_FLASH                           // Add support for flashing the EFM8BB1 chip on the Sonoff RF Bridge. C2CK must be connected to GPIO4, C2D to GPIO5 on the PCB (+3k code)
-#define USE_SONOFF_SC                            // Add support for Sonoff Sc (+1k1 code)
 #define USE_TUYA_MCU                             // Add support for Tuya Serial Dimmer
-#define USE_ARMTRONIX_DIMMERS                    // Add support for Armtronix Dimmers (+1k4 code)
-#define USE_PS_16_DZ                             // Add support for PS-16-DZ Dimmer and Sonoff L1 (+2k code)
-#define USE_SONOFF_IFAN                          // Add support for Sonoff iFan02 and iFan03 (+2k code)
 #define USE_BUZZER                               // Add support for a buzzer (+0k6 code)
-#define USE_ARILUX_RF                            // Add support for Arilux RF remote controller (+1k code, 252 iram (non 2.3.0))
 #define USE_SHUTTER                              // Add Shutter support for up to 4 shutter with different motortypes (+6k code)
 #define USE_DEEPSLEEP                            // Add support for deepsleep (+1k code)
-#define USE_EXS_DIMMER                           // Add support for ES-Store WiFi Dimmer (+2k6 code)
 #define USE_HOTPLUG                              // Add support for HotPlug
-#define USE_DEVICE_GROUPS                      // Add support for device groups (+4k code)
-#define USE_PWM_DIMMER                           // Add support for MJ-SD01/acenx/NTONPOWER PWM dimmers (+4k5 code)
- #define USE_PWM_DIMMER_REMOTE                  // Add support for remote switches to PWM Dimmer, also adds device groups support (+0k7 code, also includes device groups)
+#define USE_DEVICE_GROUPS                        // Add support for device groups (+4k code)
 #define USE_KEELOQ                               // Add support for Jarolift rollers by Keeloq algorithm (+4k5 code)
-#define USE_SONOFF_D1                            // Add support for Sonoff D1 Dimmer
+
+#ifdef  ESP8266
+    #define USE_SONOFF_RF                        // Add support for Sonoff Rf Bridge
+    #define USE_RF_FLASH                         // Add support for flashing the EFM8BB1 chip on the Sonoff RF Bridge. C2CK must be connected to GPIO4, C2D to GPIO5 on the PCB (+3k code)
+    #define USE_SONOFF_IFAN                      // Add support for Sonoff iFan02 and iFan03 (+2k code)
+    #define USE_SONOFF_SC                        // Add support for Sonoff Sc (+1k1 code)
+    #define USE_ARMTRONIX_DIMMERS                // Add support for Armtronix Dimmers (+1k4 code)
+    #define USE_PS_16_DZ                         // Add support for PS-16-DZ Dimmer and Sonoff L1 (+2k code)
+    #define USE_ARILUX_RF                        // Add support for Arilux RF remote controller (+1k code, 252 iram (non 2.3.0))
+    #define USE_EXS_DIMMER                       // Add support for ES-Store WiFi Dimmer (+2k6 code)
+    #define USE_SONOFF_D1                        // Add support for Sonoff D1 Dimmer
+    #define USE_PWM_DIMMER                       // Add support for MJ-SD01/acenx/NTONPOWER PWM dimmers (+4k5 code)
+    #define USE_PWM_DIMMER_REMOTE                // Add support for remote switches to PWM Dimmer, also adds device groups support (+0k7 code, also includes device groups)
+#endif
 
 #define USE_WS2812                               // WS2812 Led string using library NeoPixelBus (+5k code, +1k mem, 232 iram) - Disable by //
 //  #define USE_WS2812_DMA                         // DMA supports only GPIO03 (= Serial RXD) (+1k mem). When USE_WS2812_DMA is enabled expect Exceptions on Pow
@@ -2738,8 +2742,9 @@ o888o        o888ooooood8 o88o     o8888o     o888o     o888o o8o        `8     
 #define USE_HRXL                                 // Add support for MaxBotix HRXL-MaxSonar ultrasonic range finders (+0k7)
 
 // Power monitoring sensors -----------------------
+#define USE_ENERGY_SENSOR
 #define USE_ENERGY_MARGIN_DETECTION              // Add support for Energy Margin detection (+1k6 code)
- #define USE_ENERGY_POWER_LIMIT                 // Add additional support for Energy Power Limit detection (+1k2 code)
+ #define USE_ENERGY_POWER_LIMIT                  // Add additional support for Energy Power Limit detection (+1k2 code)
 #define USE_PZEM004T                             // Add support for PZEM004T Energy monitor (+2k code)
 #define USE_PZEM_AC                              // Add support for PZEM014,016 Energy monitor (+1k1 code)
 #define USE_PZEM_DC                              // Add support for PZEM003,017 Energy monitor (+1k1 code)
@@ -2787,9 +2792,7 @@ o888o        o888ooooood8 o88o     o8888o     o888o     o888o o8o        `8     
 
 #define USE_THERMOSTAT                           // Add support for the new driver created for thermostat control. #8212
 
-#ifdef  ESP8266
 #define USE_PING                                 // Add support for the PING command. #7176
-#endif
 
 #endif  // CUSTOM_CONFIG_PLATINUM *******************************************************************
 

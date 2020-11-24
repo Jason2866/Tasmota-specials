@@ -17,7 +17,7 @@ jobs:
         git config --local user.name "Platformio BUILD"
         git switch -c master
         git remote add -f Tasmota "https://github.com/arendst/Tasmota.git"
-        git merge Tasmota/development --allow-unrelated-histories
+        git merge Tasmota/development --strategy=ours --allow-unrelated-histories
     - name: Push Tasmota   # Push updates of latest Tasmota development to repo
       uses: ad-m/github-push-action@master
       with:
@@ -41,7 +41,6 @@ jobs:
         platformio update
     - name: Run PlatformIO
       run: |
-        mv user_config_override.special tasmota/user_config_override.h
         platformio run -e tasmota-zigbee
     - uses: actions/upload-artifact@v2
       with:
@@ -64,7 +63,6 @@ jobs:
         platformio update
     - name: Run PlatformIO
       run: |
-        mv user_config_override.special tasmota/user_config_override.h
         platformio run -e tasmota-gps
     - uses: actions/upload-artifact@v2
       with:
@@ -87,7 +85,6 @@ jobs:
         platformio update
     - name: Run PlatformIO
       run: |
-        mv user_config_override.special tasmota/user_config_override.h
         platformio run -e tasmota-battery
     - uses: actions/upload-artifact@v2
       with:
@@ -110,7 +107,6 @@ jobs:
         platformio update
     - name: Run PlatformIO
       run: |
-        mv user_config_override.special tasmota/user_config_override.h
         platformio run -e tasmota-scripting
     - uses: actions/upload-artifact@v2
       with:
@@ -133,7 +129,6 @@ jobs:
         platformio update
     - name: Run PlatformIO
       run: |
-        mv user_config_override.special tasmota/user_config_override.h
         platformio run -e tasmota-mega
     - uses: actions/upload-artifact@v2
       with:
@@ -156,7 +151,6 @@ jobs:
         platformio update
     - name: Run PlatformIO
       run: |
-        mv user_config_override.special tasmota/user_config_override.h
         platformio run -e tasmota-thermostat
     - uses: actions/upload-artifact@v2
       with:
@@ -179,7 +173,6 @@ jobs:
         platformio update
     - name: Run PlatformIO
       run: |
-        mv user_config_override.special tasmota/user_config_override.h
         platformio run -e tasmota-fullrules
     - uses: actions/upload-artifact@v2
       with:
@@ -202,7 +195,6 @@ jobs:
         platformio update
     - name: Run PlatformIO
       run: |
-        mv user_config_override.special tasmota/user_config_override.h
         platformio run -e tasmota-platinum
     - uses: actions/upload-artifact@v2
       with:
@@ -225,7 +217,6 @@ jobs:
         platformio update
     - name: Run PlatformIO
       run: |
-        mv user_config_override.special tasmota/user_config_override.h
         platformio run -e tasmota-minicustom
     - uses: actions/upload-artifact@v2
       with:
@@ -248,7 +239,6 @@ jobs:
         platformio update
     - name: Run PlatformIO
       run: |
-        mv user_config_override.special tasmota/user_config_override.h
         platformio run -e tasmota32-webcam
     - uses: actions/upload-artifact@v2
       with:
@@ -271,7 +261,6 @@ jobs:
         platformio update
     - name: Run PlatformIO
       run: |
-        mv user_config_override.special tasmota/user_config_override.h
         platformio run -e tasmota32-zigbee
     - uses: actions/upload-artifact@v2
       with:
@@ -294,7 +283,6 @@ jobs:
         platformio update
     - name: Run PlatformIO
       run: |
-        mv user_config_override.special tasmota/user_config_override.h
         platformio run -e tasmota32-gps
     - uses: actions/upload-artifact@v2
       with:
@@ -317,7 +305,6 @@ jobs:
         platformio update
     - name: Run PlatformIO
       run: |
-        mv user_config_override.special tasmota/user_config_override.h
         platformio run -e tasmota32-battery
     - uses: actions/upload-artifact@v2
       with:
@@ -340,7 +327,6 @@ jobs:
         platformio update
     - name: Run PlatformIO
       run: |
-        mv user_config_override.special tasmota/user_config_override.h
         platformio run -e tasmota32-scripting
     - uses: actions/upload-artifact@v2
       with:
@@ -363,7 +349,6 @@ jobs:
         platformio update
     - name: Run PlatformIO
       run: |
-        mv user_config_override.special tasmota/user_config_override.h
         platformio run -e tasmota32-mega
     - uses: actions/upload-artifact@v2
       with:
@@ -386,7 +371,6 @@ jobs:
         platformio update
     - name: Run PlatformIO
       run: |
-        mv user_config_override.special tasmota/user_config_override.h
         platformio run -e tasmota32-ethernet
     - uses: actions/upload-artifact@v2
       with:
@@ -409,7 +393,6 @@ jobs:
         platformio update
     - name: Run PlatformIO
       run: |
-        mv user_config_override.special tasmota/user_config_override.h
         platformio run -e tasmota32-odroid
     - uses: actions/upload-artifact@v2
       with:
@@ -432,7 +415,6 @@ jobs:
         platformio update
     - name: Run PlatformIO
       run: |
-        mv user_config_override.special tasmota/user_config_override.h
         platformio run -e tasmota32solo1
     - uses: actions/upload-artifact@v2
       with:
@@ -455,7 +437,6 @@ jobs:
         platformio update
     - name: Run PlatformIO
       run: |
-        mv user_config_override.special tasmota/user_config_override.h
         platformio run -e tasmota32-fullrules
     - uses: actions/upload-artifact@v2
       with:
@@ -478,7 +459,6 @@ jobs:
         platformio update
     - name: Run PlatformIO
       run: |
-        mv user_config_override.special tasmota/user_config_override.h
         platformio run -e tasmota32-platinum
     - uses: actions/upload-artifact@v2
       with:
@@ -501,18 +481,21 @@ jobs:
         platformio update
     - name: Run PlatformIO
       run: |
-        mv user_config_override.special tasmota/user_config_override.h
         platformio run -e tasmota32-minicustom
+        mv ./README.md ./build_output/firmware
     - uses: actions/upload-artifact@v2
       with:
         name: firmware
         path: ./build_output/firmware
 
   Upload:
-    needs: [tasmota-zigbee, tasmota-fullrules, tasmota-platinum, tasmota-minicustom, tasmota32-scripting, tasmota32-mega, tasmota32-fullrules, tasmota32-platinum, tasmota32-minicustom]    
+    needs: [tasmota-zigbee, tasmota-fullrules, tasmota-platinum, tasmota-minicustom, tasmota32-scripting, tasmota32-mega, tasmota32-fullrules, tasmota32-platinum, tasmota32-minicustom, tasmota32-webcam, tasmota32solo1, tasmota32-ethernet, tasmota32-odroid, tasmota32-gps, tasmota32-battery]    
     runs-on: ubuntu-latest
     continue-on-error: true
     steps:
+    - name: Remove all files # We dont need any file from here
+      run: |
+        rm -rf *
     - uses: actions/checkout@v1
     - uses: actions/download-artifact@v2
       with:
@@ -526,16 +509,17 @@ jobs:
         mkdir -p ./firmware/tasmota/other
         mkdir -p ./firmware/tasmota32/other
         mkdir -p ./firmware/tasmota32/ESP32_needed_files/
+        mv ./mv_firmware/README.md ./
         mv ./mv_firmware/tasmota32* ./firmware/tasmota32/other/
         mv ./mv_firmware/* ./firmware/tasmota/other/
         mv ./tools/Esptool/ESP32/*.* ./firmware/tasmota32/ESP32_needed_files/
-    - name: Commit files  # transfer the new binaries back into the repository
+    - name: Commit files  # transfer the new binaries into the repository
       run: |
         git config --local user.name "Platformio BUILD"
         git rm -r --cached .
         git add ./README.md
         git add -f ./firmware/*.*
-        git commit -m "Tasmota ESP Binaries http://tasmota.com"
+        git commit -m "Tasmota http://tasmota.com"
     - name: Push changes  # push the firmware files to branch firmware
       uses: ad-m/github-push-action@master
       with:
