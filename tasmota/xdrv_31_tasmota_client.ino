@@ -97,10 +97,10 @@ uint32_t SimpleHexParseLine(char *hexline) {
 
 //  AddLog_P(LOG_LEVEL_DEBUG, PSTR("DBG: Hexline |%s|, Len %d, Address 0x%02X%02X, RecType %d"), hexline, len, addr_h, addr_l, rectype);
 
-  if (len > 16) { return 4; }                        // Error 4: Line too long
-  if (rectype > 1) { return 5; }                     // Error 5: Invalid record type
+  if (len > 16) { return 5; }                // Error: Line too long
+  if (rectype > 1) { return 6; }             // Error: Invalid record type
 
-  for (uint8_t idx = 0; idx < len; idx++) {
+  for (uint32_t idx = 0; idx < len; idx++) {
     if (SHParse.FlashPageIdx < sizeof(SHParse.FlashPage)) {
       SHParse.FlashPage[SHParse.FlashPageIdx] = SimpleHexParseGetByte(hexline, idx+5);
       SHParse.FlashPageIdx++;
@@ -238,8 +238,8 @@ uint8_t TasmotaClient_receiveData(char* buffer, int size) {
   }
   if (255 == index) { index = 0; }
 
-  AddLog_P(LOG_LEVEL_DEBUG, PSTR("TCL: ReceiveData"));
-  AddLogBuffer(LOG_LEVEL_DEBUG, (uint8_t*)buffer, index);
+//  AddLog_P(LOG_LEVEL_DEBUG, PSTR("TCL: ReceiveData"));
+//  AddLogBuffer(LOG_LEVEL_DEBUG, (uint8_t*)buffer, index);
 
   return index;
 }
@@ -275,15 +275,9 @@ uint8_t TasmotaClient_execParam(uint8_t cmd, uint8_t* params, int count) {
   return TasmotaClient_sendBytes(bytes, i + 2);
 }
 
-uint8_t TasmotaClient_exitProgMode(void) {
-  return TasmotaClient_execCmd(CMND_STK_LEAVE_PROGMODE); // Exit programming mode
-}
-
-uint8_t TasmotaClient_SetupFlash(void) {
-  uint8_t ProgParams[] = {0x86, 0x00, 0x00, 0x01, 0x01, 0x01, 0x01, 0x03, 0xff, 0xff, 0xff, 0xff, 0x00, 0x80, 0x04, 0x00, 0x00, 0x00, 0x80, 0x00};
-  uint8_t ExtProgParams[] = {0x05, 0x04, 0xd7, 0xc2, 0x00};
-
+uint32_t TasmotaClient_Flash(uint8_t* data, size_t size) {
 /*
+  // Don't do this as there is no re-init configured
   TasmotaClient_Serial->end();
   delay(10);
 
@@ -292,72 +286,35 @@ uint8_t TasmotaClient_SetupFlash(void) {
     ClaimSerial();
   }
 */
-
   TasmotaClient_Reset();
 
   uint8_t timeout = 0;
-  uint8_t no_error = 0;
-  while (50 > timeout) {
+  while (timeout <= 50) {
     if (TasmotaClient_execCmd(CMND_STK_GET_SYNC)) {
-      timeout = 200;
-      no_error = 1;
+      break;
     }
     timeout++;
     delay(1);
   }
-  if (no_error) {
-    AddLog_P(LOG_LEVEL_INFO, PSTR("TCL: Found bootloader"));
-  } else {
-    no_error = 0;
-    AddLog_P(LOG_LEVEL_INFO, PSTR("TCL: Bootloader could not be found"));
-  }
-  if (no_error) {
-    if (TasmotaClient_execParam(CMND_STK_SET_DEVICE, ProgParams, sizeof(ProgParams))) {
-    } else {
-      no_error = 0;
-      AddLog_P(LOG_LEVEL_INFO, PSTR("TCL: Could not configure device for programming (1)"));
-    }
-  }
-  if (no_error) {
-    if (TasmotaClient_execParam(CMND_STK_SET_DEVICE_EXT, ExtProgParams, sizeof(ExtProgParams))) {
-    } else {
-      no_error = 0;
-      AddLog_P(LOG_LEVEL_INFO, PSTR("TCL: Could not configure device for programming (2)"));
-    }
-  }
-  if (no_error) {
-    if (TasmotaClient_execCmd(CMND_STK_ENTER_PROGMODE)) {
-    } else {
-      no_error = 0;
-      AddLog_P(LOG_LEVEL_INFO, PSTR("TCL: Failed to put bootloader into programming mode"));
-    }
-  }
-  return no_error;
-}
+  if (timeout > 50) { return 1; }            // Error: Bootloader could not be found
 
-uint8_t TasmotaClient_loadAddress(uint8_t adrHi, uint8_t adrLo) {
-  uint8_t params[] = { adrLo, adrHi };
-  return TasmotaClient_execParam(CMND_STK_LOAD_ADDRESS, params, sizeof(params));
-}
+  AddLog_P(LOG_LEVEL_INFO, PSTR("TCL: Found bootloader"));
 
-void TasmotaClient_flashPage(uint8_t addr_h, uint8_t addr_l, uint8_t* data) {
-  uint8_t Header[] = {CMND_STK_PROG_PAGE, 0x00, 0x80, 0x46};
-  TasmotaClient_loadAddress(addr_h, addr_l);
-  TasmotaClient_Serial->write(Header, 4);
-  for (int i = 0; i < 128; i++) {
-    TasmotaClient_Serial->write(data[i]);
+  uint8_t ProgParams[] = {0x86, 0x00, 0x00, 0x01, 0x01, 0x01, 0x01, 0x03, 0xff, 0xff, 0xff, 0xff, 0x00, 0x80, 0x04, 0x00, 0x00, 0x00, 0x80, 0x00};
+  if (!TasmotaClient_execParam(CMND_STK_SET_DEVICE, ProgParams, sizeof(ProgParams))) {
+    return 2;                                // Error: Could not configure device for programming (1)
   }
-  TasmotaClient_Serial->write(CONST_STK_CRC_EOP);
-  TasmotaClient_waitForSerialData(2, TASMOTA_CLIENT_TIMEOUT);
-  TasmotaClient_Serial->read();
-  TasmotaClient_Serial->read();
-}
 
-uint32_t TasmotaClient_Flash(uint8_t* data, size_t size) {
-  if (!TasmotaClient_SetupFlash()) {
-//    AddLog_P(LOG_LEVEL_INFO, PSTR("TCL: Flashing aborted!"));
-    return 1;                                        // Error 1: Flashing aborted
+  uint8_t ExtProgParams[] = {0x05, 0x04, 0xd7, 0xc2, 0x00};
+  if (!TasmotaClient_execParam(CMND_STK_SET_DEVICE_EXT, ExtProgParams, sizeof(ExtProgParams))) {
+    return 3;                                // Error: Could not configure device for programming (2)
   }
+
+  if (!TasmotaClient_execCmd(CMND_STK_ENTER_PROGMODE)) {
+    return 4;                                // Error: Failed to put bootloader into programming mode
+  }
+
+  uint8_t header[] = {CMND_STK_PROG_PAGE, 0x00, 0x80, 0x46};
 
   SHParse.FlashPageIdx = 0;
   SHParse.layoverIdx = 0;
@@ -368,17 +325,17 @@ uint32_t TasmotaClient_Flash(uint8_t* data, size_t size) {
 
   char flash_buffer[512];
   char thishexline[50];
-  uint32_t read = 0;
   uint32_t processed = 0;
   uint32_t position = 0;
-
   uint32_t error = 0;
+
+  uint32_t read = 0;
   while (read < size) {
     memcpy(flash_buffer, data + read, sizeof(flash_buffer));
+    read = read + sizeof(flash_buffer);
 
 //    AddLogBuffer(LOG_LEVEL_DEBUG, (uint8_t*)flash_buffer, 32);
 
-    read = read + sizeof(flash_buffer);
     for (uint32_t ca = 0; ca < sizeof(flash_buffer); ca++) {
       processed++;
       if ((processed <= size) && (!SHParse.EndOfFile)) {
@@ -386,23 +343,35 @@ uint32_t TasmotaClient_Flash(uint8_t* data, size_t size) {
         if (':' == flash_buffer[ca]) {
           position = 0;
         }
-        else if (0xFF == (uint8_t)flash_buffer[ca]) {
-//          AddLog_P(LOG_LEVEL_DEBUG, PSTR("DBG: Size %d, Processed %d"), size, processed);
-//          AddLogBuffer(LOG_LEVEL_DEBUG, (uint8_t*)&flash_buffer[ca], 8);
-          error = 3;                                 // Error 3: Invalid data
-          break;
-        }
         else if (0x0D == flash_buffer[ca]) {
           // 100000000C945D000C9485000C9485000C94850084
           thishexline[position] = 0;
           error = SimpleHexParseLine(thishexline);
-          if (error) { break; }                      // Error 4 and 5
+          if (error) { break; }              // Error 5 and 6
           if (SHParse.FlashPageIdx == sizeof(SHParse.FlashPage)) {
-            TasmotaClient_flashPage(SHParse.ptr_h, SHParse.ptr_l, SHParse.FlashPage);
+            uint8_t params[] = {SHParse.ptr_l, SHParse.ptr_h};
+            TasmotaClient_execParam(CMND_STK_LOAD_ADDRESS, params, sizeof(params));
+
+            TasmotaClient_Serial->write(header, sizeof(header));
+
+            for (uint32_t i = 0; i < sizeof(SHParse.FlashPage); i++) {
+              TasmotaClient_Serial->write(SHParse.FlashPage[i]);
+            }
+            TasmotaClient_Serial->write(CONST_STK_CRC_EOP);
+
+            TasmotaClient_waitForSerialData(2, TASMOTA_CLIENT_TIMEOUT);
+            TasmotaClient_Serial->read();
+            TasmotaClient_Serial->read();
+
             SHParse.FlashPageIdx = 0;
           }
         }
         else if (0x0A != flash_buffer[ca]) {
+          if (!isalnum(flash_buffer[ca])) {
+//            AddLog_P(LOG_LEVEL_DEBUG, PSTR("DBG: Size %d, Processed %d"), size, processed);
+            error = 7;                       // Error: Invalid data
+            break;
+          }
           if (position < sizeof(thishexline) -2) {
             thishexline[position++] = flash_buffer[ca];
           }
@@ -411,10 +380,9 @@ uint32_t TasmotaClient_Flash(uint8_t* data, size_t size) {
     }
     if (error) { break; }
   }
+  TasmotaClient_execCmd(CMND_STK_LEAVE_PROGMODE);
 
-  TasmotaClient_exitProgMode();
-//  AddLog_P(LOG_LEVEL_INFO, PSTR("TCL: Flash done!"));
-  return error;
+  return error;                              // Error or Flash done!
 }
 
 void TasmotaClient_Init(void) {
@@ -491,7 +459,7 @@ void TasmotaClient_sendCmnd(uint8_t cmnd, uint8_t param) {
 //  AddLog_P(LOG_LEVEL_DEBUG, PSTR("TCL: SendCmnd"));
 //  AddLogBuffer(LOG_LEVEL_DEBUG, (uint8_t*)&buffer, sizeof(buffer));
 
-  for (uint8_t ca = 0; ca < sizeof(buffer); ca++) {
+  for (uint32_t ca = 0; ca < sizeof(buffer); ca++) {
     TasmotaClient_Serial->write(buffer[ca]);
   }
 }
@@ -519,7 +487,7 @@ void CmndClientSend(void) {
     if (0 < XdrvMailbox.data_len) {
       TasmotaClient_sendCmnd(CMND_CLIENT_SEND, XdrvMailbox.data_len);
       TasmotaClient_Serial->write(char(PARAM_DATA_START));
-      for (uint8_t idx = 0; idx < XdrvMailbox.data_len; idx++) {
+      for (uint32_t idx = 0; idx < XdrvMailbox.data_len; idx++) {
         TasmotaClient_Serial->write(XdrvMailbox.data[idx]);
       }
       TasmotaClient_Serial->write(char(PARAM_DATA_END));
@@ -531,9 +499,9 @@ void CmndClientSend(void) {
 void TasmotaClient_ProcessIn(void) {
   uint8_t cmnd = TasmotaClient_Serial->read();
   if (CMND_START == cmnd) {
-    TasmotaClient_waitForSerialData(sizeof(TClientCommand),50);
+    TasmotaClient_waitForSerialData(sizeof(TClientCommand), 50);
     uint8_t buffer[sizeof(TClientCommand)];
-    for (uint8_t idx = 0; idx < sizeof(TClientCommand); idx++) {
+    for (uint32_t idx = 0; idx < sizeof(TClientCommand); idx++) {
       buffer[idx] = TasmotaClient_Serial->read();
     }
     TasmotaClient_Serial->read(); // read trailing byte of command
@@ -541,7 +509,7 @@ void TasmotaClient_ProcessIn(void) {
     char inbuf[TClientCommand.parameter+1];
     TasmotaClient_waitForSerialData(TClientCommand.parameter, 50);
     TasmotaClient_Serial->read(); // Read leading byte
-    for (uint8_t idx = 0; idx < TClientCommand.parameter; idx++) {
+    for (uint32_t idx = 0; idx < TClientCommand.parameter; idx++) {
       inbuf[idx] = TasmotaClient_Serial->read();
     }
     TasmotaClient_Serial->read(); // Read trailing byte
@@ -551,10 +519,10 @@ void TasmotaClient_ProcessIn(void) {
       Response_P(PSTR("{\"TasmotaClient\":"));
       ResponseAppend_P("%s", inbuf);
       ResponseJsonEnd();
-      MqttPublishPrefixTopicRulesProcess_P(RESULT_OR_TELE, TasmotaGlobal.mqtt_data);
+      MqttPublishPrefixTopicRulesProcess_P(RESULT_OR_TELE, PSTR("TasmotaClient"));
     }
     if (CMND_EXECUTE_CMND == TClientCommand.command) { // We need to execute the incoming command
-      ExecuteCommand(inbuf, SRC_IGNORE);
+      ExecuteCommand(inbuf, SRC_TCL);
     }
   }
 }
