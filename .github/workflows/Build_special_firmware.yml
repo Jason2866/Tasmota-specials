@@ -15,7 +15,7 @@ jobs:
     - name: Use latest Tasmota development
       run: |
         git config --local user.name "Platformio BUILD"
-        git switch -c master
+        git switch -c work
         git remote add -f Tasmota "https://github.com/arendst/Tasmota.git"
         git merge Tasmota/development --allow-unrelated-histories
     - name: Push Tasmota   # Push updates of latest Tasmota development to repo
