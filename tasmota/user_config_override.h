@@ -28,6 +28,8 @@ ooooo     ooo ooooo      ooo oooooooooo.   oooooooooooo oooooooooooo ooooo ooooo
   #undef USE_MQTT_TLS_FORCE_EC_CIPHER           // Force Elliptic Curve cipher (higher security) required by some servers (automatically enabled with USE_MQTT_AWS_IOT) (+11.4k code, +0.4k mem)
   #undef USE_MQTT_AWS_IOT                       // Enable MQTT for AWS IoT - requires a private key (+11.9k code, +0.4k mem)
 
+#define UPGRADE_V8_MIN                           // do not support upgrading from version below 8.0.0
+
 #undef USE_KNX                                  // Disable KNX IP Protocol Support (+9.4k code, +3k7 mem)
 #undef USE_WEBSERVER
 #undef USE_JAVASCRIPT_ES6                       // Disable ECMAScript6 syntax using less JavaScript code bytes (fails on IE11)
