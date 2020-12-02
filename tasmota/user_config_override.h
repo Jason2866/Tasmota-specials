@@ -29,6 +29,8 @@ ooooo     ooo ooooo      ooo oooooooooo.   oooooooooooo oooooooooooo ooooo ooooo
   #undef USE_MQTT_AWS_IOT                       // Enable MQTT for AWS IoT - requires a private key (+11.9k code, +0.4k mem)
 
 #define UPGRADE_V8_MIN                           // do not support upgrading from version below 8.0.0
+#define UPGRADE_V8_MIN_KEEP_WIFI
+#define UPGRADE_V8_MIN_KEEP_MQTT
 
 #undef USE_KNX                                  // Disable KNX IP Protocol Support (+9.4k code, +3k7 mem)
 #undef USE_WEBSERVER
