@@ -99,3 +99,4 @@ The attached binaries can also be downloaded from http://ota.tasmota.com/tasmota
 
 ### Removed
 - Version compatibility check
+- PN532 define USE_PN532_CAUSE_EVENTS replaced by generic rule trigger `on pn532#uid=`
