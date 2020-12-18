@@ -1952,8 +1952,10 @@ void Syslog(void)
 
 void AddLog(uint32_t loglevel)
 {
-  char mxtime[10];  // "13:45:21 "
-  snprintf_P(mxtime, sizeof(mxtime), PSTR("%02d" D_HOUR_MINUTE_SEPARATOR "%02d" D_MINUTE_SECOND_SEPARATOR "%02d "), RtcTime.hour, RtcTime.minute, RtcTime.second);
+//  char mxtime[10];  // "13:45:21 "
+//  snprintf_P(mxtime, sizeof(mxtime), PSTR("%02d" D_HOUR_MINUTE_SEPARATOR "%02d" D_MINUTE_SECOND_SEPARATOR "%02d "), RtcTime.hour, RtcTime.minute, RtcTime.second);
+  char mxtime[14];  // "13:45:21.999 "
+  snprintf_P(mxtime, sizeof(mxtime), PSTR("%02d" D_HOUR_MINUTE_SEPARATOR "%02d" D_MINUTE_SECOND_SEPARATOR "%02d.%03d "), RtcTime.hour, RtcTime.minute, RtcTime.second, RtcMillis());
 
   if ((loglevel <= TasmotaGlobal.seriallog_level) &&
       (TasmotaGlobal.masterlog_level <= TasmotaGlobal.seriallog_level)) {
@@ -1970,7 +1972,7 @@ void AddLog(uint32_t loglevel)
       TasmotaGlobal.web_log_index++;       // Index 0 is not allowed as it is the end of char string
     }
     while (TasmotaGlobal.web_log_index == TasmotaGlobal.web_log[0] ||  // If log already holds the next index, remove it
-           strlen(TasmotaGlobal.web_log) + strlen(TasmotaGlobal.log_data) + 13 > WEB_LOG_SIZE)  // 13 = web_log_index + mxtime + '\1' + '\0'
+           strlen(TasmotaGlobal.web_log) + strlen(TasmotaGlobal.log_data) + strlen(mxtime) + 4 > WEB_LOG_SIZE)  // 4 = web_log_index + '\1' + '\0'
     {
       char* it = TasmotaGlobal.web_log;
       it++;                                // Skip web_log_index
