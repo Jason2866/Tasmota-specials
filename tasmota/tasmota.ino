@@ -86,8 +86,9 @@ struct {
   uint32_t blink_timer;                     // Power cycle timer
   uint32_t backlog_timer;                   // Timer for next command in backlog
   uint32_t loop_load_avg;                   // Indicative loop load average
-  uint32_t web_log_index;                   // Index in Web log buffer
+  uint32_t log_buffer_pointer;              // Index in log buffer
   uint32_t uptime;                          // Counting every second until 4294967295 = 130 year
+  GpioOptionABits gpio_optiona;             // GPIO Option_A flags
 
   power_t power;                            // Current copy of Settings.power
   power_t rel_inverted;                     // Relay inverted flag (1 = (0 = On, 1 = Off))
@@ -153,7 +154,7 @@ struct {
   uint8_t module_type;                      // Current copy of Settings.module or user template type
   uint8_t last_source;                      // Last command source
   uint8_t shutters_present;                 // Number of actual define shutters
-  uint8_t prepped_loglevel;                 // Delayed log level message
+//  uint8_t prepped_loglevel;                 // Delayed log level message
 
 #ifndef SUPPORT_IF_STATEMENT
   uint8_t backlog_index;                    // Command backlog index
@@ -169,7 +170,7 @@ struct {
   char mqtt_topic[TOPSZ];                   // Composed MQTT topic
   char mqtt_data[MESSZ];                    // MQTT publish buffer and web page ajax buffer
   char log_data[LOGSZ];                     // Logging
-  char web_log[WEB_LOG_SIZE];               // Web log buffer
+  char log_buffer[LOG_BUFFER_SIZE];         // Web log buffer
 } TasmotaGlobal;
 
 #ifdef SUPPORT_IF_STATEMENT
@@ -196,6 +197,7 @@ void setup(void) {
   memset(&TasmotaGlobal, 0, sizeof(TasmotaGlobal));
   TasmotaGlobal.baudrate = APP_BAUDRATE;
   TasmotaGlobal.seriallog_timer = SERIALLOG_TIMER;
+  TasmotaGlobal.gpio_optiona.data = 0;
   TasmotaGlobal.temperature_celsius = NAN;
   TasmotaGlobal.blinks = 201;
   TasmotaGlobal.wifi_state_flag = WIFI_RESTART;
