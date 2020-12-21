@@ -965,6 +965,7 @@ oo     .d8P `88b    ooo   888  `88b.   888   888              888       888   8 
 #define USE_HOME_ASSISTANT                       // Enable Home Assistant Discovery Support (+4.1k code, +6 bytes mem)
 #define USE_WEBSERVER                            // Enable web server and Wifi Manager (+66k code, +8k mem)
   #define USE_JAVASCRIPT_ES6                     // Enable ECMAScript6 syntax using less JavaScript code bytes (fails on IE11)
+  #define USE_EMULATION
   #define USE_EMULATION_HUE                      // Enable Hue Bridge emulation for Alexa (+14k code, +2k mem common)
   #define USE_EMULATION_WEMO                     // Enable Belkin WeMo emulation for Alexa (+6k code, +2k mem common)
 
@@ -993,7 +994,7 @@ oo     .d8P `88b    ooo   888  `88b.   888   888              888       888   8 
   #define USE_SCRIPT_WEB_DISPLAY
   #define SCRIPT_FULL_WEBPAGE
   #define SUPPORT_MQTT_EVENT
-  #define USE_SCRIPT_HUE
+  //#define USE_SCRIPT_HUE
 
 // -- Optional modules ----------------------------
 #define ROTARY_V1                                // Add support for Rotary Encoder as used in MI Desk Lamp (+0k8 code)
@@ -1019,6 +1020,7 @@ oo     .d8P `88b    ooo   888  `88b.   888   888              888       888   8 
 //#define USE_KEELOQ                               // Add support for Jarolift rollers by Keeloq algorithm (+4k5 code)
 #define USE_SONOFF_D1                            // Add support for Sonoff D1 Dimmer (+0k7 code)
 
+#define USE_LIGHT
 // -- Optional light modules ----------------------
 #define USE_WS2812                               // WS2812 Led string using library NeoPixelBus (+5k code, +1k mem, 232 iram) - Disable by //
 //  #define USE_WS2812_DMA                         // DMA supports only GPIO03 (= Serial RXD) (+1k mem). When USE_WS2812_DMA is enabled expect Exceptions on Pow
