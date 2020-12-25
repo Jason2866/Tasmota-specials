@@ -1896,35 +1896,9 @@ void SetSyslog(uint32_t loglevel)
   TasmotaGlobal.syslog_timer = 0;
 }
 
-void Syslog(void)
-{
+void SyslogAsync(bool refresh) {
   static IPAddress syslog_host_addr;      // Syslog host IP address
   static uint32_t syslog_host_hash = 0;   // Syslog host name hash
-
-  // Destroys TasmotaGlobal.log_data
-
-  uint32_t current_hash = GetHash(SettingsText(SET_SYSLOG_HOST), strlen(SettingsText(SET_SYSLOG_HOST)));
-  if (syslog_host_hash != current_hash) {
-    syslog_host_hash = current_hash;
-    WiFi.hostByName(SettingsText(SET_SYSLOG_HOST), syslog_host_addr);  // If sleep enabled this might result in exception so try to do it once using hash
-  }
-  if (PortUdp.beginPacket(syslog_host_addr, Settings.syslog_port)) {
-    char syslog_preamble[64];              // Hostname + Id
-    snprintf_P(syslog_preamble, sizeof(syslog_preamble), PSTR("%s ESP-"), NetworkHostname());
-    memmove(TasmotaGlobal.log_data + strlen(syslog_preamble), TasmotaGlobal.log_data, sizeof(TasmotaGlobal.log_data) - strlen(syslog_preamble));
-    TasmotaGlobal.log_data[sizeof(TasmotaGlobal.log_data) -1] = '\0';
-    memcpy(TasmotaGlobal.log_data, syslog_preamble, strlen(syslog_preamble));
-    PortUdp_write(TasmotaGlobal.log_data, strlen(TasmotaGlobal.log_data));
-    PortUdp.endPacket();
-    delay(1);                              // Add time for UDP handling (#5512)
-  } else {
-    TasmotaGlobal.syslog_level = 0;
-    TasmotaGlobal.syslog_timer = SYSLOG_TIMER;
-    AddLog_P(LOG_LEVEL_INFO, PSTR(D_LOG_APPLICATION D_SYSLOG_HOST_NOT_FOUND ". " D_RETRY_IN " %d " D_UNIT_SECOND), SYSLOG_TIMER);
-  }
-}
-
-void SyslogAsync(bool refresh) {
   static uint32_t index = 1;
 
   if (!TasmotaGlobal.syslog_level) { return; }
@@ -1933,12 +1907,30 @@ void SyslogAsync(bool refresh) {
   char* line;
   size_t len;
   while (GetLog(TasmotaGlobal.syslog_level, &index, &line, &len)) {
-    // 00:00:00.110 Project tasmota Wemos5 Version 9.2.0.1(theo)-2_7_4_9(2020-12-20T17:09:26)
-    //              Project tasmota Wemos5 Version 9.2.0.1(theo)-2_7_4_9(2020-12-20T17:09:26)
+    // 00:00:02.096 HTP: Web server active on wemos5 with IP address 192.168.2.172
+    //              HTP: Web server active on wemos5 with IP address 192.168.2.172
     uint32_t mxtime = strchr(line, ' ') - line +1;  // Remove mxtime
     if (mxtime > 0) {
-      strlcpy(TasmotaGlobal.log_data, line +mxtime, len -mxtime);
-      Syslog();
+      uint32_t current_hash = GetHash(SettingsText(SET_SYSLOG_HOST), strlen(SettingsText(SET_SYSLOG_HOST)));
+      if (syslog_host_hash != current_hash) {
+        syslog_host_hash = current_hash;
+        WiFi.hostByName(SettingsText(SET_SYSLOG_HOST), syslog_host_addr);  // If sleep enabled this might result in exception so try to do it once using hash
+      }
+      if (!PortUdp.beginPacket(syslog_host_addr, Settings.syslog_port)) {
+        TasmotaGlobal.syslog_level = 0;
+        TasmotaGlobal.syslog_timer = SYSLOG_TIMER;
+        AddLog_P(LOG_LEVEL_INFO, PSTR(D_LOG_APPLICATION D_SYSLOG_HOST_NOT_FOUND ". " D_RETRY_IN " %d " D_UNIT_SECOND), SYSLOG_TIMER);
+        return;
+      }
+      char log_data[len +72];            // Hostname + Id + log data
+      snprintf_P(log_data, sizeof(log_data), PSTR("%s ESP-"), NetworkHostname());
+      uint32_t preamble_len = strlen(log_data);
+      len -= mxtime;
+      strlcpy(log_data +preamble_len, line +mxtime, len);
+      // wemos5 ESP-HTP: Web server active on wemos5 with IP address 192.168.2.172
+      PortUdp_write(log_data, preamble_len + len);
+      PortUdp.endPacket();
+      delay(1);                          // Add time for UDP handling (#5512)
     }
   }
 }
@@ -1956,6 +1948,7 @@ bool NeedLogRefresh(uint32_t req_loglevel, uint32_t index) {
 bool GetLog(uint32_t req_loglevel, uint32_t* index_p, char** entry_pp, size_t* len_p) {
   uint32_t index = *index_p;
 
+  if (TasmotaGlobal.uptime < 3) { return false; }  // Allow time to setup correct log level
   if (!req_loglevel || (index == TasmotaGlobal.log_buffer_pointer)) { return false; }
 
   if (!index) {                            // Dump all
@@ -1995,21 +1988,20 @@ bool GetLog(uint32_t req_loglevel, uint32_t* index_p, char** entry_pp, size_t* l
   return false;
 }
 
-void AddLog(uint32_t loglevel) {
-//  char mxtime[10];  // "13:45:21 "
-//  snprintf_P(mxtime, sizeof(mxtime), PSTR("%02d" D_HOUR_MINUTE_SEPARATOR "%02d" D_MINUTE_SECOND_SEPARATOR "%02d "), RtcTime.hour, RtcTime.minute, RtcTime.second);
+void AddLogData(uint32_t loglevel, const char* log_data) {
   char mxtime[14];  // "13:45:21.999 "
   snprintf_P(mxtime, sizeof(mxtime), PSTR("%02d" D_HOUR_MINUTE_SEPARATOR "%02d" D_MINUTE_SECOND_SEPARATOR "%02d.%03d "), RtcTime.hour, RtcTime.minute, RtcTime.second, RtcMillis());
 
   if ((loglevel <= TasmotaGlobal.seriallog_level) &&
       (TasmotaGlobal.masterlog_level <= TasmotaGlobal.seriallog_level)) {
-    Serial.printf("%s%s\r\n", mxtime, TasmotaGlobal.log_data);
+    Serial.printf("%s%s\r\n", mxtime, log_data);
   }
 
   uint32_t highest_loglevel = Settings.weblog_level;
   if (Settings.mqttlog_level > highest_loglevel) { highest_loglevel = Settings.mqttlog_level; }
   if (TasmotaGlobal.syslog_level > highest_loglevel) { highest_loglevel = TasmotaGlobal.syslog_level; }
   if (TasmotaGlobal.templog_level > highest_loglevel) { highest_loglevel = TasmotaGlobal.templog_level; }
+  if (TasmotaGlobal.uptime < 3) { highest_loglevel = LOG_LEVEL_DEBUG_MORE; }  // Log all before setup correct log level
 
   if ((loglevel <= highest_loglevel) &&    // Log only when needed
       (TasmotaGlobal.masterlog_level <= highest_loglevel)) {
@@ -2020,7 +2012,7 @@ void AddLog(uint32_t loglevel) {
       TasmotaGlobal.log_buffer_pointer++;  // Index 0 is not allowed as it is the end of char string
     }
     while (TasmotaGlobal.log_buffer_pointer == TasmotaGlobal.log_buffer[0] ||  // If log already holds the next index, remove it
-           strlen(TasmotaGlobal.log_buffer) + strlen(TasmotaGlobal.log_data) + strlen(mxtime) + 4 > LOG_BUFFER_SIZE)  // 4 = log_buffer_pointer + '\1' + '\0'
+           strlen(TasmotaGlobal.log_buffer) + strlen(log_data) + strlen(mxtime) + 4 > LOG_BUFFER_SIZE)  // 4 = log_buffer_pointer + '\1' + '\0'
     {
       char* it = TasmotaGlobal.log_buffer;
       it++;                                // Skip log_buffer_pointer
@@ -2029,64 +2021,40 @@ void AddLog(uint32_t loglevel) {
       memmove(TasmotaGlobal.log_buffer, it, LOG_BUFFER_SIZE -(it-TasmotaGlobal.log_buffer));  // Move buffer forward to remove oldest log line
     }
     snprintf_P(TasmotaGlobal.log_buffer, sizeof(TasmotaGlobal.log_buffer), PSTR("%s%c%c%s%s\1"),
-      TasmotaGlobal.log_buffer, TasmotaGlobal.log_buffer_pointer++, '0'+loglevel, mxtime, TasmotaGlobal.log_data);
+      TasmotaGlobal.log_buffer, TasmotaGlobal.log_buffer_pointer++, '0'+loglevel, mxtime, log_data);
     TasmotaGlobal.log_buffer_pointer &= 0xFF;
     if (!TasmotaGlobal.log_buffer_pointer) {
       TasmotaGlobal.log_buffer_pointer++;  // Index 0 is not allowed as it is the end of char string
     }
   }
-//  TasmotaGlobal.prepped_loglevel = 0;
 }
-/*
-void PrepLog_P(uint32_t loglevel, PGM_P formatP, ...)
-{
-  va_list arg;
-  va_start(arg, formatP);
-  vsnprintf_P(TasmotaGlobal.log_data, sizeof(TasmotaGlobal.log_data), formatP, arg);
-  va_end(arg);
 
-  TasmotaGlobal.prepped_loglevel = loglevel;
-}
-*/
 void AddLog_P(uint32_t loglevel, PGM_P formatP, ...)
 {
-/*
-  if (TasmotaGlobal.prepped_loglevel) {
-    AddLog(TasmotaGlobal.prepped_loglevel);
-  }
-*/
+  char log_data[LOGSZ];
+
   va_list arg;
   va_start(arg, formatP);
-  vsnprintf_P(TasmotaGlobal.log_data, sizeof(TasmotaGlobal.log_data), formatP, arg);
+  vsnprintf_P(log_data, sizeof(log_data), formatP, arg);
   va_end(arg);
 
-  AddLog(loglevel);
+  AddLogData(loglevel, log_data);
 }
 
 void AddLog_Debug(PGM_P formatP, ...)
 {
+  char log_data[LOGSZ];
+
   va_list arg;
   va_start(arg, formatP);
-  vsnprintf_P(TasmotaGlobal.log_data, sizeof(TasmotaGlobal.log_data), formatP, arg);
+  vsnprintf_P(log_data, sizeof(log_data), formatP, arg);
   va_end(arg);
 
-  AddLog(LOG_LEVEL_DEBUG);
+  AddLogData(LOG_LEVEL_DEBUG, log_data);
 }
 
 void AddLogBuffer(uint32_t loglevel, uint8_t *buffer, uint32_t count)
 {
-/*
-  snprintf_P(TasmotaGlobal.log_data, sizeof(TasmotaGlobal.log_data), PSTR("DMP:"));
-  for (uint32_t i = 0; i < count; i++) {
-    snprintf_P(TasmotaGlobal.log_data, sizeof(TasmotaGlobal.log_data), PSTR("%s %02X"), TasmotaGlobal.log_data, *(buffer++));
-  }
-  AddLog(loglevel);
-*/
-/*
-  strcpy_P(TasmotaGlobal.log_data, PSTR("DMP: "));
-  ToHex_P(buffer, count, TasmotaGlobal.log_data + strlen(TasmotaGlobal.log_data), sizeof(TasmotaGlobal.log_data) - strlen(TasmotaGlobal.log_data), ' ');
-  AddLog(loglevel);
-*/
   char hex_char[(count * 3) + 2];
   AddLog_P(loglevel, PSTR("DMP: %s"), ToHex_P(buffer, count, hex_char, sizeof(hex_char), ' '));
 }
@@ -2102,16 +2070,18 @@ void AddLogMissed(const char *sensor, uint32_t misses)
 }
 
 void AddLogBufferSize(uint32_t loglevel, uint8_t *buffer, uint32_t count, uint32_t size) {
-  snprintf_P(TasmotaGlobal.log_data, sizeof(TasmotaGlobal.log_data), PSTR("DMP:"));
+  char log_data[LOGSZ];
+
+  snprintf_P(log_data, sizeof(log_data), PSTR("DMP:"));
   for (uint32_t i = 0; i < count; i++) {
     if (1 ==  size) {  // uint8_t
-      snprintf_P(TasmotaGlobal.log_data, sizeof(TasmotaGlobal.log_data), PSTR("%s %02X"), TasmotaGlobal.log_data, *(buffer));
+      snprintf_P(log_data, sizeof(log_data), PSTR("%s %02X"), log_data, *(buffer));
     } else {           // uint16_t
-      snprintf_P(TasmotaGlobal.log_data, sizeof(TasmotaGlobal.log_data), PSTR("%s %02X%02X"), TasmotaGlobal.log_data, *(buffer +1), *(buffer));
+      snprintf_P(log_data, sizeof(log_data), PSTR("%s %02X%02X"), log_data, *(buffer +1), *(buffer));
     }
     buffer += size;
   }
-  AddLog(loglevel);
+  AddLogData(loglevel, log_data);
 }
 
 /*********************************************************************************************\
