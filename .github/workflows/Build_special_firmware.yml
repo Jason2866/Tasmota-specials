@@ -22,7 +22,7 @@ jobs:
       uses: ad-m/github-push-action@master
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        branch: 'development'
+        branch: 'special_builder'
         force: true
 
   tasmota-zigbee:
