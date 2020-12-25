@@ -2,7 +2,6 @@ name: Build_special_firmware
 
 on:
   push:
-  pull_request:
   schedule:
     - cron: '0 * * * *'
 
