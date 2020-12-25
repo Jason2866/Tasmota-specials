@@ -511,8 +511,7 @@ jobs:
         mv ./mv_firmware/README.md ./
         mv ./mv_firmware/tasmota32* ./firmware/tasmota32/other/
         mv ./mv_firmware/* ./firmware/tasmota/other/
-        rm ./firmware/tasmota32/*.gz
-        rm ./firmware/tasmota32/languages/*.gz
+        rm ./firmware/tasmota32/other/*.gz
         mv ./tools/Esptool/ESP32/*.* ./firmware/tasmota32/ESP32_needed_files/
     - name: Commit files  # transfer the new binaries into the repository
       run: |
