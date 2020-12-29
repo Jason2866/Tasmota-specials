@@ -466,7 +466,7 @@ jobs:
         path: ./build_output/firmware
 
   Upload:
-    needs: [tasmota-zigbee, tasmota-fullrules, tasmota-platinum, tasmota-minicustom, tasmota32-scripting, tasmota32-mega, tasmota32-fullrules, tasmota32-platinum, tasmota32-minicustom, tasmota32-webcam, tasmota32solo1, tasmota32-ethernet, tasmota32-odroid, tasmota32-gps, tasmota32-battery]    
+    needs: [tasmota-zigbee, tasmota-fullrules, tasmota-platinum, tasmota-minicustom, tasmota32-scripting, tasmota32-mega, tasmota32-fullrules, tasmota32-platinum, tasmota32-minicustom, tasmota32-webcam, tasmota32solo1, tasmota32-ethernet, tasmota32-gps, tasmota32-battery]    
     runs-on: ubuntu-latest
     continue-on-error: true
     steps:
