@@ -19,7 +19,6 @@ Command syntax for flashing Tasmota32 firmware on ESP32 via Esptool (replace COM
 - Ethernet ESP32 for wired LAN (needs Ethernet hardware module)
 - Tasmota ESP32-solo1 (experimental version for ESP32-solo1 MCU)
 - Webcam with RTSP Server on Port 8554 enabled
-- Odroid-Go [Tasmota config](https://tasmota.github.io/docs/ESP32/#odroid-go), [Hardware info](https://www.hardkernel.com/shop/odroid-go/)
 - Tasmota Battery build for battery powered tuya sensors
 - Tasmota minicustom minimal even smaller (NO Webserver, you have to use mqtt!!)
 - Tasmota Mega at the bleeding edge - Almost every sensor included
