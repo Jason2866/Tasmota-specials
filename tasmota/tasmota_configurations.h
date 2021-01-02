@@ -1,14 +1,18 @@
 /*
   tasmota_configurations.h - Configurations for Tasmota
-  Copyright (C) 2020  Theo Arends
+
+  Copyright (C) 2021  Theo Arends
+
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
   the Free Software Foundation, either version 3 of the License, or
   (at your option) any later version.
+
   This program is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
+
   You should have received a copy of the GNU General Public License
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
@@ -302,9 +306,11 @@
     #define USE_DISPLAY_ILI9341                  // [DisplayModel 4] Enable ILI9341 Tft 480x320 display (+19k code)
     #define USE_DISPLAY_EPAPER_29                // [DisplayModel 5] Enable e-paper 2.9 inch display (+19k code)
     #define USE_DISPLAY_EPAPER_42                // [DisplayModel 6] Enable e-paper 4.2 inch display
-//    #define USE_DISPLAY_ILI9488                  // [DisplayModel 8]
-//    #define USE_DISPLAY_SSD1351                  // [DisplayModel 9]
-//    #define USE_DISPLAY_RA8876                   // [DisplayModel 10]
+    #define USE_DISPLAY_ILI9488                  // [DisplayModel 8]
+    #define USE_DISPLAY_SSD1351                  // [DisplayModel 9]
+    #define USE_DISPLAY_RA8876                   // [DisplayModel 10]
+    #define USE_DISPLAY_ST7789                   // [DisplayModel 12] Enable ST7789 module
+//    #define USE_DISPLAY_SSD1331                  // [DisplayModel 14] Enable SSD1331 module
 
 #undef DEBUG_THEO                                // Disable debug code
 #undef USE_DEBUG_DRIVER                          // Disable debug code
@@ -503,7 +509,7 @@
 #undef USE_SONOFF_D1                             // Disable support for Sonoff D1 Dimmer (+0k7 code)
 
 // -- Optional light modules ----------------------
-//#undef USE_LIGHT                                 // Enable Dimmer/Light support
+#undef USE_LIGHT                                 // Disable Dimmer/Light support
 #undef USE_LIGHT_VIRTUAL_CT                      // Disable support for Virtual White Color Temperature (SO106)
 #undef USE_WS2812                                // Disable WS2812 Led string using library NeoPixelBus (+5k code, +1k mem, 232 iram) - Disable by //
 #undef USE_MY92X1                                // Disable support for MY92X1 RGBCW led controller as used in Sonoff B1, Ailight and Lohas
