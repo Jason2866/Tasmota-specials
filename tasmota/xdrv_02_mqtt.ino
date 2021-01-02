@@ -1,7 +1,7 @@
 /*
   xdrv_02_mqtt.ino - mqtt support for Tasmota
 
-  Copyright (C) 2020  Theo Arends
+  Copyright (C) 2021  Theo Arends
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -218,11 +218,13 @@ bool MqttPublishLib(const char* topic, bool retained) {
   return result;
 }
 
+#ifdef DEBUG_TASMOTA_CORE
 void MqttDumpData(char* topic, char* data, uint32_t data_len) {
   char dump_data[data_len +1];
   memcpy(dump_data, data, sizeof(dump_data));  // Make another copy for removing optional control characters
-  AddLog_P(LOG_LEVEL_DEBUG_MORE, PSTR(D_LOG_MQTT D_DATA_SIZE " %d, \"%s %s\""), data_len, topic, RemoveControlCharacter(dump_data));
+  DEBUG_CORE_LOG(PSTR(D_LOG_MQTT "Size %d, \"%s %s\""), data_len, topic, RemoveControlCharacter(dump_data));
 }
+#endif
 
 void MqttDataHandler(char* mqtt_topic, uint8_t* mqtt_data, unsigned int data_len) {
 #ifdef USE_DEBUG_DRIVER
@@ -248,9 +250,9 @@ void MqttDataHandler(char* mqtt_topic, uint8_t* mqtt_data, unsigned int data_len
   char data[data_len +1];
   memcpy(data, mqtt_data, sizeof(data));
 
-//  AddLog_P(LOG_LEVEL_DEBUG_MORE, PSTR(D_LOG_MQTT D_DATA_SIZE " %d, \"%s %s\""), data_len, topic, data);
-//  if (LOG_LEVEL_DEBUG_MORE <= TasmotaGlobal.seriallog_level) { Serial.println(data); }
+#ifdef DEBUG_TASMOTA_CORE
   MqttDumpData(topic, data, data_len);  // Use a function to save stack space used by dump_data
+#endif
 
   // MQTT pre-processing
   XdrvMailbox.index = strlen(topic);
@@ -319,7 +321,7 @@ void MqttPublish(const char* topic, bool retained) {
     }
   }
 
-  char log_data[LOGSZ];
+  char log_data[MAX_LOGSZ];
   snprintf_P(log_data, sizeof(log_data), PSTR("%s%s = %s"), slog_type, (Settings.flag.mqtt_enabled) ? topic : strrchr(topic,'/')+1, TasmotaGlobal.mqtt_data);  // SetOption3 - Enable MQTT
   if (strlen(log_data) >= (sizeof(log_data) - strlen(sretained) -1)) {
     log_data[sizeof(log_data) - strlen(sretained) -5] = '\0';

@@ -1,7 +1,7 @@
 /*
   xdrv_23_zigbee.ino - zigbee support for Tasmota
 
-  Copyright (C) 2020  Theo Arends and Stephan Hadinger
+  Copyright (C) 2021  Theo Arends and Stephan Hadinger
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -2048,11 +2048,11 @@ void ZigbeeShow(bool json)
           if (light.validHue() && light.validSat() && (channels >= 3)) {
             uint8_t r,g,b;
             uint8_t sat = changeUIntScale(light.getSat(), 0, 254, 0, 255);    // scale to 0..255
-            LightStateClass::HsToRgb(light.getHue(), sat, &r, &g, &b);
+            HsToRgb(light.getHue(), sat, &r, &g, &b);
             WSContentSend_P(msg[ZB_WEB_COLOR_RGB], r,g,b,r,g,b);
           } else if (light.validX() && light.validY() && (channels >= 3)) {
             uint8_t r,g,b;
-            LightStateClass::XyToRgb(light.getX() / 65535.0f, light.getY() / 65535.0f, &r, &g, &b);
+            XyToRgb(light.getX() / 65535.0f, light.getY() / 65535.0f, &r, &g, &b);
             WSContentSend_P(msg[ZB_WEB_COLOR_RGB], r,g,b,r,g,b);
           }
         }
@@ -2072,7 +2072,7 @@ void ZigbeeShow(bool json)
     WSContentSend_P(msg[ZB_WEB_LINE_END]);  // Terminate current multi column table and open new table
     if (zigbee.permit_end_time) {
       // PermitJoin in progress
-      
+
       WSContentSend_P(msg[ZB_WEB_PERMITJOIN_ACTIVE], D_ZIGBEE_PERMITJOIN_ACTIVE);
     }
 #endif
@@ -2085,7 +2085,7 @@ void ZigbeeMapRefresh(void) {
     ZigbeeMapAllDevices();
   }
   Webserver->sendHeader("Location","/zbm");        // Add a header to respond with a new location for the browser to go to the home page again
-  Webserver->send(302);              
+  Webserver->send(302);
 }
 
 // Display a graphical representation of the Zigbee map using vis.js network

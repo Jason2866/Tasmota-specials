@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 - Basic support for ESP32 Odroid Go 16MB binary tasmota32-odroidgo.bin (#8630)
 - Command ``CTRange`` to specify the visible CT range the bulb is capable of (#10311)
 - Command ``VirtualCT`` to simulate or fine tune CT bulbs with 3,4,5 channels (#10311)
+- Disable `USE_LIGHT`` light support for ZBBridge (saves 17.6kb)
 
 ### Breaking Changed
 - Replaced MFRC522 13.56MHz rfid card reader GPIO selection from ``SPI CS`` by ``RC522 CS``
@@ -19,6 +20,9 @@ All notable changes to this project will be documented in this file.
 - Replaced EPaper42 GPIO selection from ``SPI CS`` by ``EPaper42 CS``
 - Replaced SSD1351 GPIO selection from ``SPI CS`` by ``SSD1351 CS``
 - Replaced RA8876 GPIO selection from ``SPI CS`` by ``RA8876 CS``
+
+### Changed
+- Maximum chars in AddLog_P logging reduced from 700 to 128 (LOGSZ) to enhance stability
 
 ## [9.2.0.1] 20201229
 ### Added
@@ -32,6 +36,7 @@ All notable changes to this project will be documented in this file.
 - Support for Afrikaans language translations by Christiaan Heerze
 - Support for IR inverted leds using ``#define IR_SEND_INVERTED true`` (#10301)
 - Support for disabling 38kHz IR modulation using ``#define IR_SEND_USE_MODULATION false`` (#10301)
+- Support for SPI display driver for ST7789 TFT by Gerhard Mutz (#9037)
 
 ### Changed
 - Logging from heap to stack freeing 700 bytes RAM

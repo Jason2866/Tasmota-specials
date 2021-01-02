@@ -1,7 +1,7 @@
 /*
   xdsp_09_SSD1351.ino - Display SSD1351 support for Tasmota
 
-  Copyright (C) 2020  Gerhard Mutz and Theo Arends
+  Copyright (C) 2021  Gerhard Mutz and Theo Arends
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -90,8 +90,7 @@ void SSD1351_InitDriver() {
 
 #ifdef USE_DISPLAY_MODES1TO5
 
-void SSD1351PrintLog(void)
-{
+void SSD1351PrintLog(void) {
   disp_refresh--;
   if (!disp_refresh) {
     disp_refresh = Settings.display_refresh;
@@ -119,8 +118,7 @@ void SSD1351PrintLog(void)
   }
 }
 
-void SSD1351Time(void)
-{
+void SSD1351Time(void) {
   char line[12];
 
   renderer->clearDisplay();
@@ -133,8 +131,7 @@ void SSD1351Time(void)
   renderer->Updateframe();
 }
 
-void SSD1351Refresh(void)  // Every second
-{
+void SSD1351Refresh(void) {     // Every second
   if (Settings.display_mode) {  // Mode 0 is User text
     switch (Settings.display_mode) {
       case 1:  // Time
@@ -151,12 +148,12 @@ void SSD1351Refresh(void)  // Every second
 }
 
 #endif  // USE_DISPLAY_MODES1TO5
-/*********************************************************************************************/
+
 /*********************************************************************************************\
  * Interface
 \*********************************************************************************************/
-bool Xdsp09(uint8_t function)
-{
+
+bool Xdsp09(uint8_t function) {
   bool result = false;
 
   if (FUNC_DISPLAY_INIT_DRIVER == function) {

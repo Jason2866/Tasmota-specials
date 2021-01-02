@@ -1,7 +1,7 @@
 /*
   ro-RO.h - localization for Romanian - Romania and Moldova for Tasmota
 
-  Copyright (C) 2020  Augustin Marti
+  Copyright (C) 2021  Augustin Marti
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -776,6 +776,8 @@
 #define D_SENSOR_RA8876_CS     "RA8876 CS"
 #define D_SENSOR_ST7789_CS     "ST7789 CS"
 #define D_SENSOR_ST7789_DC     "ST7789 DC"
+#define D_SENSOR_SSD1331_CS    "SSD1331 CS"
+#define D_SENSOR_SSD1331_DC    "SSD1331 DC"
 
 // Units
 #define D_UNIT_AMPERE "A"
