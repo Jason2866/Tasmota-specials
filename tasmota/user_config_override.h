@@ -2464,7 +2464,7 @@ o8o        o888o o888ooooood8  `Y8bood8P'   o88o     o8888o
        #define USE_DISPLAY_SSD1351                  // [DisplayModel 9]
        #define USE_DISPLAY_RA8876                   // [DisplayModel 10]
        #define USE_DISPLAY_ST7789                   // [DisplayModel 12] Enable ST7789 module
-       #define USE_DISPLAY_SSD1331                  // [DisplayModel 14] Enable SSD1331 module
+//       #define USE_DISPLAY_SSD1331                  // [DisplayModel 14] Enable SSD1331 module
 #endif  // USE_NRF24
 #endif  // USE_SPI
 
