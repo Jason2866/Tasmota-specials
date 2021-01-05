@@ -2081,6 +2081,7 @@ o888o           `YbodP'    o888ooooood8 o888ooooood8 o888o  o888o    `YbodP'    
 
 #define USE_SPI
 #define USE_DISPLAY
+    #define USE_DISPLAY_MODES1TO5
 #define SHOW_SPLASH
 #define USE_AWATCH
 #define USE_DISPLAY_ILI9342
