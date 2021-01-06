@@ -276,6 +276,7 @@ ooooo     ooo ooooo      ooo oooooooooo.   oooooooooooo oooooooooooo ooooo ooooo
 #undef USE_UNISHOX_COMPRESSION                   // Disable support for string compression in Rules or Scripts
 #undef USE_RULES                                 // Disable support for rules
 #undef USE_SCRIPT                                // Disable support for script
+#undef USE_UFILESYS
 
 // -- Optional modules ----------------------------
 #undef ROTARY_V1                                 // Disable support for MI Desk Lamp
