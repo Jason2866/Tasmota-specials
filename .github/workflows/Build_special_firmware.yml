@@ -480,6 +480,7 @@ jobs:
         platformio update
     - name: Run PlatformIO
       run: |
+        mv ./tasmota/xdrv_50_filesystem.ino xdrv_50_filesystem.ino.off
         platformio run -e tasmota32-minicustom
         mv ./README.md ./build_output/firmware
     - uses: actions/upload-artifact@v2
