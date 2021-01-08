@@ -2057,7 +2057,6 @@ o888o           `YbodP'    o888ooooood8 o888ooooood8 o888o  o888o    `YbodP'    
 #define USE_SCRIPT_FATFS 4
 #define FAT_SCRIPT_SIZE 8192
 #define JPEG_PICTS
-#define USE_UFILESYS
 #define USE_SDCARD
 
 // -- Optional modules ----------------------------
