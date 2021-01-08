@@ -396,6 +396,7 @@ void UFSDelete(void) {
  * Web support
 \*********************************************************************************************/
 
+#ifdef USE_WEBSERVER
 const char UFS_WEB_DIR[] PROGMEM =
   "<p><form action='" "ufsd" "' method='get'><button>" "%s" "</button></form></p>";
 
@@ -644,6 +645,7 @@ void UfsUpload(void) {
     WSSend(500, CT_PLAIN, F("500: couldn't create file"));
   }
 }
+#endif // ifdef USE_WEBSERVER
 
 /*********************************************************************************************\
  * Interface
