@@ -2142,6 +2142,9 @@ o888ooooood8   "888" o888o o888o `Y8bod8P' d888b    o888o o888o `Y8bod8P'   "888
 #undef OTA_URL
 #define OTA_URL                " "  // [OtaUrl]
 
+#define USE_UFILESYS
+#define GUI_TRASH_FILE
+
 #define USE_DOMOTICZ                             // Enable Domoticz (+6k code, +0.3k mem)
 #define USE_HOME_ASSISTANT                       // Enable Home Assistant Discovery Support (+4.1k code, +6 bytes mem)
 #define USE_WEBSERVER                            // Enable web server and Wifi Manager (+66k code, +8k mem)
@@ -2668,6 +2671,9 @@ o888o        o888ooooood8 o88o     o8888o     o888o     o888o o8o        `8     
                                     
 #undef CODE_IMAGE_STR
 #define CODE_IMAGE_STR "platinum"
+
+#define USE_UFILESYS
+#define GUI_TRASH_FILE
 
 #define USE_DOMOTICZ                             // Enable Domoticz (+6k code, +0.3k mem)
 #define USE_HOME_ASSISTANT                       // Enable Home Assistant Discovery Support (+7k code)
