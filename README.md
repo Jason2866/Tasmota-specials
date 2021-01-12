@@ -23,4 +23,4 @@ Command syntax for flashing Tasmota32 firmware on ESP32 via Esptool <br>
 - Tasmota Battery build for battery powered tuya sensors
 - Tasmota minicustom minimal even smaller (NO Webserver, you have to use mqtt!!)
 - Tasmota Mega at the bleeding edge - Almost every sensor included
-- Tasmota Platinum nearly ALL enabled IT.IS.HUGE! (only for devices with 4Mb flash)<br>
+- Tasmota Platinum nearly ALL enabled IT.IS.HUGE! (only for devices with >=4Mb flash)<br>
