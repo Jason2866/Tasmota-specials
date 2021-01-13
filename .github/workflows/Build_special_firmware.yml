@@ -11,8 +11,6 @@ jobs:
     continue-on-error: true
     steps:
     - uses: actions/checkout@v1
-      with:
-        fetch-depth: 1
     - name: Use latest Tasmota development
       run: |
         git config --local user.name "Platformio BUILD"
