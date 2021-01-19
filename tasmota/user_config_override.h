@@ -1829,6 +1829,7 @@ o888o           `YbodP'    o888ooooood8 o888ooooood8 o888o  o888o    `YbodP'    
 #undef OTA_URL
 #define OTA_URL                " "  // [OtaUrl]
 
+#define USE_UFILESYS
 #define GUI_TRASH_FILE
 
 #define USE_WEBSERVER                            // Enable web server and Wifi Manager (+66k code, +8k mem)
@@ -2004,9 +2005,9 @@ o888o           `YbodP'    o888ooooood8 o888ooooood8 o888o  o888o    `YbodP'    
 //  #define ETH_CLKMODE       0                    // [EthClockMode] 0 = ETH_CLOCK_GPIO0_IN, 1 = ETH_CLOCK_GPIO0_OUT, 2 = ETH_CLOCK_GPIO16_OUT, 3 = ETH_CLOCK_GPIO17_OUT
 
 #define USE_ADC                                  // Add support for ADC on GPIO32 to GPIO39
+
 #define USE_MI_ESP32                             // Add support for ESP32 as a BLE-bridge (+9k2 mem, +292k flash)
-
-
+#define USE_BLE_ESP32                            // Enable new BLE driver
 
 #endif  // CUSTOM_CONFIG_ODROID *******************************************************************
 
@@ -2029,6 +2030,7 @@ o888o           `YbodP'    o888ooooood8 o888ooooood8 o888o  o888o    `YbodP'    
 #define USE_M5STACK_CORE2
 #define USE_I2S_AUDIO
 #define GUI_TRASH_FILE
+#define USE_UFILESYS
 
 #define USE_WEBSERVER                            // Enable web server and Wifi Manager (+66k code, +8k mem)
   #define USE_JAVASCRIPT_ES6                     // Enable ECMAScript6 syntax using less JavaScript code bytes (fails on IE11)
@@ -2047,6 +2049,8 @@ o888o           `YbodP'    o888ooooood8 o888ooooood8 o888o  o888o    `YbodP'    
 #define FAT_SCRIPT_SIZE 8192
 #define JPEG_PICTS
 #define USE_SDCARD
+#define USE_UFILESYS
+#define GUI_TRASH_FILE
 
 // -- Optional modules ----------------------------
 //#define USE_DEVICE_GROUPS                        // Add support for device groups (+5k6 code)
@@ -2103,7 +2107,9 @@ o888o           `YbodP'    o888ooooood8 o888ooooood8 o888o  o888o    `YbodP'    
     #define IR_RCV_TIMEOUT          15           // Number of milli-Seconds of no-more-data before we consider a message ended (default 15)
     #define IR_RCV_MIN_UNKNOWN_SIZE 6            // Set the smallest sized "UNKNOWN" message packets we actually care about (default 6, max 255)
 
-#define USE_MI_ESP32                             // Add support for ESP32 as a BLE-bridge (+9k2 mem, +292k flash)
+#define USE_BLE_ESP32                            // Enable new BLE driver
+#define USE_MI_ESP32
+ 
 //#define USE_IBEACON                              // Add support for bluetooth LE passive scan of ibeacon devices (uses HM17 module)
 
 #endif  // FIRMWARE_M5STACK_CORE2 *******************************************************************
@@ -2411,6 +2417,9 @@ o8o        o888o o888ooooood8  `Y8bood8P'   o88o     o8888o
  #define USE_EXPRESSION                         // Add support for expression evaluation in rules (+3k2 code, +64 bytes mem)
    #define SUPPORT_IF_STATEMENT                 // Add support for IF statement in rules (+4k2 code, -332 bytes mem)
  #define SUPPORT_MQTT_EVENT                     // Support trigger event with MQTT subscriptions (+3k5 code)
+
+#define USE_UFILESYS
+#define GUI_TRASH_FILE
 
 //#define USE_SCRIPT                               // Add support for script
   #define USE_SCRIPT_FATFS 4                     // Add support for script storage on SD card (+12k code, +4k mem)
