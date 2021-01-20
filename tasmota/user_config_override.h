@@ -978,6 +978,9 @@ oo     .d8P `88b    ooo   888  `88b.   888   888              888       888   8 
   #define USE_SCRIPT_JSON_EXPORT
   #define USE_SCRIPT_WEB_DISPLAY
   #define USE_SENDMAIL
+  #ifdef ESP32
+     #define USE_ESP32MAIL
+  #endif // ESP32
   #define USE_SML_M
   #define USE_SCRIPT_JSON_EXPORT
   #define USE_SCRIPT_WEB_DISPLAY
