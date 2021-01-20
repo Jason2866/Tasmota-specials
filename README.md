@@ -19,9 +19,7 @@ Command syntax for flashing Tasmota32 firmware on ESP32 via Esptool <br>
 - Tasmota Ethernet ESP32 for wired LAN (needs Ethernet hardware module)
 - Tasmota M5Stack-core2
 - Tasmota ESP32-solo1 (experimental version for ESP32-solo1 MCU)
-- Tasmota ESP32 Webcam with RTSP Server on Port 8554 enabled
 - Tasmota Battery build for battery powered tuya sensors
 - Tasmota minicustom minimal even smaller (NO Webserver, you have to use mqtt!!)
 - Tasmota Mega at the bleeding edge - Almost every sensor included
 - Tasmota Platinum nearly ALL enabled IT.IS.HUGE! (only for devices with >=4Mb flash)<br>
-
