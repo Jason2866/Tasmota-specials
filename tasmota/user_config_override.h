@@ -2029,6 +2029,8 @@ o888o           `YbodP'    o888ooooood8 o888ooooood8 o888o  o888o    `YbodP'    
 
 #define USE_M5STACK_CORE2
 #define USE_I2S_AUDIO
+#define USE_FT5206
+#define USE_MPU6886
 #define GUI_TRASH_FILE
 #define USE_UFILESYS
 
@@ -2051,6 +2053,8 @@ o888o           `YbodP'    o888ooooood8 o888ooooood8 o888o  o888o    `YbodP'    
 #define USE_SDCARD
 #define USE_UFILESYS
 #define GUI_TRASH_FILE
+#define SAY_TIME
+#define USE_WEBRADIO
 
 // -- Optional modules ----------------------------
 //#define USE_DEVICE_GROUPS                        // Add support for device groups (+5k6 code)
@@ -2070,8 +2074,6 @@ o888o           `YbodP'    o888ooooood8 o888ooooood8 o888o  o888o    `YbodP'    
 // -- I2C sensors ---------------------------------
 #define USE_I2C                                  // I2C using library wire (+10k code, 0k2 mem, 124 iram)
 #define USE_BMA423
-#define SAY_TIME
-#define USE_WEBRADIO
 
 #define USE_BMP                                // [I2cDriver10] Enable BMP085/BMP180/BMP280/BME280 sensors (I2C addresses 0x76 and 0x77) (+4k4 code)
 
@@ -2083,8 +2085,6 @@ o888o           `YbodP'    o888ooooood8 o888ooooood8 o888o  o888o    `YbodP'    
 #define USE_DISPLAY_ILI9342
 #define USE_TOUCH_BUTTONS
 #define MAXBUTTONS 16
-#define USE_FT5206
-#define USE_MPU6886
 
 // -- Serial sensors ------------------------------
 #define USE_SERIAL_BRIDGE                        // Add support for software Serial Bridge (+0k8 code)
@@ -2106,6 +2106,9 @@ o888o           `YbodP'    o888ooooood8 o888ooooood8 o888o  o888o    `YbodP'    
     #define IR_RCV_BUFFER_SIZE      100          // Max number of packets allowed in capture buffer (default 100 (*2 bytes ram))
     #define IR_RCV_TIMEOUT          15           // Number of milli-Seconds of no-more-data before we consider a message ended (default 15)
     #define IR_RCV_MIN_UNKNOWN_SIZE 6            // Set the smallest sized "UNKNOWN" message packets we actually care about (default 6, max 255)
+
+#define USE_SENDMAIL
+#define USE_ESP32MAIL
 
 #define USE_BLE_ESP32                            // Enable new BLE driver
 #define USE_MI_ESP32
