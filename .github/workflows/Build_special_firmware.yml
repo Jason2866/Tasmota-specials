@@ -222,7 +222,7 @@ jobs:
         name: firmware
         path: ./build_output/firmware
 
-  tasmota32-M5stack_core2:
+  tasmota32-core2:
     needs: tasmota_pull
     runs-on: ubuntu-latest
     continue-on-error: true
@@ -238,7 +238,7 @@ jobs:
         platformio update
     - name: Run PlatformIO
       run: |
-        platformio run -e tasmota32-M5stack_core2
+        platformio run -e tasmota32-core2
     - uses: actions/upload-artifact@v2
       with:
         name: firmware
@@ -466,7 +466,7 @@ jobs:
         path: ./build_output/firmware
 
   Upload:
-    needs: [tasmota-zigbee, tasmota-fullrules, tasmota-platinum, tasmota-minicustom, tasmota32-scripting, tasmota32-mega, tasmota32-fullrules, tasmota32-platinum, tasmota32-minicustom, tasmota32solo1, tasmota32-ethernet, tasmota32-gps, tasmota32-battery, tasmota32-M5stack_core2]
+    needs: [tasmota-zigbee, tasmota-fullrules, tasmota-platinum, tasmota-minicustom, tasmota32-scripting, tasmota32-mega, tasmota32-fullrules, tasmota32-platinum, tasmota32-minicustom, tasmota32solo1, tasmota32-ethernet, tasmota32-gps, tasmota32-battery, tasmota32-core2]
     runs-on: ubuntu-latest
     continue-on-error: true
     steps:
