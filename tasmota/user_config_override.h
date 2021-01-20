@@ -951,6 +951,9 @@ oo     .d8P `88b    ooo   888  `88b.   888   888              888       888   8 
 #undef OTA_URL
 #define OTA_URL                " "  // [OtaUrl]
 
+#define USE_UFILESYS
+#define GUI_TRASH_FILE
+
 #define USE_DOMOTICZ                             // Enable Domoticz (+6k code, +0.3k mem)
 #define USE_HOME_ASSISTANT                       // Enable Home Assistant Discovery Support (+4.1k code, +6 bytes mem)
 #define USE_WEBSERVER                            // Enable web server and Wifi Manager (+66k code, +8k mem)
