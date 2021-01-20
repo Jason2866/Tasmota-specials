@@ -2017,114 +2017,30 @@ o888o           `YbodP'    o888ooooood8 o888ooooood8 o888o  o888o    `YbodP'    
  * [tasmota32-M5stack_core2.bin]
 \*********************************************************************************************/
 
-#ifdef CUSTOM_CONFIG_M5STACK_CORE2  // *******************************************************************
+#ifdef FIRMWARE_M5STACK_CORE2  // *************************************************************
 
 #warning **** Building M5stack_core2 variant  ****
-
-#undef CODE_IMAGE_STR
-#define CODE_IMAGE_STR "M5stack_core2"
 
 #undef OTA_URL
 #define OTA_URL                " "  // [OtaUrl]
 
-#define USE_M5STACK_CORE2
-#define USE_I2S_AUDIO
-#define USE_FT5206
-#define USE_MPU6886
-#define GUI_TRASH_FILE
-#define USE_UFILESYS
-
-#define USE_WEBSERVER                            // Enable web server and Wifi Manager (+66k code, +8k mem)
-  #define USE_JAVASCRIPT_ES6                     // Enable ECMAScript6 syntax using less JavaScript code bytes (fails on IE11)
-//  #define USE_EMULATION_HUE                      // Enable Hue Bridge emulation for Alexa (+14k code, +2k mem common)
-//  #define USE_EMULATION_WEMO                     // Enable Belkin WeMo emulation for Alexa (+6k code, +2k mem common)
-
-#define USE_TIMERS                               // Add support for up to 16 timers (+2k2 code)
-  #define USE_TIMERS_WEB                         // Add timer webpage support (+4k5 code)
-  #define USE_SUNRISE                            // Add support for Sunrise and sunset tools (+16k)
-    #define SUNRISE_DAWN_ANGLE DAWN_NORMAL       // Select desired Dawn Angle from (DAWN_NORMAL, DAWN_CIVIL, DAWN_NAUTIC, DAWN_ASTRONOMIC)
-
-// -- Rules or Script  ----------------------------
-#undef  USE_RULES
 #define USE_SCRIPT
-#define USE_SCRIPT_FATFS 4
-#define FAT_SCRIPT_SIZE 8192
-#define JPEG_PICTS
-#define USE_SDCARD
-#define USE_UFILESYS
-#define GUI_TRASH_FILE
-#define SAY_TIME
-#define USE_WEBRADIO
-
 #ifdef USE_SCRIPT
+  #undef USE_RULES
+  #define MAXVARS 75
+  #define MAXSVARS 15
+  #define MAXFILT 10
   #define UFSYS_SIZE 8192
   #define USE_SCRIPT_TASK
   #define LARGE_ARRAYS
   #define SCRIPT_LARGE_VNBUFF
   #define USE_SCRIPT_GLOBVARS
   #define USE_SCRIPT_SUB_COMMAND
-  #define MAXFILT 10
   #define USE_ANGLE_FUNC
-  #define MAXVARS 75
-  #define MAXSVARS 15
   #define SCRIPT_FULL_WEBPAGE
   #define SCRIPT_GET_HTTPS_JP
   #define USE_GOOGLE_CHARTS
 #endif  // USE_SCRIPT
-
-// -- Optional modules ----------------------------
-//#define USE_DEVICE_GROUPS                        // Add support for device groups (+5k6 code)
-
-// -- Optional light modules ----------------------
-//#define USE_WS2812                               // WS2812 Led string using library NeoPixelBus (+5k code, +1k mem, 232 iram) - Disable by //
-//  #define USE_WS2812_DMA                         // DMA supports only GPIO03 (= Serial RXD) (+1k mem). When USE_WS2812_DMA is enabled expect Exceptions on Pow
-  #define USE_WS2812_HARDWARE  NEO_HW_WS2812     // Hardware type (NEO_HW_WS2812, NEO_HW_WS2812X, NEO_HW_WS2813, NEO_HW_SK6812, NEO_HW_LC8812, NEO_HW_APA106)
-  #define USE_WS2812_CTYPE     NEO_GRB           // Color type (NEO_RGB, NEO_GRB, NEO_BRG, NEO_RBG, NEO_RGBW, NEO_GRBW)
-
-// -- Counter input -------------------------------
-//#define USE_COUNTER                              // Enable inputs as counter (+0k8 code)
-
-// -- Internal Analog input -----------------------
-#define USE_ADC                                    // Add support for ADC on GPIO32 to GPIO39
-
-// -- I2C sensors ---------------------------------
-#define USE_I2C                                  // I2C using library wire (+10k code, 0k2 mem, 124 iram)
-#define USE_BMA423
-
-#define USE_BMP                                // [I2cDriver10] Enable BMP085/BMP180/BMP280/BME280 sensors (I2C addresses 0x76 and 0x77) (+4k4 code)
-
-#define USE_SPI
-#define USE_DISPLAY
-    #define USE_DISPLAY_MODES1TO5
-#define SHOW_SPLASH
-#define USE_AWATCH
-#define USE_DISPLAY_ILI9342
-#define USE_TOUCH_BUTTONS
-#define MAXBUTTONS 16
-
-// -- Serial sensors ------------------------------
-#define USE_SERIAL_BRIDGE                        // Add support for software Serial Bridge (+0k8 code)
-
-// -- One wire sensors ----------------------------
-//#define USE_DS18x20                              // Add support for DS18x20 sensors with id sort, single scan and read retry (+2k6 code)
-//  #define W1_PARASITE_POWER                      // Optimize for parasite powered sensors
-
-// -- Low level interface devices -----------------
-//#define USE_DHT                                  // Add support for DHT11, AM2301 (DHT21, DHT22, AM2302, AM2321) and SI7021 Temperature and Humidity sensor (1k6 code)
-
-// -- IR Remote features - subset of IR protocols --------------------------
-//#define USE_IR_REMOTE                            // Send IR remote commands using library IRremoteESP8266 and ArduinoJson (+4k3 code, 0k3 mem, 48 iram)
-  #define USE_IR_SEND_NEC                        // Support IRsend NEC protocol
-  #define USE_IR_SEND_RC5                        // Support IRsend Philips RC5 protocol
-  #define USE_IR_SEND_RC6                        // Support IRsend Philips RC6 protocol
-
-  #define USE_IR_RECEIVE                         // Support for IR receiver (+7k2 code, 264 iram)
-    #define IR_RCV_BUFFER_SIZE      100          // Max number of packets allowed in capture buffer (default 100 (*2 bytes ram))
-    #define IR_RCV_TIMEOUT          15           // Number of milli-Seconds of no-more-data before we consider a message ended (default 15)
-    #define IR_RCV_MIN_UNKNOWN_SIZE 6            // Set the smallest sized "UNKNOWN" message packets we actually care about (default 6, max 255)
-
-#define USE_SENDMAIL
-#define USE_ESP32MAIL
 
 #define USE_BLE_ESP32                            // Enable new BLE driver
 #define USE_MI_ESP32
