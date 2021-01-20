@@ -196,12 +196,6 @@ void alt_eeprom_readBytes(uint32_t adr, uint32_t len, uint8_t *buf) {
 
 #include "FS.h"
 
-#define FS_FILE_WRITE "w"
-#define FS_FILE_READ "r"
-#define FS_FILE_APPEND "a"
-
-
-
 #if USE_SCRIPT_FATFS==-1
 #ifdef ESP32
 //#include "FS.h"
@@ -306,7 +300,7 @@ extern FS *ufsp;
 #ifdef USE_DISPLAY
 #ifdef USE_TOUCH_BUTTONS
 #include <renderer.h>
-extern VButton *buttons[MAXBUTTONS];
+extern VButton *buttons[MAX_TOUCH_BUTTONS];
 #endif
 #endif
 
@@ -3050,7 +3044,7 @@ chknext:
         if (!strncmp(vname, "tbut[", 5)) {
           GetNumericArgument(vname + 5, OPER_EQU, &fvar, 0);
           uint8_t index = fvar;
-          if (index<1 || index>MAXBUTTONS) index = 1;
+          if (index<1 || index>MAX_TOUCH_BUTTONS) index = 1;
           index--;
           if (buttons[index]) {
             fvar = buttons[index]->vpower.on_off;
@@ -7491,7 +7485,7 @@ bool Xdrv10(uint8_t function)
 
 #endif
 
-#endif // UFILESYSTEM
+#endif // USE_UFILESYS
 
 
 // indicates scripter enabled (use rules[][] as single array)
