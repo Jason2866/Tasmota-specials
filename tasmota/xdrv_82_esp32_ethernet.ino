@@ -18,6 +18,7 @@
 */
 
 #ifdef ESP32
+#if CONFIG_IDF_TARGET_ESP32
 #ifdef USE_ETHERNET
 /*********************************************************************************************\
  * Ethernet support for ESP32
@@ -37,14 +38,14 @@
  * GPIO23 = ETH MDC
  * #define ETH_TYPE          ETH_PHY_LAN8720
  * #define ETH_CLKMODE       ETH_CLOCK_GPIO17_OUT
- * #define ETH_ADDR          0
+ * #define ETH_ADDRESS       0
  *
  * {"NAME":"wESP32","GPIO":[0,0,1,0,1,1,0,0,1,1,1,1,5568,5600,1,0,0,0,0,1,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,1],"FLAG":0,"BASE":1}
  * GPIO16 = ETH MDC
  * GPIO17 = ETH MDIO
  * #define ETH_TYPE          ETH_PHY_LAN8720
  * #define ETH_CLKMODE       ETH_CLOCK_GPIO0_IN
- * #define ETH_ADDR          0
+ * #define ETH_ADDRESS       0
  *
  * {"NAME":"WT32-ETH01","GPIO":[1,1,1,1,1,1,0,0,1,0,1,1,3840,576,5600,0,0,0,0,5568,0,0,0,0,0,0,0,0,1,1,0,1,1,0,0,1],"FLAG":0,"BASE":1}
  * GPIO16 = Force Hi
@@ -52,7 +53,7 @@
  * GPIO23 = ETH MDC
  * #define ETH_TYPE          ETH_PHY_LAN8720
  * #define ETH_CLKMODE       ETH_CLOCK_GPIO0_IN
- * #define ETH_ADDR          1
+ * #define ETH_ADDRESS       1
  *
 \*********************************************************************************************/
 
@@ -65,8 +66,8 @@
 
 //********************************************************************************************
 
-#ifndef ETH_ADDR
-#define ETH_ADDR          0                      // esp_eth.h eth_phy_base_t:   0 = PHY0 .. 31 = PHY31
+#ifndef ETH_ADDRESS
+#define ETH_ADDRESS       0                      // esp_eth.h eth_phy_base_t:   0 = PHY0 .. 31 = PHY31
 #endif
 
 #ifndef ETH_TYPE
@@ -221,4 +222,5 @@ bool Xdrv82(uint8_t function) {
 }
 
 #endif  // USE_ETHERNET
+#endif  // CONFIG_IDF_TARGET_ESP32
 #endif  // ESP32
