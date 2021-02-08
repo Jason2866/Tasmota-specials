@@ -44,7 +44,7 @@ jobs:
     - uses: actions/upload-artifact@v2
       with:
         name: firmware
-        path: ./build_output/firmware
+        path: ./build_output
 
   tasmota-gps:
     needs: tasmota_pull
@@ -66,7 +66,7 @@ jobs:
     - uses: actions/upload-artifact@v2
       with:
         name: firmware
-        path: ./build_output/firmware
+        path: ./build_output
 
   tasmota-battery:
     needs: tasmota_pull
@@ -88,7 +88,7 @@ jobs:
     - uses: actions/upload-artifact@v2
       with:
         name: firmware
-        path: ./build_output/firmware
+        path: ./build_output
 
   tasmota-scripting:
     needs: tasmota_pull
@@ -110,7 +110,7 @@ jobs:
     - uses: actions/upload-artifact@v2
       with:
         name: firmware
-        path: ./build_output/firmware
+        path: ./build_output
 
   tasmota-mega:
     needs: tasmota_pull
@@ -132,7 +132,7 @@ jobs:
     - uses: actions/upload-artifact@v2
       with:
         name: firmware
-        path: ./build_output/firmware
+        path: ./build_output
 
   tasmota-thermostat:
     needs: tasmota_pull
@@ -154,7 +154,7 @@ jobs:
     - uses: actions/upload-artifact@v2
       with:
         name: firmware
-        path: ./build_output/firmware
+        path: ./build_output
 
   tasmota-fullrules:
     needs: tasmota_pull
@@ -176,7 +176,7 @@ jobs:
     - uses: actions/upload-artifact@v2
       with:
         name: firmware
-        path: ./build_output/firmware
+        path: ./build_output
 
   tasmota-platinum:
     needs: tasmota_pull
@@ -198,7 +198,7 @@ jobs:
     - uses: actions/upload-artifact@v2
       with:
         name: firmware
-        path: ./build_output/firmware
+        path: ./build_output
 
   tasmota-minicustom:
     needs: tasmota_pull
@@ -220,7 +220,7 @@ jobs:
     - uses: actions/upload-artifact@v2
       with:
         name: firmware
-        path: ./build_output/firmware
+        path: ./build_output
 
   tasmota32-core2:
     needs: tasmota_pull
@@ -242,7 +242,7 @@ jobs:
     - uses: actions/upload-artifact@v2
       with:
         name: firmware
-        path: ./build_output/firmware
+        path: ./build_output
 
   tasmota32-zigbee:
     needs: tasmota_pull
@@ -264,7 +264,7 @@ jobs:
     - uses: actions/upload-artifact@v2
       with:
         name: firmware
-        path: ./build_output/firmware
+        path: ./build_output
 
   tasmota32-gps:
     needs: tasmota_pull
@@ -286,7 +286,7 @@ jobs:
     - uses: actions/upload-artifact@v2
       with:
         name: firmware
-        path: ./build_output/firmware
+        path: ./build_output
 
   tasmota32-battery:
     needs: tasmota_pull
@@ -308,7 +308,7 @@ jobs:
     - uses: actions/upload-artifact@v2
       with:
         name: firmware
-        path: ./build_output/firmware
+        path: ./build_output
 
   tasmota32-scripting:
     needs: tasmota_pull
@@ -330,7 +330,7 @@ jobs:
     - uses: actions/upload-artifact@v2
       with:
         name: firmware
-        path: ./build_output/firmware
+        path: ./build_output
 
   tasmota32-mega:
     needs: tasmota_pull
@@ -352,7 +352,7 @@ jobs:
     - uses: actions/upload-artifact@v2
       with:
         name: firmware
-        path: ./build_output/firmware
+        path: ./build_output
 
   tasmota32-ethernet:
     needs: tasmota_pull
@@ -374,7 +374,7 @@ jobs:
     - uses: actions/upload-artifact@v2
       with:
         name: firmware
-        path: ./build_output/firmware
+        path: ./build_output
 
   tasmota32solo1:
     needs: tasmota_pull
@@ -396,7 +396,7 @@ jobs:
     - uses: actions/upload-artifact@v2
       with:
         name: firmware
-        path: ./build_output/firmware
+        path: ./build_output
 
   tasmota32-fullrules:
     needs: tasmota_pull
@@ -418,7 +418,7 @@ jobs:
     - uses: actions/upload-artifact@v2
       with:
         name: firmware
-        path: ./build_output/firmware
+        path: ./build_output
 
   tasmota32-platinum:
     needs: tasmota_pull
@@ -440,7 +440,7 @@ jobs:
     - uses: actions/upload-artifact@v2
       with:
         name: firmware
-        path: ./build_output/firmware
+        path: ./build_output
 
   tasmota32-minicustom:
     needs: tasmota_pull
@@ -463,7 +463,7 @@ jobs:
     - uses: actions/upload-artifact@v2
       with:
         name: firmware
-        path: ./build_output/firmware
+        path: ./build_output
 
   Upload:
     needs: [tasmota-zigbee, tasmota-fullrules, tasmota-platinum, tasmota-minicustom, tasmota32-scripting, tasmota32-mega, tasmota32-fullrules, tasmota32-platinum, tasmota32-minicustom, tasmota32solo1, tasmota32-ethernet, tasmota32-gps, tasmota32-battery, tasmota32-core2]
@@ -487,9 +487,11 @@ jobs:
         mkdir -p ./firmware/tasmota32/other
         mkdir -p ./firmware/tasmota32/ESP32_needed_files/
         mkdir -p ./firmware/tasmota32/Odroid_go_and_core2_needed_files/
-        mv ./mv_firmware/README.md ./
-        mv ./mv_firmware/tasmota32* ./firmware/tasmota32/other/
-        mv ./mv_firmware/* ./firmware/tasmota/other/
+        mkdir -p ./firmware/map
+        mv ./mv_firmware/map/* ./firmware/map/
+        mv ./mv_firmware/firmware/README.md ./
+        mv ./mv_firmware/firmware/tasmota32* ./firmware/tasmota32/other/
+        mv ./mv_firmware/firmware/* ./firmware/tasmota/other/
         mv ./tools/Esptool/ESP32/*.* ./firmware/tasmota32/ESP32_needed_files/
         mv ./tools/Esptool/Odroid_go_and_core2/*.* ./firmware/tasmota32/Odroid_go_and_core2_needed_files/
     - name: Commit files  # transfer the new binaries into the repository
