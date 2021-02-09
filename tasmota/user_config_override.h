@@ -19,10 +19,16 @@ ooooo     ooo ooooo      ooo oooooooooo.   oooooooooooo oooooooooooo ooooo ooooo
 #ifdef CUSTOM_CONFIG_REMOVALS  // ******************************************************************
 #warning **** Removed some defines to save code space ****
 
+#undef USER_TEMPLATE
+
 #undef USE_ARDUINO_OTA                          // Disable support for Arduino OTA (+13k code)
 #undef USE_DOMOTICZ                             // Disable Domoticz (+6k code, +0.3k mem)
 #undef USE_HOME_ASSISTANT                       // Disable Home Assistant Discovery Support (+7k code)
 
+//#undef MQTT_TELE_RETAIN                         // Tele messages may send retain flag (0 = off, 1 = on)
+//#undef MQTT_CLEAN_SESSION                       // Mqtt clean session connection (0 = No clean session, 1 = Clean session (default))
+#undef USE_TLS
+#undef USE_ZBBRIDGE_TLS
 #undef USE_MQTT_TLS                             // Use TLS for MQTT connection (+34.5k code, +7.0k mem and +4.8k additional during connection handshake)
   #undef USE_MQTT_TLS_CA_CERT                   // Force full CA validation instead of fingerprints, slower, but simpler to use (+2.2k code, +1.9k mem during connection handshake)
   #undef USE_MQTT_TLS_FORCE_EC_CIPHER           // Force Elliptic Curve cipher (higher security) required by some servers (automatically enabled with USE_MQTT_AWS_IOT) (+11.4k code, +0.4k mem)
@@ -43,19 +49,21 @@ ooooo     ooo ooooo      ooo oooooooooo.   oooooooooooo oooooooooooo ooooo ooooo
 #undef USE_TIMERS_WEB                           // Disable timer webpage support (+4k5 code)
 #undef USE_SUNRISE                              // Disable support for Sunrise and sunset tools (+16k)
 
-// -- Compression ---------------------------------
 #undef USE_UNISHOX_COMPRESSION                  // Disable support for string compression in Rules or Scripts
 
 #undef USE_RULES                                // Disable support for rules (+4k4 code)
+  #undef USE_RULES_COMPRESSION                  // Disable Compresses rules in Flash at about ~50% (+3.8k code)
   #undef USE_EXPRESSION                         // Disable support for expression evaluation in rules (+3k2 code, +64 bytes mem)
     #undef SUPPORT_IF_STATEMENT                 // Disable support for IF statement in rules (+4k2 code, -332 bytes mem)
   #undef SUPPORT_MQTT_EVENT                     // Support trigger event with MQTT subscriptions (+3k5 code)
 
 #undef USE_SCRIPT                               // Disable support for script
+#undef USE_SML_M                                // Disable SML support optional using script
   #undef USE_SCRIPT_FATFS                       // Disable support for script storage on SD card (+12k code, +4k mem)
 
 #undef ROTARY_V1                                // Disable support for Rotary Encoder as used in MI Desk Lamp (+0k8 code)
-  #undef ROTARY_MAX_STEPS                       // Rotary step boundary
+#undef ROTARY_MAX_STEPS                         // Rotary step boundary
+
 #undef USE_SONOFF_RF                            // Add support for Sonoff Rf Bridge
   #undef USE_RF_FLASH                           // Add support for flashing the EFM8BB1 chip on the Sonoff RF Bridge. C2CK must be connected to GPIO4, C2D to GPIO5 on the PCB (+3k code)
 #undef USE_SONOFF_SC                            // Disable support for Sonoff Sc (+1k1 code)
@@ -72,16 +80,19 @@ ooooo     ooo ooooo      ooo oooooooooo.   oooooooooooo oooooooooooo ooooo ooooo
 #undef USE_DEVICE_GROUPS                        // Add support for device groups (+4k code)
 #undef USE_PWM_DIMMER                           // Add support for MJ-SD01/acenx/NTONPOWER PWM dimmers (+4k5 code)
   #undef USE_PWM_DIMMER_REMOTE                  // Add support for remote switches to PWM Dimmer, also adds device groups support (+0k7 code, also includes device groups)
-#undef USE_SHELLY_DIMMER                        // Add support for Shelly Dimmer (+3k code)
-  #undef SHELLY_CMDS                            // Add command to send co-processor commands (+0k3 code)
-#undef SHELLY_FW_UPGRADE                        // Add firmware upgrade option for co-processor (+3k4 code)
-  #undef SHELLY_VOLTAGE_MON                     // Add support for reading voltage and current measurment (-0k0 code)
 #undef USE_KEELOQ                               // Add support for controling Jarolift rollers by Keeloq algorithm
 #undef USE_SONOFF_D1                            // Add support for Sonoff D1 Dimmer
+#undef USE_THERMOSTAT                           // Add support for Thermostat (+9k code)
+#undef USE_SHELLY_DIMMER                        // Add support for Shelly Dimmer (+2k2 code)
+  #undef SHELLY_CMDS                            // Add command to send co-processor commands (+0k4 code)
+  #undef SHELLY_FW_UPGRADE                      // Add firmware upgrade option for co-processor (+30k code, +5k mem)
+  #undef SHELLY_VOLTAGE_MON                     // Add support for reading voltage and current measurment (+?? code)
 
 // -- Optional light modules ---------------------
+//#undef USE_LIGHT                                // Disable all light
 #undef USE_WS2812                               // Disable WS2812 Led string using library NeoPixelBus (+5k code, +1k mem, 232 iram) - Disable by //
   #undef USE_WS2812_DMA                         // Disable DMA supports only GPIO03 (= Serial RXD) (+1k mem). When USE_WS2812_DMA is enabled expect Exceptions on Pow
+  #undef USE_WS2812_INVERTED                    // Disable inverted data signal
   #undef USE_WS2812_HARDWARE                    // Hardware type (NEO_HW_WS2812, NEO_HW_WS2812X, NEO_HW_WS2813, NEO_HW_SK6812, NEO_HW_LC8812, NEO_HW_APA106)
   #undef USE_WS2812_CTYPE                       // WS2812 Color type (NEO_RGB, NEO_GRB, NEO_BRG, NEO_RBG, NEO_RGBW, NEO_GRBW)
 #undef USE_MY92X1                               // Add support for MY92X1 RGBCW led controller as used in Sonoff B1 and Ailight
@@ -89,6 +100,7 @@ ooooo     ooo ooooo      ooo oooooooooo.   oooooooooooo oooooooooooo ooooo ooooo
 #undef USE_SM2135                               // Add support for SM2135 RGBCW led control as used in Action LSC (+0k6 code)
 #undef USE_SONOFF_L1                            // Add support for Sonoff L1 led control
 #undef USE_ELECTRIQ_MOODL                       // Add support for ElectriQ iQ-wifiMOODL RGBW LED controller
+#undef USE_LIGHT_PALETTE                        // Add support for color palette (+0k9 code)
 
 #undef USE_COUNTER                              // Disable counters
 #undef USE_ADC_VCC
@@ -127,6 +139,7 @@ ooooo     ooo ooooo      ooo oooooooooo.   oooooooooooo oooooooooooo ooooo ooooo
 #undef USE_SPS30                                // Disable Sensiron SPS30 particle sensor (I2C address 0x69) (+1.7 code)
 #undef USE_ADE7953                              // Disable ADE7953 Energy monitor as used on Shelly 2.5 (I2C address 0x38) (+1k5)
 #undef USE_VL53L0X                              // Disable VL53L0x time of flight sensor (I2C address 0x29) (+4k code)
+#undef USE_VL53L1X                              // Disable support for VL53L1X sensor (I2C address 0x29) using Pololu VL53L1X library (+2k9 code)
 #undef USE_MLX90614                             // Disable MLX90614 ir temp sensor (I2C address 0x5a) (+0.6k code)
 #undef USE_CHIRP                                // Disable CHIRP soil moisture sensor (variable I2C address, default 0x20)
 #undef USE_PAJ7620                              // Disable PAJ7620 gesture sensor (I2C address 0x73) (+2.5k code)
@@ -137,50 +150,58 @@ ooooo     ooo ooooo      ooo oooooooooo.   oooooooooooo oooooooooooo ooooo ooooo
 #undef USE_AHT1x                                // Disable AHT10/15 humidity and temperature sensor (I2C address 0x38) (+0k8 code)
 #undef USE_WEMOS_MOTOR_V1                       // Disable Wemos motor driver V1 ()
 #undef USE_HDC1080                              // Disable HDC1080 temperature/humidity sensor (I2C address 0x40) (+1k5 code)
-#undef USE_DISPLAY                            // Add I2C Display Support (+2k code)
-  #undef USE_DISPLAY_MODES1TO5                // Enable display mode 1 to 5 in addition to mode 0
-  #undef USE_DISPLAY_LCD                      // [DisplayModel 1] [I2cDriver3] Enable Lcd display (I2C addresses 0x27 and 0x3F) (+6k code)
-  #undef USE_DISPLAY_SSD1306                  // [DisplayModel 2] [I2cDriver4] Enable SSD1306 Oled 128x64 display (I2C addresses 0x3C and 0x3D) (+16k code)
-  #undef USE_DISPLAY_MATRIX                   // [DisplayModel 3] [I2cDriver5] Enable 8x8 Matrix display (I2C adresseses see below) (+11k code)
-    #undef MTX_ADDRESS1                       // [DisplayAddress1] I2C address of first 8x8 matrix module
-    #undef MTX_ADDRESS2                       // [DisplayAddress2] I2C address of second 8x8 matrix module
-    #undef MTX_ADDRESS3                       // [DisplayAddress3] I2C address of third 8x8 matrix module
-    #undef MTX_ADDRESS4                       // [DisplayAddress4] I2C address of fourth 8x8 matrix module
-    #undef MTX_ADDRESS5                       // [DisplayAddress5] I2C address of fifth 8x8 matrix module
-    #undef MTX_ADDRESS6                       // [DisplayAddress6] I2C address of sixth 8x8 matrix module
-    #undef MTX_ADDRESS7                       // [DisplayAddress7] I2C address of seventh 8x8 matrix module
-    #undef MTX_ADDRESS8                       // [DisplayAddress8] I2C address of eigth 8x8 matrix module
-  #undef USE_DISPLAY_SEVENSEG                 // [DisplayModel 11] [I2cDriver47] Enable sevenseg display (I2C 0x70-0x77) (<+11k code)
-    #undef SEVENSEG_ADDRESS1                 // [DisplayAddress1] I2C address of first sevenseg matrix module
- #undef USE_DISPLAY_SH1106                   // [DisplayModel 7] [I2cDriver6] Enable SH1106 Oled 128x64 display (I2C addresses 0x3C and 0x3D)
+#undef USE_IAQ                                  // Disable iAQ-core air quality sensor (I2C address 0x5a) (+0k6 code)
+#undef USE_AS3935                               // Disable AS3935 Franklin Lightning Sensor (I2C address 0x03) (+5k4 code)
+#undef USE_VEML6075                             // Disable VEML6075 UVA/UVB/UVINDEX Sensor (I2C address 0x10) (+2k1 code)
+#undef USE_VEML7700                             // Disable VEML7700 Ambient Light sensor (I2C addresses 0x10) (+4k5 code)
+#undef USE_MCP9808                              // Disable MCP9808 temperature sensor (I2C addresses 0x18 - 0x1F) (+0k9 code)
+#undef USE_HP303B                               // Disable HP303B temperature and pressure sensor (I2C address 0x76 or 0x77) (+6k2 code)
+#undef USE_MLX90640                             // Disable MLX90640 IR array temperature sensor (I2C address 0x33) (+4k9 code)
+#undef USE_EZOPH                                // Disable support for EZO's pH sensor (+0k3 code) - Shared EZO code required for any EZO device (+1k2 code)
+#undef USE_EZOORP                               // Disable support for EZO's ORP sensor (+0k3 code) - Shared EZO code required for any EZO device (+1k2 code)
+#undef USE_EZORTD                               // Disable support for EZO's RTD sensor (+0k2 code) - Shared EZO code required for any EZO device (+1k2 code)
+#undef USE_EZOHUM                               // Disable support for EZO's HUM sensor (+0k3 code) - Shared EZO code required for any EZO device (+1k2 code)
+#undef USE_EZOEC                                // Disable support for EZO's EC sensor (+0k3 code) - Shared EZO code required for any EZO device (+1k2 code)
+#undef USE_EZOCO2                               // Disable support for EZO's CO2 sensor (+0k3 code) - Shared EZO code required for any EZO device (+1k2 code)
 
+#undef USE_SPI                                  // Disable SPI using GPIO12(MISO), GPIO13(MOSI) and GPIO14(CLK) in addition to two user selectable GPIOs(CS and DC)
+#undef USE_RC522                                // Disable support for MFRC522 13.56Mhz Rfid reader (+6k code)
+  #undef USE_RC522_DATA_FUNCTION                // Disable support for reading data block content (+0k4 code)
+  #undef USE_RC522_TYPE_INFORMATION             // Disable support for showing card type (+0k4 code)
+
+#undef USE_DISPLAY                              // Disable displays
+#undef USE_DISPLAY_MODES1TO5                    // Disable display mode 1 to 5 in addition to mode 0
 
 #undef USE_MHZ19                                // Disable support for MH-Z19 CO2 sensor (+2k code)
 #undef USE_SENSEAIR                             // Disable support for SenseAir K30, K70 and S8 CO2 sensor (+2k3 code)
 #undef USE_PMS5003                              // Disable support for PMS5003 and PMS7003 particle concentration sensor (+1k3 code)
 #undef USE_NOVA_SDS                             // Disable support for SDS011 and SDS021 particle concentration sensor (+0k7 code)
 #undef USE_HPMA                                 // Disable support for Honeywell HPMA115S0 particle concentration sensor (+1k4)
+#undef USE_SR04                                 // Disable support for HC-SR04 ultrasonic devices (+1k code)
+#undef USE_DYP                                  // Disable support for DYP ME-007 ultrasonic distance sensor, serial port version (+0k5 code)
 #undef USE_SERIAL_BRIDGE                        // Disable support for software Serial Bridge (+0k8 code)
 #undef USE_MP3_PLAYER                           // Disable Use of the DFPlayer Mini MP3 Player RB-DFR-562 commands: play, volume and stop
 #undef USE_AZ7798                               // Disable support for AZ-Instrument 7798 CO2 datalogger (+1k6 code)
 #undef USE_PN532_HSU                            // Disable support for PN532 using HSU (Serial) interface (+1k8 code, 140 bytes mem)
-  #undef USE_PN532_CAUSE_EVENTS                 // Cause event execution for PN532_UID= and PN532_DATA=[if defined] (+ 30 bytes code)
   #undef USE_PN532_DATA_FUNCTION                // Disable sensor40 command support for erase, setting data block content (+1k7 code, 388 bytes mem)
   #undef USE_PN532_DATA_RAW                     // Allow DATA block to be used by non-alpha-numberic data (+ 80 bytes code, 48 bytes ram)
 #undef USE_RDM6300                              // Disable support for RDM6300 125kHz RFID Reader (+0k8)
 #undef USE_IBEACON                              // Disable support for bluetooth LE passive scan of ibeacon devices (uses HM17 module)
 #undef USE_GPS                                  // Disable support for GPS and NTP Server for becoming Stratus 1 Time Source (+ 3.1kb flash, +132 bytes RAM)
   #undef USE_FLOG                               // Disable support for GPS logging in OTA's Flash (Experimental) (+ 2.9kb flash, +8 bytes RAM)
-#undef USE_HM10                                 // Disable support for HM-10 as a BLE-bridge for the LYWSD03 (+5k1 code)
-#undef USE_MI_ESP32                             // (ESP32 only) Disable support for ESP32 as a BLE-bridge (+9k2 mem, +292k flash)
-#undef USE_HRXL                                 // Disable support for MaxBotix HRXL-MaxSonar ultrasonic range finders (+0k7)
+#undef USE_HM10                                 // (ESP8266 only) Disable support for HM-10 as a BLE-bridge for the LYWSD03 (+5k1 code)
+#undef USE_HRXL                                 // (ESP32 only) Disable support for MaxBotix HRXL-MaxSonar ultrasonic range finders (+0k7)
+#undef USE_MI_ESP32                             // Disable support for ESP32 as a BLE-bridge (+9k2 mem, +292k flash)
+#undef USE_TASMOTA_CLIENT                       // Disable support for Arduino Uno/Pro Mini via serial interface including flashing (+2k3 code, 44 mem)
+#undef USE_OPENTHERM                            // Disable support for OpenTherm (+15k code)
+#undef USE_MIEL_HVAC                            // Disable support for Mitsubishi Electric HVAC (+5k code)
+#undef USE_AS608                                // Disable support for AS608 optical and R503 capacitive fingerprint sensor (+3k code)
+  #undef USE_AS608_MESSAGES                     // Disable verbose error messages (+0k4 code)
 
 // Power monitoring sensors ----------------------
+#undef USE_ENERGY_SENSOR                        // Disable energy sensors (+14k code)
 #undef USE_ENERGY_MARGIN_DETECTION              // Disable support for Energy Margin detection (+1k6 code)
   #undef USE_ENERGY_POWER_LIMIT                 // Disable additional support for Energy Power Limit detection (+1k2 code)
-#undef USE_ENERGY_SENSOR
-#undef USE_HLW8012
-#undef USE_CSE7766
 #undef USE_PZEM004T                             // Disable support for PZEM004T Energy monitor (+2k code)
 #undef USE_PZEM_AC                              // Disable support for PZEM014,016 Energy monitor (+1k1 code)
 #undef USE_PZEM_DC                              // Disable support for PZEM003,017 Energy monitor (+1k1 code)
@@ -190,15 +211,21 @@ ooooo     ooo ooooo      ooo oooooooooo.   oooooooooooo oooooooooooo ooooo ooooo
 #undef USE_DDS2382                              // Disable support for Hiking DDS2382 Modbus energy monitor (+0k6 code)
 #undef USE_DDSU666                              // Disable support for Chint DDSU666 Modbus energy monitor (+0k6 code)
 #undef USE_SOLAX_X1                             // Disable support for Solax X1 series Modbus log info (+4k1 code)
-#undef USE_LE01MR                               // DIsable support for F&F LE-01MR modbus energy meter
+#undef USE_LE01MR                               // Disable support for F&F LE-01MR modbus energy meter
+#undef USE_BL0940                               // Disable support for BL0940 Energy monitor as used in Blitzwolf SHP-10 (+1k6 code)
+#undef USE_TELEINFO                             // Disable support for Teleinfo via serial RX interface (+5k2 code, +168 RAM + SmartMeter LinkedList Values RAM)
+#undef USE_IEM3000                              // Disable support for Schneider Electric iEM3000-Modbus series energy monitor (+0k8 code)
+#undef USE_IEM3000                              // Disable support for Schneider Electric iEM3000-Modbus series energy monitor (+0k8 code)
 
 // -- Low level interface devices -----------------
 #undef USE_DHT                                  // Disable support for DHT11, AM2301 (DHT21, DHT22, AM2302, AM2321) and SI7021 Temperature and Humidity sensor
 
 #undef USE_MAX31855                             // Disable MAX31855 K-Type thermocouple sensor using softSPI
 #undef USE_MAX31865                             // Disable support for MAX31865 RTD sensors using softSPI
+#undef USE_LMT01                                // Disable support for TI LMT01 temperature sensor, count pulses on single GPIO (+0k5 code)
 
 // -- IR Remote features --------------------------
+#undef USE_IR_REMOTE_FULL                       // Activate all protocols from IRremoteESP8266 - activating this option will ignore all other USE_IR_REMOTE_* options and set them all to active
 #undef USE_IR_REMOTE                            // Send IR remote commands using library IRremoteESP8266 and ArduinoJson (+4k3 code, 0k3 mem, 48 iram)
   #undef USE_IR_SEND_NEC                        // Support IRsend NEC protocol
   #undef USE_IR_SEND_RC5                        // Support IRsend Philips RC5 protocol
@@ -208,10 +235,10 @@ ooooo     ooo ooooo      ooo oooooooooo.   oooooooooooo oooooooooooo ooooo ooooo
 
 // -- Zigbee interface ----------------------------
 #undef USE_ZIGBEE                               // Disable serial communication with Zigbee CC2530 flashed with ZNP
+  #undef USE_ZIGBEE_ZNP                         // Disable ZNP protocol, needed for CC2530 based devices
+  #undef USE_ZIGBEE_EZSP                        // Disable EZSP protocol, needed for EFR32 EmberZNet based devices, like Sonoff Zigbee bridge
 
 // ------------------------------------------------
-
-#undef USE_SR04                                 // Disable support for HC-SR04 ultrasonic devices (+1k code)
 
 #undef USE_TM1638                               // Disable support for TM1638 switches copying Switch1 .. Switch8 (+1k code)
 #undef USE_HX711                                // Disable support for HX711 load cell (+1k5 code)
@@ -219,6 +246,10 @@ ooooo     ooo ooooo      ooo oooooooooo.   oooooooooooo oooooooooooo ooooo ooooo
 
 #undef USE_TX20_WIND_SENSOR                     // Disable support for La Crosse TX20 anemometer (+2k6/0k8 code)
 #undef USE_TX23_WIND_SENSOR                     // Disable support for La Crosse TX23 anemometer (+2k7/1k code)
+
+#undef USE_WINDMETER                            // Add support for analog anemometer
+
+#undef USE_FTC532                               // Add support for FTC532 touch controller (+0k6 code)
 
 #undef USE_RC_SWITCH                            // Disable support for RF transceiver using library RcSwitch (+2k7 code, 460 iram)
 
@@ -229,7 +260,7 @@ ooooo     ooo ooooo      ooo oooooooooo.   oooooooooooo oooooooooooo ooooo ooooo
 #undef USE_HRE                                  // Disable support for Badger HR-E Water Meter (+1k4 code)
 #undef USE_A4988_STEPPER                        // Disable support for A4988 stepper-motor-driver-circuit (+10k5 code)
 
-#undef USE_TASMOTA_CLIENT                       // Disable support for Arduino Uno/Pro Mini via serial interface including flashing (+2k3 code, 44 mem)
+#undef USE_PROMETHEUS                           // Disable support for https://prometheus.io/ metrics exporting over HTTP /metrics endpoint
 
 //#undef DEBUG_TASMOTA_CORE                       // Disable core debug messages
 //#undef DEBUG_TASMOTA_DRIVER                     // Disable driver debug messages
@@ -237,6 +268,8 @@ ooooo     ooo ooooo      ooo oooooooooo.   oooooooooooo oooooooooooo ooooo ooooo
 //#undef DEBUG_TASMOTA_TRACE                      // Disable trace debug messages
 
 #endif  // CUSTOM_CONFIG_REMOVALS *******************************************************************
+
+
 
 
 /*********************************************************************************************\
