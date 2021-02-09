@@ -200,6 +200,8 @@ ooooo     ooo ooooo      ooo oooooooooo.   oooooooooooo oooooooooooo ooooo ooooo
 
 // Power monitoring sensors ----------------------
 #undef USE_ENERGY_SENSOR                        // Disable energy sensors (+14k code)
+#undef USE_HLW8012
+#undef USE_CSE7766
 #undef USE_ENERGY_MARGIN_DETECTION              // Disable support for Energy Margin detection (+1k6 code)
   #undef USE_ENERGY_POWER_LIMIT                 // Disable additional support for Energy Power Limit detection (+1k2 code)
 #undef USE_PZEM004T                             // Disable support for PZEM004T Energy monitor (+2k code)
