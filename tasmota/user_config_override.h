@@ -2096,8 +2096,8 @@ o888o           `YbodP'    o888ooooood8 o888ooooood8 o888o  o888o    `YbodP'    
   #define USE_GOOGLE_CHARTS
 #endif  // USE_SCRIPT
 
-#define USE_BLE_ESP32                            // Enable new BLE driver
-#define USE_MI_ESP32
+//#define USE_BLE_ESP32                            // Enable new BLE driver
+//#define USE_MI_ESP32
  
 //#define USE_IBEACON                              // Add support for bluetooth LE passive scan of ibeacon devices (uses HM17 module)
 
