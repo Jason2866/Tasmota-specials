@@ -1017,7 +1017,7 @@ oo     .d8P `88b    ooo   888  `88b.   888   888              888       888   8 
 #define USE_SCRIPT_WEB_DISPLAY
 #define SCRIPT_FULL_WEBPAGE
 #define SUPPORT_MQTT_EVENT
-//#define USE_SCRIPT_HUE
+#define USE_SCRIPT_HUE
 #define USE_BUTTON_EVENT
 #define SCRIPT_POWER_SECTION
 #define USE_SCRIPT_TIMER
