@@ -1012,29 +1012,34 @@ oo     .d8P `88b    ooo   888  `88b.   888   888              888       888   8 
   #define USE_SCRIPT_COMPRESSION
   #define USE_SCRIPT_JSON_EXPORT
   #define USE_SCRIPT_WEB_DISPLAY
+
+#ifdef ESP8266 
   #define USE_SENDMAIL
-  #ifdef ESP32
-     #define USE_ESP32MAIL
-     #define MAXVARS 75
-     #define MAXSVARS 15
-     #define MAXFILT 10
-     #define UFSYS_SIZE 8192
-     #define USE_SCRIPT_TASK
-     #define LARGE_ARRAYS
-     #define SCRIPT_LARGE_VNBUFF
-     #define USE_SCRIPT_GLOBVARS
-     #define USE_SCRIPT_SUB_COMMAND
-     #define USE_ANGLE_FUNC
-     #define SCRIPT_FULL_WEBPAGE
-     #define SCRIPT_GET_HTTPS_JP
-     #define USE_GOOGLE_CHARTS
-  #endif // ESP32
-  #define USE_SML_M
-  #define USE_SCRIPT_JSON_EXPORT
-  #define USE_SCRIPT_WEB_DISPLAY
+#endif // ESP8266
+
+#ifdef ESP32
+  #define USE_ESP32MAIL
+  #define MAXVARS 75
+  #define MAXSVARS 15
+  #define MAXFILT 10
+  #define UFSYS_SIZE 8192
+  #define USE_SCRIPT_TASK
+  #define LARGE_ARRAYS
+  #define SCRIPT_LARGE_VNBUFF
+  #define USE_SCRIPT_GLOBVARS
+  #define USE_SCRIPT_SUB_COMMAND
+  #define USE_ANGLE_FUNC
   #define SCRIPT_FULL_WEBPAGE
-  #define SUPPORT_MQTT_EVENT
-  //#define USE_SCRIPT_HUE
+  #define SCRIPT_GET_HTTPS_JP
+  #define USE_GOOGLE_CHARTS
+#endif // ESP32
+
+#define USE_SML_M
+#define USE_SCRIPT_JSON_EXPORT
+#define USE_SCRIPT_WEB_DISPLAY
+#define SCRIPT_FULL_WEBPAGE
+#define SUPPORT_MQTT_EVENT
+//#define USE_SCRIPT_HUE
 
 // -- Optional modules ----------------------------
 #define ROTARY_V1                                // Add support for Rotary Encoder as used in MI Desk Lamp (+0k8 code)
