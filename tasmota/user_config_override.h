@@ -993,6 +993,8 @@ oo     .d8P `88b    ooo   888  `88b.   888   888              888       888   8 
 #define USE_HOME_ASSISTANT                       // Enable Home Assistant Discovery Support (+4.1k code, +6 bytes mem)
 #define USE_WEBSERVER                            // Enable web server and Wifi Manager (+66k code, +8k mem)
   #define USE_JAVASCRIPT_ES6                     // Enable ECMAScript6 syntax using less JavaScript code bytes (fails on IE11)
+  #define USE_LIGHT
+  #define USE_WS2812
   #define USE_EMULATION
   #define USE_EMULATION_HUE                      // Enable Hue Bridge emulation for Alexa (+14k code, +2k mem common)
   #define USE_EMULATION_WEMO                     // Enable Belkin WeMo emulation for Alexa (+6k code, +2k mem common)
@@ -1002,16 +1004,23 @@ oo     .d8P `88b    ooo   888  `88b.   888   888              888       888   8 
   #define USE_SUNRISE                            // Add support for Sunrise and sunset tools (+16k)
     #define SUNRISE_DAWN_ANGLE DAWN_NORMAL       // Select desired Dawn Angle from (DAWN_NORMAL, DAWN_CIVIL, DAWN_NAUTIC, DAWN_ASTRONOMIC)
 
- #define SUPPORT_MQTT_EVENT                     // Support trigger event with MQTT subscriptions (+3k5 code)
 
 // -- Compression ---------------------------------
 #define USE_UNISHOX_COMPRESSION                  // Add support for string compression in Rules or Scripts
 
 #undef  USE_RULES
+
 #define USE_SCRIPT                               // Add support for script
-  #define USE_SCRIPT_COMPRESSION
-  #define USE_SCRIPT_JSON_EXPORT
-  #define USE_SCRIPT_WEB_DISPLAY
+#define USE_SCRIPT_COMPRESSION
+#define USE_SML_M
+#define USE_SCRIPT_JSON_EXPORT
+#define USE_SCRIPT_WEB_DISPLAY
+#define SCRIPT_FULL_WEBPAGE
+#define SUPPORT_MQTT_EVENT
+#define USE_SCRIPT_HUE
+#define USE_BUTTON_EVENT
+#define SCRIPT_POWER_SECTION
+#define USE_SCRIPT_TIMER
 
 #ifdef ESP8266 
   #define USE_SENDMAIL
@@ -1029,17 +1038,11 @@ oo     .d8P `88b    ooo   888  `88b.   888   888              888       888   8 
   #define USE_SCRIPT_GLOBVARS
   #define USE_SCRIPT_SUB_COMMAND
   #define USE_ANGLE_FUNC
-  #define SCRIPT_FULL_WEBPAGE
   #define SCRIPT_GET_HTTPS_JP
   #define USE_GOOGLE_CHARTS
+  #define USE_ANGLE_FUNC
 #endif // ESP32
 
-#define USE_SML_M
-#define USE_SCRIPT_JSON_EXPORT
-#define USE_SCRIPT_WEB_DISPLAY
-#define SCRIPT_FULL_WEBPAGE
-#define SUPPORT_MQTT_EVENT
-//#define USE_SCRIPT_HUE
 
 // -- Optional modules ----------------------------
 #define ROTARY_V1                                // Add support for Rotary Encoder as used in MI Desk Lamp (+0k8 code)
