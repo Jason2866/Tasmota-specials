@@ -131,7 +131,7 @@ const uint8_t LIGHT_COLOR_SIZE = 25;   // Char array scolor size
 const char kLightCommands[] PROGMEM = "|"  // No prefix
   // SetOptions synonyms
   D_SO_CHANNELREMAP "|" D_SO_MULTIPWM "|" D_SO_ALEXACTRANGE "|" D_SO_POWERONFADE "|" D_SO_PWMCT "|"
-  D_SO_WHITEBLEND "|" D_SO_VIRTUALCT "|"
+  D_SO_WHITEBLEND "|"
   // Other commands
   D_CMND_COLOR "|" D_CMND_COLORTEMPERATURE "|" D_CMND_DIMMER "|" D_CMND_DIMMER_RANGE "|" D_CMND_DIMMER_STEP "|" D_CMND_LEDTABLE "|" D_CMND_FADE "|"
   D_CMND_RGBWWTABLE "|" D_CMND_SCHEME "|" D_CMND_SPEED "|" D_CMND_WAKEUP "|" D_CMND_WAKEUPDURATION "|"
@@ -150,7 +150,7 @@ const char kLightCommands[] PROGMEM = "|"  // No prefix
 
 SO_SYNONYMS(kLightSynonyms,
   37, 68, 82, 91, 92,
-  105, 106,
+  105,
 );
 
 void (* const LightCommand[])(void) PROGMEM = {
@@ -505,9 +505,6 @@ class LightStateClass {
       uint8_t prev_bri = _briRGB;
       _briRGB = bri_rgb;
       if (bri_rgb > 0) { addRGBMode(); }
-#ifdef USE_PWM_DIMMER
-      if (PWM_DIMMER == TasmotaGlobal.module_type) PWMDimmerSetBrightnessLeds(-1);
-#endif  // USE_PWM_DIMMER
       return prev_bri;
     }
 
@@ -516,9 +513,6 @@ class LightStateClass {
       uint8_t prev_bri = _briCT;
       _briCT = bri_ct;
       if (bri_ct > 0) { addCTMode(); }
-#ifdef USE_PWM_DIMMER
-      if (PWM_DIMMER == TasmotaGlobal.module_type) PWMDimmerSetBrightnessLeds(-1);
-#endif  // USE_PWM_DIMMER
       return prev_bri;
     }
 
@@ -1958,6 +1952,10 @@ void LightSetOutputs(const uint16_t *cur_col_10) {
         if (!Settings.flag4.zerocross_dimmer) {
           analogWrite(Pin(GPIO_PWM1, i), bitRead(TasmotaGlobal.pwm_inverted, i) ? Settings.pwm_range - cur_col : cur_col);
         }
+#ifdef USE_PWM_DIMMER
+        // Animate brightness LEDs to follow PWM dimmer brightness
+        if (PWM_DIMMER == TasmotaGlobal.module_type) PWMDimmerSetBrightnessLeds(change10to8(cur_col));
+#endif  // USE_PWM_DIMMER
       }
     }
   }

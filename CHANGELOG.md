@@ -3,7 +3,30 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased] - Development
 
-## [9.2.0.7]
+## [9.3.0.1]
+### Added
+- Animate PWM dimmer brightness LEDs during transitions and with variable brightness (#11076)
+- Commands ``StateRetain`` and ``InfoRetain`` (#11084)
+
+### Changed
+- Remove the need to start filenames with a slash (/) in Ufs commands
+- Removed command ``VirtualCT`` as synonym for ``SetOption106`` (#11049)
+
+### Fixed
+- Web request accepts wrong password (#11039)
+- Ili1942 driver (#11046)
+- ESP32 Mi32 driver (#11048)
+- Shutter driver (#11055)
+- TM1637 driver now needs ``TM1637 CLK`` and ``TM1637 DIO`` to enable (#11057)
+- Sml driver (#11082)
+- Ezo drivers (#11083)
+
+## [Released]
+
+## [9.3.0] 20210219
+- Release Kenneth
+
+## [9.2.0.7] 20210219
 ### Added
 - Support for Device Groups Device Map (#10898)
 - Support for Eastron SDM72D-M three phase 100A Modbus energy meter (#10862)
@@ -131,8 +154,6 @@ All notable changes to this project will be documented in this file.
 - ESP32 LoadStoreError when using ``#define USER_TEMPLATE`` (#9506)
 - Compile error when ``#ifdef USE_IR_RECEIVE`` is disabled regression from 9.1.0.2
 - Prometheus memory leak (#10221)
-
-## [Released]
 
 ## [9.2.0] 20201216
 - Release Julie
