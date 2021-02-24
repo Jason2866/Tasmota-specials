@@ -2,12 +2,14 @@
 
 ## :warning: No support/warranty with these binaries! :warning:
 
-## The special firmware files are [here](https://github.com/Jason2866/Merge/tree/firmware/firmware). Additional needed ESP32 files are [here](https://github.com/Jason2866/Merge/tree/firmware/firmware/tasmota32/ESP32_needed_files)
+## The special firmware files are [here](https://github.com/Jason2866/Tasmota-specials/tree/firmware/firmware). Additional needed ESP32 files are [here](https://github.com/Jason2866/Tasmota-specials/tree/firmware/firmware/tasmota32/ESP32_needed_files)
 
 ## Usual ✨ Tasmota ✨ firmware files are [here](https://github.com/arendst/Tasmota/tree/firmware/firmware)
 
 Command syntax for flashing Tasmota32 firmware on ESP32 via Esptool <br>
 ```esptool.py --chip esp32 --baud 921600 --before default_reset --after hard_reset write_flash -z --flash_mode dout --flash_freq 40m --flash_size detect 0x1000 bootloader_dout_40m.bin 0x8000 partitions.bin 0xe000 boot_app0.bin 0x10000 tasmota32.bin```
+
+or you can use [ESP_Flasher](https://github.com/Jason2866/ESP_Flasher/releases) for flashing ESP8266 **and** ESP32 (Only Windows executable is tested)
 
 ## Build variants:
 
@@ -23,4 +25,3 @@ Command syntax for flashing Tasmota32 firmware on ESP32 via Esptool <br>
 - Tasmota minicustom minimal even smaller (NO Webserver, you have to use mqtt!!)
 - Tasmota Mega at the bleeding edge - Almost every sensor included
 - Tasmota Platinum nearly ALL enabled IT.IS.HUGE! (only for devices with >=4Mb flash)<br>
-
