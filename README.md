@@ -6,7 +6,7 @@
 
 ## Usual ✨ Tasmota ✨ firmware files are [here](https://github.com/arendst/Tasmota/tree/firmware/firmware)
 
-For flashing Tasmota firmware you can use [ESP_Flasher](https://github.com/Jason2866/ESP_Flasher/releases) for flashing ESP8266 **and** ESP32 (Only Windows executable is tested)
+For flashing Tasmota firmware you can use [ESP_Flasher](https://github.com/Jason2866/ESP_Flasher/releases) for flashing ESP8266 **and** ESP32 (Only Windows and Mac executable are tested)
 
 ## Build variants:
 
