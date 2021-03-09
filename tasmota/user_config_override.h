@@ -465,6 +465,9 @@ d'""""""d888' `888'  d8P'  `Y8b   `888'   `Y8b `888'     `8 `888'     `8
 //#define USE_SCRIPT                               // Add support for script
   #define USE_SCRIPT_FATFS 4                     // Add support for script storage on SD card (+12k code, +4k mem)
 
+#define USE_UFILESYS
+#define GUI_TRASH_FILE
+
 // -- Optional modules ----------------------------
 //#define ROTARY_V1                                // Add support for MI Desk Lamp
 //#define USE_SONOFF_RF                            // Add support for Sonoff Rf Bridge
@@ -637,6 +640,8 @@ d'""""""d888' `888'  d8P'  `Y8b   `888'   `Y8b `888'     `8 `888'     `8
   #define USE_ZIGBEE_COALESCE_ATTR_TIMER 350     // timer to coalesce attribute values (in ms)
   #define USE_ZIGBEE_MODELID      "Tasmota Z2T"  // reported "ModelId"      (cluster 0000 / attribute 0005)
   #define USE_ZIGBEE_MANUFACTURER "Tasmota"      // reported "Manufacturer" (cluster 0000 / attribute 0004)
+
+#define USE_CCLOADER
 
 //#define USE_SR04                                 // Add support for HC-SR04 ultrasonic devices (+1k code)
 
