@@ -465,6 +465,9 @@ d'""""""d888' `888'  d8P'  `Y8b   `888'   `Y8b `888'     `8 `888'     `8
 //#define USE_SCRIPT                               // Add support for script
   #define USE_SCRIPT_FATFS 4                     // Add support for script storage on SD card (+12k code, +4k mem)
 
+#define USE_UFILESYS
+#define GUI_TRASH_FILE
+
 // -- Optional modules ----------------------------
 //#define ROTARY_V1                                // Add support for MI Desk Lamp
 //#define USE_SONOFF_RF                            // Add support for Sonoff Rf Bridge
@@ -637,6 +640,8 @@ d'""""""d888' `888'  d8P'  `Y8b   `888'   `Y8b `888'     `8 `888'     `8
   #define USE_ZIGBEE_COALESCE_ATTR_TIMER 350     // timer to coalesce attribute values (in ms)
   #define USE_ZIGBEE_MODELID      "Tasmota Z2T"  // reported "ModelId"      (cluster 0000 / attribute 0005)
   #define USE_ZIGBEE_MANUFACTURER "Tasmota"      // reported "Manufacturer" (cluster 0000 / attribute 0004)
+
+//#define USE_CCLOADER
 
 //#define USE_SR04                                 // Add support for HC-SR04 ultrasonic devices (+1k code)
 
@@ -2519,7 +2524,9 @@ o8o        o888o o888ooooood8  `Y8bood8P'   o88o     o8888o
  #define USE_WEMOS_MOTOR_V1                     // [I2cDriver44] Enable Wemos motor driver V1 ()
  #define USE_HDC1080                            // [I2cDriver45] Enable HDC1080 temperature/humidity sensor (I2C address 0x40) (+1k5 code)
  #define USE_IAQ                                // [I2cDriver46] Enable iAQ-core air quality sensor (I2C address 0x5a) (+0k6 code)
- #define USE_AS3935                              // [I2cDriver48] Enable AS3935 Franklin Lightning Sensor (I2C address 0x03) (+5k4 code)
+ #ifdef  ESP32
+   #define USE_AS3935                              // [I2cDriver48] Enable AS3935 Franklin Lightning Sensor (I2C address 0x03) (+5k4 code)
+ #endif
 
   #define USE_DISPLAY                            // Add I2C Display Support (+2k code)
     // #define USE_DISPLAY_MODES1TO5                // Enable display mode 1 to 5 in addition to mode 0
@@ -2541,25 +2548,18 @@ o8o        o888o o888ooooood8  `Y8bood8P'   o88o     o8888o
 #endif   // USE_I2C
 
 // -- SPI sensors ---------------------------------
- #define USE_SPI                                  // Hardware SPI using GPIO12(MISO), GPIO13(MOSI) and GPIO14(CLK) in addition to two user selectable GPIOs(CS and DC)
-#ifdef USE_SPI
-//  #define USE_NRF24                              // Add SPI support for NRF24L01(+) (+2k6 code)
-  #ifdef USE_NRF24
-    // #define USE_MIBLE                            // BLE-bridge for some Mijia-BLE-sensors (+4k7 code)
-  #else
-    #ifndef USE_DISPLAY
-      #define USE_DISPLAY                        // Add SPI Display support for 320x240 and 480x320 TFT
-    #endif
-       #define USE_DISPLAY_ILI9341                  // [DisplayModel 4] Enable ILI9341 Tft 480x320 display (+19k code)
-       #define USE_DISPLAY_EPAPER_29                // [DisplayModel 5] Enable e-paper 2.9 inch display (+19k code)
-       //#define USE_DISPLAY_EPAPER_42              // [DisplayModel 6] Enable e-paper 4.2 inch display
-       #define USE_DISPLAY_ILI9488                  // [DisplayModel 8]
-       #define USE_DISPLAY_SSD1351                  // [DisplayModel 9]
-       #define USE_DISPLAY_RA8876                   // [DisplayModel 10]
-       #define USE_DISPLAY_ST7789                   // [DisplayModel 12] Enable ST7789 module
-//       #define USE_DISPLAY_SSD1331                  // [DisplayModel 14] Enable SSD1331 module
-#endif  // USE_NRF24
-#endif  // USE_SPI
+#define USE_SPI                                  // Hardware SPI using GPIO12(MISO), GPIO13(MOSI) and GPIO14(CLK) in addition to two user selectable GPIOs(CS and DC)
+#define USE_DISPLAY                        // Add SPI Display support for 320x240 and 480x320 TFT
+  #define USE_DISPLAY_ILI9341                  // [DisplayModel 4] Enable ILI9341 Tft 480x320 display (+19k code)
+  #define USE_DISPLAY_ILI9488                  // [DisplayModel 8]
+  #define USE_DISPLAY_SSD1351                  // [DisplayModel 9]
+  #define USE_DISPLAY_RA8876                   // [DisplayModel 10]
+  #define USE_DISPLAY_ST7789                   // [DisplayModel 12] Enable ST7789 module
+//#define USE_DISPLAY_SSD1331                  // [DisplayModel 14] Enable SSD1331 module
+#ifdef ESP32
+  #define USE_DISPLAY_EPAPER_29              // [DisplayModel 5] Enable e-paper 2.9 inch display (+19k code)
+  #define USE_DISPLAY_EPAPER_42              // [DisplayModel 6] Enable e-paper 4.2 inch display
+#endif // ESP32
 
 // -- Serial sensors ------------------------------
 #define USE_MHZ19                                // Add support for MH-Z19 CO2 sensor (+2k code)
@@ -2575,7 +2575,7 @@ o8o        o888o o888ooooood8  `Y8bood8P'   o88o     o8888o
   #define USE_PN532_DATA_FUNCTION                // Add sensor40 command support for erase, setting data block content (+1k7 code, 388 bytes mem)
   #define USE_PN532_DATA_RAW                     // Allow DATA block to be used by non-alpha-numberic data (+ 80 bytes code, 48 bytes ram)
 #define USE_RDM6300                              // Add support for RDM6300 125kHz RFID Reader (+0k8)
-#define USE_IBEACON                              // Add support for bluetooth LE passive scan of ibeacon devices (uses HM17 module)
+//#define USE_IBEACON                              // Add support for bluetooth LE passive scan of ibeacon devices (uses HM17 module)
 
 #ifdef  ESP8266
 #define USE_HM10                                 // Add support for HM-10 as a BLE-bridge for the LYWSD03 (+5k1 code)
