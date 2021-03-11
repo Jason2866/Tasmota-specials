@@ -1237,7 +1237,7 @@ int ResponseJsonEndEnd(void)
 
 #ifdef ESP8266
 uint16_t GpioConvert(uint8_t gpio) {
-  if (gpio >= ARRAY_SIZE(kGpioConvert)) {
+  if (gpio >= nitems(kGpioConvert)) {
     return AGPIO(GPIO_USER);
   }
   return pgm_read_word(kGpioConvert + gpio);
@@ -1285,7 +1285,7 @@ void ConvertGpios(void) {
 void DumpConvertTable(void) {
   bool jsflg = false;
   uint32_t lines = 1;
-  for (uint32_t i = 0; i < ARRAY_SIZE(kGpioConvert); i++) {
+  for (uint32_t i = 0; i < nitems(kGpioConvert); i++) {
     uint32_t data = pgm_read_word(kGpioConvert + i);
     if (!jsflg) {
       Response_P(PSTR("{\"GPIOConversion%d\":{"), lines);
@@ -1293,14 +1293,14 @@ void DumpConvertTable(void) {
       ResponseAppend_P(PSTR(","));
     }
     jsflg = true;
-    if ((ResponseAppend_P(PSTR("\"%d\":\"%d\""), i, data) > (MAX_LOGSZ - TOPSZ)) || (i == ARRAY_SIZE(kGpioConvert) -1)) {
+    if ((ResponseAppend_P(PSTR("\"%d\":\"%d\""), i, data) > (MAX_LOGSZ - TOPSZ)) || (i == nitems(kGpioConvert) -1)) {
       ResponseJsonEndEnd();
       MqttPublishPrefixTopic_P(RESULT_OR_STAT, XdrvMailbox.command);
       jsflg = false;
       lines++;
     }
   }
-  for (uint32_t i = 0; i < ARRAY_SIZE(kAdcNiceList); i++) {
+  for (uint32_t i = 0; i < nitems(kAdcNiceList); i++) {
     uint32_t data = pgm_read_word(kAdcNiceList + i);
     if (!jsflg) {
       Response_P(PSTR("{\"ADC0Conversion%d\":{"), lines);
@@ -1308,7 +1308,7 @@ void DumpConvertTable(void) {
       ResponseAppend_P(PSTR(","));
     }
     jsflg = true;
-    if ((ResponseAppend_P(PSTR("\"%d\":\"%d\""), i, data) > (MAX_LOGSZ - TOPSZ)) || (i == ARRAY_SIZE(kAdcNiceList) -1)) {
+    if ((ResponseAppend_P(PSTR("\"%d\":\"%d\""), i, data) > (MAX_LOGSZ - TOPSZ)) || (i == nitems(kAdcNiceList) -1)) {
       ResponseJsonEndEnd();
       MqttPublishPrefixTopic_P(RESULT_OR_STAT, XdrvMailbox.command);
       jsflg = false;
@@ -1328,7 +1328,7 @@ int ICACHE_RAM_ATTR Pin(uint32_t gpio, uint32_t index) {
     real_gpio += index;
     mask = 0xFFFF;
   }
-  for (uint32_t i = 0; i < ARRAY_SIZE(TasmotaGlobal.gpio_pin); i++) {
+  for (uint32_t i = 0; i < nitems(TasmotaGlobal.gpio_pin); i++) {
     if ((TasmotaGlobal.gpio_pin[i] & mask) == real_gpio) {
       return i;              // Pin number configured for gpio
     }
@@ -1342,7 +1342,7 @@ bool PinUsed(uint32_t gpio, uint32_t index) {
 }
 
 uint32_t GetPin(uint32_t lpin) {
-  if (lpin < ARRAY_SIZE(TasmotaGlobal.gpio_pin)) {
+  if (lpin < nitems(TasmotaGlobal.gpio_pin)) {
     return TasmotaGlobal.gpio_pin[lpin];
   } else {
     return GPIO_NONE;
@@ -1466,7 +1466,7 @@ void GetInternalTemplate(void* ptr, uint32_t module, uint32_t option) {
 void TemplateGpios(myio *gp)
 {
   uint16_t *dest = (uint16_t *)gp;
-  uint16_t src[ARRAY_SIZE(Settings.user_template.gp.io)];
+  uint16_t src[nitems(Settings.user_template.gp.io)];
 
   memset(dest, GPIO_NONE, sizeof(myio));
   if (USER_MODULE == Settings.module) {
@@ -1484,7 +1484,7 @@ void TemplateGpios(myio *gp)
 //  AddLogBuffer(LOG_LEVEL_DEBUG, (uint8_t *)&src, sizeof(mycfgio));
 
   uint32_t j = 0;
-  for (uint32_t i = 0; i < ARRAY_SIZE(Settings.user_template.gp.io); i++) {
+  for (uint32_t i = 0; i < nitems(Settings.user_template.gp.io); i++) {
     if (6 == i) { j = 9; }
     if (8 == i) { j = 12; }
     dest[j] = src[i];
@@ -1600,7 +1600,7 @@ bool JsonTemplate(char* dataBuf)
     uint8_t template8[sizeof(mytmplt8285)] = { GPIO_NONE };
     if (13 == arr.size()) {  // Possible old template
       uint32_t gpio = 0;
-      for (uint32_t i = 0; i < ARRAY_SIZE(template8) -1; i++) {
+      for (uint32_t i = 0; i < nitems(template8) -1; i++) {
         gpio = arr[i].getUInt();
         if (gpio > 255) {    // New templates might have values above 255
           break;
@@ -1615,13 +1615,13 @@ bool JsonTemplate(char* dataBuf)
 
       val = root[PSTR(D_JSON_FLAG)];
       if (val) {
-        template8[ARRAY_SIZE(template8) -1] = val.getUInt() & 0x0F;
+        template8[nitems(template8) -1] = val.getUInt() & 0x0F;
       }
       TemplateConvert(template8, Settings.user_template.gp.io);
       Settings.user_template.flag.data = 0;
     } else {
 #endif
-      for (uint32_t i = 0; i < ARRAY_SIZE(Settings.user_template.gp.io); i++) {
+      for (uint32_t i = 0; i < nitems(Settings.user_template.gp.io); i++) {
         JsonParserToken val = arr[i];
         if (!val) { break; }
         uint16_t gpio = val.getUInt();
@@ -1657,7 +1657,7 @@ void TemplateJson(void)
 //  AddLogBufferSize(LOG_LEVEL_DEBUG, (uint8_t*)&Settings.user_template, sizeof(Settings.user_template) / 2, 2);
 
   Response_P(PSTR("{\"" D_JSON_NAME "\":\"%s\",\"" D_JSON_GPIO "\":["), SettingsText(SET_TEMPLATE_NAME));
-  for (uint32_t i = 0; i < ARRAY_SIZE(Settings.user_template.gp.io); i++) {
+  for (uint32_t i = 0; i < nitems(Settings.user_template.gp.io); i++) {
     uint16_t gpio = Settings.user_template.gp.io[i];
     if (gpio == AGPIO(GPIO_USER)) {
       gpio = AGPIO(GPIO_NONE) +1;
@@ -1969,7 +1969,8 @@ int8_t I2cWriteBuffer(uint8_t addr, uint8_t reg, uint8_t *reg_data, uint16_t len
   return 0;
 }
 
-void I2cScan(char *devs, unsigned int devs_len)
+void I2cScan(char *devs, unsigned int devs_len, uint32_t bus = 0);
+void I2cScan(char *devs, unsigned int devs_len, uint32_t bus)
 {
   // Return error codes defined in twi.h and core_esp8266_si2c.c
   // I2C_OK                      0
@@ -1984,8 +1985,13 @@ void I2cScan(char *devs, unsigned int devs_len)
 
   snprintf_P(devs, devs_len, PSTR("{\"" D_CMND_I2CSCAN "\":\"" D_JSON_I2CSCAN_DEVICES_FOUND_AT));
   for (address = 1; address <= 127; address++) {
-    Wire.beginTransmission(address);
-    error = Wire.endTransmission();
+#ifdef ESP32
+    TwoWire & myWire = (bus == 0) ? Wire : Wire1;
+#else
+    TwoWire & myWire = Wire;
+#endif
+    myWire.beginTransmission(address);
+    error = myWire.endTransmission();
     if (0 == error) {
       any = 1;
       snprintf_P(devs, devs_len, PSTR("%s 0x%02x"), devs, address);

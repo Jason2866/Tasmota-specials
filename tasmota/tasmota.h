@@ -84,6 +84,12 @@ const uint8_t MAX_PCF8574 = 4;              // Max number of PCF8574 devices
 const uint8_t MAX_RULE_SETS = 3;            // Max number of rule sets of size 512 characters
 const uint16_t MAX_RULE_SIZE = 512;         // Max number of characters in rules
 
+#ifdef ESP32
+const uint8_t MAX_I2C = 2;                  // Max number of I2C controllers (ESP32 = 2)
+#else
+const uint8_t MAX_I2C = 0;                  // Max number of I2C controllers (ESP8266 = 0, no choice)
+#endif
+
 // Changes to the following MAX_ defines need to be in line with enum SettingsTextIndex
 const uint8_t MAX_MQTT_PREFIXES = 3;        // Max number of MQTT prefixes (cmnd, stat, tele)
 const uint8_t MAX_SSIDS = 2;                // Max number of SSIDs
@@ -238,6 +244,11 @@ const uint32_t LOOP_SLEEP_DELAY = 50;       // Lowest number of milliseconds to 
 #define KNX_MAX_device_param   31
 #define MAX_KNXTX_CMNDS        5
 
+// XPT2046 resistive touch driver min/max raw values
+#define	XPT2046_MINX			192
+#define XPT2046_MAXX			3895
+#define XPT2046_MINY			346
+#define	XPT2046_MAXY			3870
 /*********************************************************************************************\
  * Enumeration
 \*********************************************************************************************/
