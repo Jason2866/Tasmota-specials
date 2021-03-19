@@ -159,12 +159,13 @@ void MCP230xx_ApplySettings(void)
   TasmotaGlobal.devices_present += mcp230xx_outpincount;
 #endif // USE_MCP230xx_OUTPUT
   uint8_t int_en = 0;
+  uint8_t reg_portpins[mcp230xx_type];
   for (uint32_t mcp230xx_port = 0; mcp230xx_port < mcp230xx_type; mcp230xx_port++) {
     uint8_t reg_gppu = 0;
     uint8_t reg_gpinten = 0;
     uint8_t reg_iodir = 0xFF;
 #ifdef USE_MCP230xx_OUTPUT
-    uint8_t reg_portpins = 0x00;
+    reg_portpins[mcp230xx_port] = 0x00;
 #endif // USE_MCP230xx_OUTPUT
     for (uint32_t idx = 0; idx < 8; idx++) {
       switch (Settings.mcp230xx_config[idx+(mcp230xx_port*8)].pinmode) {
@@ -180,10 +181,10 @@ void MCP230xx_ApplySettings(void)
         case 5 ... 6:
           reg_iodir &= ~(1 << idx);
           if (Settings.flag.save_state) {  // SetOption0 - Save power state and use after restart - Firmware configuration wants us to use the last pin state
-            reg_portpins |= (Settings.mcp230xx_config[idx+(mcp230xx_port*8)].saved_state << idx);
+            reg_portpins[mcp230xx_port] |= (Settings.mcp230xx_config[idx+(mcp230xx_port*8)].saved_state << idx);
           } else {
             if (Settings.mcp230xx_config[idx+(mcp230xx_port*8)].pullup) {
-              reg_portpins |= (1 << idx);
+              reg_portpins[mcp230xx_port] |= (1 << idx);
             }
           }
           break;
@@ -205,15 +206,18 @@ void MCP230xx_ApplySettings(void)
     I2cWrite8(USE_MCP230xx_ADDR, MCP230xx_GPINTEN+mcp230xx_port, reg_gpinten);
 #ifdef USE_MCP230xx_OUTPUT
     I2cWrite8(USE_MCP230xx_ADDR, MCP230xx_IODIR+mcp230xx_port, reg_iodir);
+#endif // USE_MCP230xx_OUTPUT
+  }
+#ifdef USE_MCP230xx_OUTPUT
+  for (uint32_t mcp230xx_port = 0; mcp230xx_port < mcp230xx_type; mcp230xx_port++) {
     for (uint32_t idx = 0; idx < mcp230xx_outpincount; idx++) {
       if (mcp230xx_port ? mcp230xx_outpinmapping[idx] > 7 : mcp230xx_outpinmapping[idx] < 8) {
         uint8_t relay_no = TasmotaGlobal.devices_present - mcp230xx_outpincount + idx + 1;
-        ExecuteCommandPower(relay_no, (reg_portpins >> (mcp230xx_outpinmapping[idx] & 7)) & 1, SRC_IGNORE);
+        ExecuteCommandPower(relay_no, (reg_portpins[mcp230xx_port] >> (mcp230xx_outpinmapping[idx] & 7)) & 1, SRC_IGNORE);
       }
     }
-    //I2cWrite8(USE_MCP230xx_ADDR, MCP230xx_GPIO+mcp230xx_port, reg_portpins);
-#endif // USE_MCP230xx_OUTPUT
   }
+#endif // USE_MCP230xx_OUTPUT
   mcp230xx_int_en = int_en;
   MCP230xx_CheckForIntCounter();  // update register on whether or not we should be counting interrupts
   MCP230xx_CheckForIntRetainer(); // update register on whether or not we should be retaining interrupt events for teleperiod
@@ -366,13 +370,15 @@ void MCP230xx_Show(bool json)
       uint16_t gpiototal = ((uint16_t)gpiob << 8) | gpio;
       ResponseAppend_P(PSTR(",\"MCP230_OUT\":{"));
       char stt[7];
+      bool first = true;
       for (uint32_t pinx = 0; pinx < mcp230xx_pincount; pinx++) {
         if (Settings.mcp230xx_config[pinx].pinmode >= 5) {
           sprintf(stt, ConvertNumTxt(((gpiototal>>pinx)&1), Settings.mcp230xx_config[pinx].pinmode));
-          ResponseAppend_P(PSTR("\"OUT_D%i\":\"%s\","), pinx, stt);
+          ResponseAppend_P(PSTR("%s\"OUT_D%i\":\"%s\""), (first) ? "" : ",", pinx, stt);
+          first = false;
         }
       }
-      ResponseAppend_P(PSTR("\"END\":1}"));
+      ResponseAppend_P(PSTR("}"));
     }
 #endif  // USE_MCP230xx_OUTPUT
     ResponseJsonEnd();
@@ -399,8 +405,8 @@ void MCP230xx_SetOutPin(uint8_t pin,uint8_t pinstate) {
 
   I2cWrite8(USE_MCP230xx_ADDR, MCP230xx_GPIO + port, portpins);
   if (Settings.flag.save_state) {  // SetOption0 - Save power state and use after restart - Firmware configured to save last known state in settings
-    Settings.mcp230xx_config[pin].saved_state=portpins>>(pin-(port*8))&1;
-    Settings.mcp230xx_config[pin+pinadd].saved_state=portpins>>(pin+pinadd-(port*8))&1;
+    Settings.mcp230xx_config[pin].saved_state=(portpins>>(pin-(port*8))&1)^(pinmo-5);
+    Settings.mcp230xx_config[pin+pinadd].saved_state=(portpins>>(pin+pinadd-(port*8))&1)^(pinmo-5);
   }
   sprintf(cmnd,ConvertNumTxt(pinstate, pinmo));
   sprintf(stt,ConvertNumTxt((portpins >> (pin-(port*8))&1), pinmo));
@@ -778,13 +784,15 @@ void MCP230xx_OutputTelemetry(void)
 
 void MCP230xx_Interrupt_Counter_Report(void) {
   ResponseTime_P(PSTR(",\"MCP230_INTTIMER\":{"));
+  bool first = true;
   for (uint32_t pinx = 0;pinx < mcp230xx_pincount;pinx++) {
     if (Settings.mcp230xx_config[pinx].int_count_en) { // Counting is enabled for this pin so we add to report
-      ResponseAppend_P(PSTR("\"INTCNT_D%i\":%i,"),pinx,mcp230xx_int_counter[pinx]);
+      ResponseAppend_P(PSTR("%s\"INTCNT_D%i\":%i,"), (first) ? "" : "?", pinx, mcp230xx_int_counter[pinx]);
+      first = false;
       mcp230xx_int_counter[pinx]=0;
     }
   }
-  ResponseAppend_P(PSTR("\"END\":1}}"));
+  ResponseAppend_P(PSTR("}}"));
   MqttPublishTeleSensor();
   mcp230xx_int_sec_counter = 0;
 }
@@ -809,10 +817,9 @@ void MCP230xx_SwitchRelay() {
     uint8_t pin = mcp230xx_outpinmapping[i - (TasmotaGlobal.devices_present - mcp230xx_outpincount)];
     uint8_t pincmd = Settings.mcp230xx_config[pin].pinmode - 5;
     uint8_t relay_state = bitRead(XdrvMailbox.index, i);
-    AddLog(LOG_LEVEL_DEBUG, PSTR("MCP: relay %d pin_no %d state %d"), i,pin, relay_state);
     switch (relay_state) {
     case 1:
-      MCP230xx_SetOutPin(pin,abs(pincmd-1));
+      MCP230xx_SetOutPin(pin,1-pincmd);
       break;
     case 0:
       MCP230xx_SetOutPin(pin,pincmd);
