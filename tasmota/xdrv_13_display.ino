@@ -1864,11 +1864,7 @@ void CmndDisplayScrollText(void)
 
 void CmndDisplaySize(void)
 {
-#ifdef USE_DISPLAY_TM1637
-  if ((XdrvMailbox.payload > 0) && (XdrvMailbox.payload <= 6)) {
-#else
   if ((XdrvMailbox.payload > 0) && (XdrvMailbox.payload <= 4)) {
-#endif
     Settings.display_size = XdrvMailbox.payload;
     if (renderer) renderer->setTextSize(Settings.display_size);
     //else DisplaySetSize(Settings.display_size);
