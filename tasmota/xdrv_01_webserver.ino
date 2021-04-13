@@ -25,17 +25,17 @@
  * Based on source by AlexT (https://github.com/tzapu)
 \*********************************************************************************************/
 
-#define XDRV_01                               1
+#define XDRV_01                                   1
 
 // Enable below demo feature only if defines USE_UNISHOX_COMPRESSION and USE_SCRIPT_WEB_DISPLAY are disabled
 //#define USE_WEB_SSE
 
 #ifndef WIFI_SOFT_AP_CHANNEL
-#define WIFI_SOFT_AP_CHANNEL                  1          // Soft Access Point Channel number between 1 and 11 as used by WifiManager web GUI
+#define WIFI_SOFT_AP_CHANNEL                      1      // Soft Access Point Channel number between 1 and 11 as used by WifiManager web GUI
 #endif
 
 #ifndef MAX_WIFI_NETWORKS_TO_SHOW
-#define MAX_WIFI_NETWORKS_TO_SHOW             3          // Maximum number of Wifi Networks to show in the Wifi Configuration Menu BEFORE clicking on Show More Networks.
+#define MAX_WIFI_NETWORKS_TO_SHOW                 3      // Maximum number of Wifi Networks to show in the Wifi Configuration Menu BEFORE clicking on Show More Networks.
 #endif
 
 #ifndef RESTART_AFTER_INITIAL_WIFI_CONFIG
@@ -108,7 +108,6 @@ const char HTTP_SCRIPT_COUNTER[] PROGMEM =
   #include "./html_uncompressed/HTTP_SCRIPT_ROOT_PART2.h"
 #endif
 
-
 const char HTTP_SCRIPT_WIFI[] PROGMEM =
   "function c(l){"
     "eb('s1').value=l.innerText||l.textContent;"
@@ -117,13 +116,13 @@ const char HTTP_SCRIPT_WIFI[] PROGMEM =
 
 const char HTTP_SCRIPT_HIDE[] PROGMEM =
   "function hidBtns() {"
-    "eb('butmo').style.display = 'none';"
-    "eb('butmod').style.display = 'none';"
-    "eb('but0').style.display = 'block';"
-    "eb('but1').style.display = 'block';"
-    "eb('but13').style.display = 'block';"
-    "eb('but0d').style.display = 'block';"
-    "eb('but13d').style.display = 'block';"
+    "eb('butmo').style.display='none';"
+    "eb('butmod').style.display='none';"
+    "eb('but0').style.display='block';"
+    "eb('but1').style.display='block';"
+    "eb('but13').style.display='block';"
+    "eb('but0d').style.display='block';"
+    "eb('but13d').style.display='block';"
   "}";
 
 const char HTTP_SCRIPT_RELOAD_TIME[] PROGMEM =
@@ -135,13 +134,10 @@ const char HTTP_SCRIPT_RELOAD_TIME[] PROGMEM =
   #include "./html_uncompressed/HTTP_SCRIPT_CONSOL.h"
 #endif
 
-
 const char HTTP_MODULE_TEMPLATE_REPLACE_INDEX[] PROGMEM =
   "}2%d'>%s (%d)}3";                       // }2 and }3 are used in below os.replace
 const char HTTP_MODULE_TEMPLATE_REPLACE_NO_INDEX[] PROGMEM =
   "}2%d'>%s}3";                           // }2 and }3 are used in below os.replace
-
-
 
 #ifdef USE_UNISHOX_COMPRESSION
   #include "./html_compressed/HTTP_SCRIPT_MODULE_TEMPLATE.h"
@@ -150,7 +146,6 @@ const char HTTP_MODULE_TEMPLATE_REPLACE_NO_INDEX[] PROGMEM =
   #include "./html_uncompressed/HTTP_SCRIPT_MODULE_TEMPLATE.h"
   #include "./html_uncompressed/HTTP_SCRIPT_TEMPLATE.h"
 #endif
-
 
 const char HTTP_SCRIPT_TEMPLATE2[] PROGMEM =
     "j=0;"
@@ -199,7 +194,6 @@ const char HTTP_SCRIPT_INFO_END[] PROGMEM =
   "}"
   "wl(i);";
 
-
 #ifdef USE_UNISHOX_COMPRESSION
   #include "./html_compressed/HTTP_HEAD_LAST_SCRIPT.h"
   #include "./html_compressed/HTTP_HEAD_STYLE1.h"
@@ -209,7 +203,6 @@ const char HTTP_SCRIPT_INFO_END[] PROGMEM =
   #include "./html_uncompressed/HTTP_HEAD_STYLE1.h"
   #include "./html_uncompressed/HTTP_HEAD_STYLE2.h"
 #endif
-
 
 #ifdef USE_ZIGBEE
 // Styles used for Zigbee Web UI
@@ -817,20 +810,18 @@ void WSContentButton(uint32_t title_index, bool show=true)
   char action[4];
   char title[100];  // Large to accomodate UTF-16 as used by Russian
 
+  WSContentSend_P(PSTR("<p><form id=but%d style=\"display: %s;\" action='%s' method='get'"),
+    title_index,
+    show ? "block":"none",
+    GetTextIndexed(action, sizeof(action), title_index, kButtonAction));
   if (title_index <= BUTTON_RESET_CONFIGURATION) {
     char confirm[100];
-    WSContentSend_P(PSTR("<p><form id=but%d style=\"display: %s;\" action='%s' method='get' onsubmit='return confirm(\"%s\");'><button name='%s' class='button bred'>%s</button></form></p>"),
-      title_index,
-      show ? "block":"none",
-      GetTextIndexed(action, sizeof(action), title_index, kButtonAction),
+    WSContentSend_P(PSTR(" onsubmit='return confirm(\"%s\");'><button name='%s' class='button bred'>%s</button></form></p>"),
       GetTextIndexed(confirm, sizeof(confirm), title_index, kButtonConfirm),
       (!title_index) ? PSTR("rst") : PSTR("non"),
       GetTextIndexed(title, sizeof(title), title_index, kButtonTitle));
   } else {
-    WSContentSend_P(PSTR("<p><form id=but%d style=\"display: %s;\" action='%s' method='get'><button>%s</button></form></p>"),
-      title_index,
-      show ? "block":"none",
-      GetTextIndexed(action, sizeof(action), title_index, kButtonAction),
+    WSContentSend_P(PSTR("><button>%s</button></form></p>"),
       GetTextIndexed(title, sizeof(title), title_index, kButtonTitle));
   }
 }
@@ -1925,12 +1916,7 @@ void HandleWifiConfiguration(void) {
       }
     }
 
-    if (limitScannedNetworks) {
-      WSContentSend_P(PSTR("<div><a href='/wi?scan='>" D_SHOW_MORE_WIFI_NETWORKS "</a></div><br>"));
-    } else {
-      WSContentSend_P(PSTR("<div><a href='/wi?scan='>" D_SCAN_FOR_WIFI_NETWORKS "</a></div><br>"));
-    }
-
+    WSContentSend_P(PSTR("<div><a href='/wi?scan='>%s</a></div><br>"), (limitScannedNetworks) ? PSTR(D_SHOW_MORE_WIFI_NETWORKS) : PSTR(D_SCAN_FOR_WIFI_NETWORKS));
     WSContentSend_P(HTTP_FORM_WIFI_PART1, (WifiIsInManagerMode()) ? "" : PSTR(" (" STA_SSID1 ")"), SettingsText(SET_STASSID1));
     if (WifiIsInManagerMode()) {
       // As WIFI_HOSTNAME may contain %s-%04d it cannot be part of HTTP_FORM_WIFI where it will exception
@@ -1944,19 +1930,14 @@ void HandleWifiConfiguration(void) {
 
   if (WifiIsInManagerMode()) {
 #ifndef FIRMWARE_MINIMAL
+    WSContentSend_P(PSTR("<div style='text-align:center;color:#%06x;'><h3>"), WebColor(COL_TEXT_WARNING));
     if (WIFI_TESTING == Web.wifiTest) {
-      WSContentSend_P(PSTR("<div style='text-align:center;color:#%06x;'><h3>" D_TRYING_TO_CONNECT "<br>%s</h3></div>"),
-        WebColor(COL_TEXT_WARNING),
-        SettingsText(SET_STASSID1)
-      );
+      WSContentSend_P(PSTR(D_TRYING_TO_CONNECT "<br>%s</h3></div>"), SettingsText(SET_STASSID1));
     } else if (WIFI_TEST_FINISHED_BAD == Web.wifiTest) {
-      WSContentSend_P(PSTR("<div style='text-align:center;color:#%06x;'><h3>" D_CONNECT_FAILED_TO " %s<br>" D_CHECK_CREDENTIALS "</h3></div>"),
-        WebColor(COL_TEXT_WARNING),
-        SettingsText(SET_STASSID1)
-      );
+      WSContentSend_P(PSTR(D_CONNECT_FAILED_TO " %s<br>" D_CHECK_CREDENTIALS "</h3></div>"), SettingsText(SET_STASSID1));
     }
     // More Options Button
-    WSContentSend_P(PSTR("<div id=butmod style=\"display: %s;\"></div><p><form id=butmo style=\"display: %s;\"><button type='button' onclick='hidBtns()'>" D_SHOW_MORE_OPTIONS "</button></form></p>"),
+    WSContentSend_P(PSTR("<div id=butmod style=\"display:%s;\"></div><p><form id=butmo style=\"display:%s;\"><button type='button' onclick='hidBtns()'>" D_SHOW_MORE_OPTIONS "</button></form></p>"),
       (WIFI_TEST_FINISHED_BAD == Web.wifiTest) ? "none" : Web.initial_config ? "block" : "none", Web.initial_config ? "block" : "none"
     );
     WSContentSpaceButton(BUTTON_RESTORE, !Web.initial_config);
