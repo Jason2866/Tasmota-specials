@@ -3,7 +3,57 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased] - Development
 
-## [9.3.1.1]
+## [9.3.1.3]
+### Added
+- Optional GUI file editor enabled with define ``GUI_EDIT_FILE`` by barbudor (#11668)
+- Initial support for universal display driver UDisplay by Gerhard Mutz. Enable by selecting any GPIO as ``Option A3`` (#11665)
+
+### Breaking Changed
+- ESP32 partition layout changed to accomodate more file space on most and more code space on core2 and odroid-go (#11746)
+
+### Changed
+- In tasmota-sensors.bin enabled support for VL53L0X and disabled TSL2561 (#11711)
+- Add HLW8012/BL0937 average pulse calculation by Alex Lovett (#11722)
+- Redesigned initial GUI wifi configuration by Adrian Scillato (#11693)
+- Redesigned GUI by moving non-configuration buttons from ``Configuration`` to new submenu ``Consoles``
+
+### Fixed
+- Telegram chat id incorrect size (#11660)
+- KNX energy yesterday (#11718)
+
+## [9.3.1.2] 20210413
+### Added
+- Commands ``MqttKeepAlive 1..100`` to set Mqtt Keep Alive timer (default 30) and ``MqttTimeout 1..100`` to set Mqtt Socket Timeout (default 4) (#5341)
+- Commands ``DisplayType`` to select sub-modules where implemented and ``DisplayInvert`` to select inverted display where implemented
+- Command ``SerialBuffer 256..520`` to change hardware serial receive buffer size from default (256) to max local buffer size (520) (#11448)
+- Command ``SetOption126 1`` to enable DS18x20 arithmetic mean over teleperiod for JSON temperature based on (#11472)
+- Support for TM1638 seven segment display by Ajith Vasudevan (#11031)
+- Support for MAX7219 seven segment display by Ajith Vasudevan (#11387)
+- Support for Frequency monitoring and zero-cross detection on CSE7761 (Sonoff Dual R3)
+- ESP32 support for internal Hall Effect sensor connected to both GPIO36 and GPIO39 only
+- Support for multiple CCS811 sensors with baseline control (USE_CCS811_V2) by clanganke (#10858)
+- Berry add ``gpio`` module
+- Berry add ``light`` module
+- Support for dummy energy monitor using user values set by commands ``VoltageSet``, ``CurrentSet``, ``PowerSet`` and ``FrequencySet``. Enable by selecting any GPIO as ``Option A2`` (#10640)
+- Command ``Backlog0`` to allow execution of following commands without delay
+- Tasmota discovery as alternative to Home Assistant discovery using define ``USE_TASMOTA_DISCOVERY``
+
+### Changed
+- PubSubClient library from EspEasy v2.7.12 to Tasmota v2.8.12
+- IRremoteESP8266 library from v2.7.15 to v2.7.16
+- ESP32 core library from v1.0.5 to v1.0.6
+- Limit number of relay/button columns in GUI to 8 (#11546)
+- ADC range result from int to float using command ``FreqRes`` for decimal resolution selection (#11545)
+- Teleinfo, if raw mode selected also return telemety values in SENSOR data
+- Removed overtemp detection on external energy monitoring devices (#11628)
+
+### Fixed
+- HC-SR04 on ESP32 release serial interface if not used (#11507)
+- Teleinfo, if raw mode selected also always update total energy calculations
+- Alexa discovery for ZBBridge (#11576)
+- Alexa discovery in hue emulation (#11415)
+
+## [9.3.1.1] 20210320
 ### Added
 - Support for CSE7761 energy monitor as used in ESP32 based Sonoff Dual R3 Pow (#10793)
 - Command ``Sensor80 1 <0..7>`` to control MFRC522 RFID antenna gain from 18dB (0) to 48dB (7) (#11073)
@@ -18,7 +68,7 @@ All notable changes to this project will be documented in this file.
 - ESP32 Extent BLE (#11212)
 - ESP32 support for WS2812 hardware driver via RMT or I2S
 - ESP32 support for secondary I2C controller
-
+- Support for MPU6886 on primary or secondary I2C bus
 
 ### Changed
 - ESP32 core library from v1.0.5-rc6 to v1.0.5
@@ -45,7 +95,7 @@ All notable changes to this project will be documented in this file.
 ## [9.3.1] 20210223
 - Release Kenneth
 
-## [9.3.0.1]
+## [9.3.0.1] 20210223
 ### Added
 - Animate PWM dimmer brightness LEDs during transitions and with variable brightness (#11076)
 - Commands ``StateRetain`` and ``InfoRetain`` (#11084)
@@ -172,7 +222,7 @@ All notable changes to this project will be documented in this file.
 - Milliseconds to console output (#10152)
 - Support for P9813 RGB Led MOSFET controller (#10104)
 - Support for GPIO option selection
-- Gpio ``Option_a1`` enabling PWM2 high impedance if powered off as used by Wyze bulbs (#10196)
+- Gpio ``Option A1`` enabling PWM2 high impedance if powered off as used by Wyze bulbs (#10196)
 - Support for FTC532 8-button touch controller by Peter Franck (#10222)
 - Support character `#` to be replaced by `space`-character in command ``Publish`` topic (#10258)
 - BSSID and Signal Strength Indicator to GUI wifi scan result (#10253)

@@ -78,7 +78,7 @@
 #include <SPI.h>
 #ifdef USE_SDCARD
 #include <SD.h>
-#include <SDFAT.h>
+#include <SdFat.h>
 #endif  // USE_SDCARD
 #endif  // ESP8266
 #ifdef ESP32
@@ -98,6 +98,8 @@
  * Global variables
 \*********************************************************************************************/
 
+const uint32_t VERSION_MARKER[] PROGMEM = { 0x5AA55AA5, 0xFFFFFFFF, 0xA55AA55A };
+
 WiFiUDP PortUdp;                            // UDP Syslog and Alexa
 
 struct {
@@ -109,6 +111,10 @@ struct {
   uint32_t loop_load_avg;                   // Indicative loop load average
   uint32_t log_buffer_pointer;              // Index in log buffer
   uint32_t uptime;                          // Counting every second until 4294967295 = 130 year
+  uint32_t zc_time;                         // Zero-cross moment (microseconds)
+  uint32_t zc_offset;                       // Zero cross moment offset due to monitoring chip processing (microseconds)
+  uint32_t zc_code_offset;                  // Zero cross moment offset due to executing power code (microseconds)
+  uint32_t zc_interval;                     // Zero cross interval around 8333 (60Hz) or 10000 (50Hz) (microseconds)
   GpioOptionABits gpio_optiona;             // GPIO Option_A flags
   void *log_buffer_mutex;                   // Control access to log buffer
 
@@ -134,8 +140,10 @@ struct {
   int16_t save_data_counter;                // Counter and flag for config save to Flash
   RulesBitfield rules_flag;                 // Rule state flags (16 bits)
 
+  bool rule_teleperiod;                     // Process rule based on teleperiod data using prefix TELE-
   bool serial_local;                        // Handle serial locally
   bool fallback_topic_flag;                 // Use Topic or FallbackTopic
+  bool backlog_nodelay;                     // Execute all backlog commands with no delay
   bool backlog_mutex;                       // Command backlog pending
   bool stop_flash_rotate;                   // Allow flash configuration rotation
   bool blinkstate;                          // LED state
@@ -338,11 +346,19 @@ void setup(void) {
     snprintf_P(TasmotaGlobal.hostname, sizeof(TasmotaGlobal.hostname)-1, SettingsText(SET_HOSTNAME));
   }
 
+  RtcInit();
   GpioInit();
+  ButtonInit();
+  SwitchInit();
+#ifdef ROTARY_V1
+  RotaryInit();
+#endif  // ROTARY_V1
 
-  WifiConnect();
+  XdrvCall(FUNC_PRE_INIT);
+  XsnsCall(FUNC_PRE_INIT);
 
   SetPowerOnState();
+  WifiConnect();
 
   AddLog(LOG_LEVEL_INFO, PSTR(D_PROJECT " %s %s " D_VERSION " %s%s-" ARDUINO_CORE_RELEASE "(%s)"),
     PSTR(PROJECT), SettingsText(SET_DEVICENAME), TasmotaGlobal.version, TasmotaGlobal.image_name, GetBuildDateAndTime().c_str());
@@ -350,7 +366,7 @@ void setup(void) {
   AddLog(LOG_LEVEL_INFO, PSTR(D_WARNING_MINIMAL_VERSION));
 #endif  // FIRMWARE_MINIMAL
 
-  RtcInit();
+  memcpy_P(TasmotaGlobal.mqtt_data, VERSION_MARKER, 1);  // Dummy for compiler saving VERSION_MARKER
 
 #ifdef USE_ARDUINO_OTA
   ArduinoOTAInit();
@@ -387,16 +403,19 @@ void BacklogLoop(void) {
       if (!nodelay_detected) {
         ExecuteCommand((char*)cmd.c_str(), SRC_BACKLOG);
       }
-      if (nodelay) {
+      if (nodelay || TasmotaGlobal.backlog_nodelay) {
         TasmotaGlobal.backlog_timer = millis();  // Reset backlog_timer which has been set by ExecuteCommand (CommandHandler)
       }
       TasmotaGlobal.backlog_mutex = false;
+    }
+    if (BACKLOG_EMPTY) {
+      TasmotaGlobal.backlog_nodelay = false;
     }
   }
 }
 
 void SleepDelay(uint32_t mseconds) {
-  if (mseconds) {
+  if (!TasmotaGlobal.backlog_nodelay && mseconds) {
     uint32_t wait = millis() + mseconds;
     while (!TimeReached(wait) && !Serial.available()) {  // We need to service serial buffer ASAP as otherwise we get uart buffer overrun
       delay(1);

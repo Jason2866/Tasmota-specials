@@ -28,7 +28,7 @@
  * Use online command StateText to translate ON, OFF, HOLD and TOGGLE.
  * Use online command Prefix to translate cmnd, stat and tele.
  *
- * Updated until v9.2.0.3
+ * Updated until v9.3.1.3
 \*********************************************************************/
 
 //#define LANGUAGE_MODULE_NAME         // Enable to display "Module Generic" (ie Spanish), Disable to display "Generic Module" (ie English)
@@ -84,7 +84,7 @@
 #define D_DISABLED "deaktiviert"
 #define D_DISTANCE "Abstand"
 #define D_DNS_SERVER "DNS-Server"
-#define D_DO "Disolved Oxygen"
+#define D_DO "gelöster Sauerstoff"
 #define D_DONE "erledigt"
 #define D_DST_TIME "DST"
 #define D_EC "EC"
@@ -109,6 +109,7 @@
 #define D_GATEWAY "Gateway"
 #define D_GROUP "Gruppe"
 #define D_HOST "Host"
+#define D_HALL_EFFECT "Hall Effekt"
 #define D_HOSTNAME "Hostname"
 #define D_HUMIDITY "Feuchtigkeit"
 #define D_ILLUMINANCE "Beleuchtungsstärke"
@@ -255,6 +256,7 @@
 #define D_CONFIGURATION "Einstellungen"
 #define D_INFORMATION "Informationen"
 #define D_FIRMWARE_UPGRADE "Firmware Update"
+#define D_MANAGEMENT "Konsolen"
 #define D_CONSOLE "Konsole"
 #define D_CONFIRM_RESTART "Wirklich neustarten?"
 
@@ -290,9 +292,18 @@
 #define D_WPA_PSK "WPA-PSK"
 #define D_WPA2_PSK "WPA2-PSK"
 #define D_AP1_SSID "WLAN 1 - SSID"
-#define D_AP1_PASSWORD "WLAN 1 - Passwort"
+#define D_AP1_SSID_HELP "WiFi Netzwerk auswählen oder eingeben"
 #define D_AP2_SSID "WLAN 2 - SSID"
-#define D_AP2_PASSWORD "WLAN 2 - Passwort"
+#define D_AP2_SSID_HELP "alternatives WiFi Netzwerk eingeben"
+#define D_AP_PASSWORD "WLAN - Passwort"
+#define D_AP_PASSWORD_HELP "WiFi Passwort eingeben"
+#define D_SELECT_YOUR_WIFI_NETWORK "WiFi Netzwerk auswählen"
+#define D_SHOW_MORE_WIFI_NETWORKS "Suche nach WiFi Netzwerken"
+#define D_SHOW_MORE_OPTIONS "Mehr Optionen"
+#define D_CHECK_CREDENTIALS "Bitte SSID/Passwort überprüfen"
+#define D_SUCCESSFUL_WIFI_CONNECTION "mit Wifi verbunden"
+#define D_NOW_YOU_CAN_CLOSE_THIS_WINDOW "das Fenster kann geschlossen werden"
+#define D_REDIRECTING_TO_NEW_IP "Umleitung zur neuen Geräte IP-Addresse"
 
 #define D_MQTT_PARAMETERS "MQTT-Einstellungen"
 #define D_CLIENT "client"
@@ -325,14 +336,14 @@
 #define D_TEMPLATE_PARAMETERS "Vorlage Parameter"
 #define D_TEMPLATE_NAME "Name"
 #define D_BASE_TYPE "basiert auf"
-#define D_TEMPLATE_FLAGS "Options"
+#define D_TEMPLATE_FLAGS "Optionen"
 
 #define D_SAVE_CONFIGURATION "Konfiguration speichern"
 #define D_CONFIGURATION_SAVED "Konfiguration gespeichert"
 #define D_CONFIGURATION_RESET "Konfiguration zurücksetzen"
 
 #define D_PROGRAM_VERSION "Tasmota Version"
-#define D_BUILD_DATE_AND_TIME "Build-Datum & -Uhrzeit"
+#define D_BUILD_DATE_AND_TIME "Erstellungs-Datum & -Uhrzeit"
 #define D_CORE_AND_SDK_VERSION "Core-/SDK-Version"
 #define D_FLASH_WRITE_COUNT "Anz. Flash-Schreibzyklen"
 #define D_MAC_ADDRESS "MAC-Adresse"
@@ -511,7 +522,7 @@
 #define D_SENSORS_FOUND "Sensor gefunden"
 
 // xsns_06_dht.ino
-#define D_TIMEOUT_WAITING_FOR "Timeout während Warten auf"
+#define D_TIMEOUT_WAITING_FOR "Zeitüberschreitung während Warten auf"
 #define D_START_SIGNAL_LOW "Startausschlag niedrig"
 #define D_START_SIGNAL_HIGH "Startausschlag hoch"
 #define D_PULSE "Puls"
@@ -585,6 +596,10 @@
 #define D_StL1L2L3 "Ströme L1+L2+L3"
 #define D_SpL1L2L3 "Spannung L1+L2+L3/3"
 
+// xsns_86_tfminiplus.ino
+#define D_SIGNALSTRENGTH "Signalstärke"
+#define D_CHIPTEMPERATURE "Chip Temperatur"
+
 // tasmota_template.h - keep them as short as possible to be able to fit them in GUI drop down box
 #define D_SENSOR_NONE          "None"
 #define D_SENSOR_USER          "User"
@@ -643,6 +658,9 @@
 #define D_SENSOR_TM1638_CLK    "TM1638 CLK"
 #define D_SENSOR_TM1638_DIO    "TM1638 DIO"
 #define D_SENSOR_TM1638_STB    "TM1638 STB"
+#define D_SENSOR_MAX7219_DIN    "MAX7219 DIN"
+#define D_SENSOR_MAX7219_CS    "MAX7219 CS"
+#define D_SENSOR_MAX7219_CLK    "MAX7219 CLK"
 #define D_SENSOR_HX711_SCK     "HX711 SCK"
 #define D_SENSOR_HX711_DAT     "HX711 DAT"
 #define D_SENSOR_FTC532        "FTC532"
@@ -797,7 +815,12 @@
 #define D_SENSOR_WIEGAND_D1    "Wiegand D1"
 #define D_SENSOR_NEOPOOL_TX    "NeoPool Tx"
 #define D_SENSOR_NEOPOOL_RX    "NeoPool Rx"
-
+#define D_SENSOR_VL53L0X_XSHUT "VL53L0X XSHUT"
+#define D_SENSOR_TFMINIPLUS_TX  "TFmini+ TX"
+#define D_SENSOR_TFMINIPLUS_RX  "TFmini+ RX"
+#define D_SENSOR_ZEROCROSS     "ZC Puls"
+#define D_SENSOR_HALLEFFECT    "HallEffect"
+#define D_SENSOR_EPD_DATA      "EPD Data"
 
 // Units
 #define D_UNIT_AMPERE "A"
@@ -844,6 +867,10 @@
 #define D_UNIT_WATT "W"
 #define D_UNIT_WATTHOUR "Wh"
 #define D_UNIT_WATT_METER_QUADRAT "W/m²"
+
+#define D_NEW_ADDRESS          "Neue Addresse"
+#define D_OUT_OF_RANGE         "Außerhalb Bereich"
+#define D_SENSOR_DETECTED      "erkannt"
 
 //SDM220, SDM120, SDM72, LE01MR
 #define D_EXPORT_POWER    "Exportiere Leistung"
@@ -899,6 +926,9 @@
 #define D_MANAGE_FILE_SYSTEM   "Verwalte Dateisystem"
 #define D_FS_SIZE              "Größe"
 #define D_FS_FREE              "Frei"
+#define D_NEW_FILE             "neue-datei.txt"
+#define D_CREATE_NEW_FILE      "Neue Datei erstellen und bearbeiten"
+#define D_EDIT_FILE            "Datei bearbeiten"
 
 //xsns_67_as3935.ino
 #define D_AS3935_GAIN "Umgebung:"

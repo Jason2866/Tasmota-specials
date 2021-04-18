@@ -29,7 +29,7 @@ extern "C" {
 
 #ifdef ESP8266
 
-void ICACHE_RAM_ATTR callRxRead(void *self) { ((TasmotaSerial*)self)->rxRead(); };
+void IRAM_ATTR callRxRead(void *self) { ((TasmotaSerial*)self)->rxRead(); };
 
 // As the Arduino attachInterrupt has no parameter, lists of objects
 // and callbacks corresponding to each possible GPIO pins have to be defined
@@ -41,6 +41,8 @@ TasmotaSerial *tms_obj_list[16];
 #if CONFIG_IDF_TARGET_ESP32           // ESP32/PICO-D4
 static int tasmota_serial_index = 2;  // Allow UART2 and UART1 only
 #elif CONFIG_IDF_TARGET_ESP32S2       // ESP32-S2
+static int tasmota_serial_index = 1;  // Allow UART1 only
+#elif CONFIG_IDF_TARGET_ESP32C3       // ESP32-C3
 static int tasmota_serial_index = 1;  // Allow UART1 only
 #endif
 
@@ -104,6 +106,11 @@ TasmotaSerial::~TasmotaSerial(void) {
     }
   }
 #endif  // ESP8266
+
+#ifdef ESP32
+  TSerial->end();
+  tasmota_serial_index++;
+#endif  // ESP32
 }
 
 bool TasmotaSerial::isValidGPIOpin(int pin) {
@@ -255,7 +262,7 @@ int TasmotaSerial::available(void) {
 #define TM_SERIAL_WAIT_RCV { while (ESP.getCycleCount() < (wait + start)); wait += m_bit_time; }
 #define TM_SERIAL_WAIT_RCV_LOOP { while (ESP.getCycleCount() < (wait + start)); }
 
-void ICACHE_RAM_ATTR TasmotaSerial::_fast_write(uint8_t b) {
+void IRAM_ATTR TasmotaSerial::_fast_write(uint8_t b) {
   uint32_t wait = m_bit_time;
   uint32_t start = ESP.getCycleCount();
   // Start bit;
@@ -311,7 +318,7 @@ size_t TasmotaSerial::write(uint8_t b) {
   }
 }
 
-void ICACHE_RAM_ATTR TasmotaSerial::rxRead(void) {
+void IRAM_ATTR TasmotaSerial::rxRead(void) {
   if (!m_nwmode) {
     int32_t loop_read = m_very_high_speed ? serial_buffer_size : 1;
     // Advance the starting point for the samples but compensate for the

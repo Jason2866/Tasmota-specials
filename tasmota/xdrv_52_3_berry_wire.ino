@@ -23,21 +23,21 @@
 #include <berry.h>
 #include <Wire.h>
 
-// read the `_bus` attribute and return `Wire` or `Wire1`
+// read the `bus` attribute and return `Wire` or `Wire1`
 TwoWire & getWire(bvm *vm);
 TwoWire & getWire(bvm *vm) {
-  be_getmember(vm, 1, "_bus");
-  int32_t bus = be_toint(vm, -1);
+  be_getmember(vm, 1, "bus");
+  int32_t bus = be_toint(vm, -1); // bus is 1 or 2
   be_pop(vm, 1);
-  if (0 == bus) {
+  if (2 != bus) {
     return Wire;
   } else {
     return Wire1;
   }
 }
-int32_t getBus(bvm *vm);
+int32_t getBus(bvm *vm);    // 1 or 2
 int32_t getBus(bvm *vm) {
-  be_getmember(vm, 1, "_bus");
+  be_getmember(vm, 1, "bus");
   int32_t bus = be_toint(vm, -1);
   be_pop(vm, 1);
   return bus;
@@ -48,7 +48,7 @@ int32_t getBus(bvm *vm) {
  * 
  * import wire
  * 
- * wire.getfreeheap() -> int
+ * wire.get_free_heap() -> int
  * 
 \*********************************************************************************************/
 extern "C" {
@@ -57,15 +57,15 @@ extern "C" {
   int32_t b_wire_init(struct bvm *vm);
   int32_t b_wire_init(struct bvm *vm) {
     int32_t top = be_top(vm); // Get the number of arguments
-    int32_t bus = 0;
+    int32_t bus = 1;
     if (top > 1 && be_isint(vm, 2)) {
       bus = be_toint(vm, 2);
-      if (bus < 0) { bus = 0; }
-      if (bus > 1) { bus = 1; }
+      if (bus < 1) { bus = 1; }
+      if (bus > 2) { bus = 2; }
     }
     // store bus in instance
     be_pushint(vm, bus);
-    be_setmember(vm, 1, "_bus");
+    be_setmember(vm, 1, "bus");
     be_return_nil(vm);
   }
 
@@ -135,14 +135,18 @@ extern "C" {
   int32_t b_wire_write(struct bvm *vm);
   int32_t b_wire_write(struct bvm *vm) {
     int32_t top = be_top(vm); // Get the number of arguments
+    const void * buf;
+    size_t len;
     TwoWire & myWire = getWire(vm);
-    if (top == 2 && (be_isint(vm, 2) || be_isstring(vm, 2))) {
+    if (top == 2 && (be_isint(vm, 2) || be_isstring(vm, 2) || be_isinstance(vm, 2))) {
       if (be_isint(vm, 2)) {
         int32_t value = be_toint(vm, 2);
         myWire.write(value);
       } else if (be_isstring(vm, 2)) {
         const char * s = be_tostring(vm, 1);
         myWire.write(s);
+      } else if ((buf = be_tobytes(vm, 2, &len)) != nullptr) {
+        myWire.write((uint8_t*) buf, len);
       } else {
         be_return_nil(vm);
       }
@@ -185,11 +189,11 @@ extern "C" {
     be_raise(vm, kTypeError, nullptr);
   }
 
-  // Berry: `validwrite(address:int, reg:int, val:int, size:int) -> bool or nil`
+  // Berry: `write(address:int, reg:int, val:int, size:int) -> bool or nil`
   int32_t b_wire_validwrite(struct bvm *vm);
   int32_t b_wire_validwrite(struct bvm *vm) {
     int32_t top = be_top(vm); // Get the number of arguments
-    int32_t bus = getBus(vm);
+    int32_t bus = getBus(vm) - 1; // 0 or 1
     if (top == 5 && be_isint(vm, 2) && be_isint(vm, 3) && be_isint(vm, 4) && be_isint(vm, 5)) {
       uint8_t addr = be_toint(vm, 2);
       uint8_t reg = be_toint(vm, 3);
@@ -202,21 +206,37 @@ extern "C" {
     be_raise(vm, kTypeError, nullptr);
   }
 
-  // Berry: `validread(address:int, reg:int, size:int) -> int or nil`
+  // Berry: `read(address:int, reg:int, size:int) -> int or nil`
   int32_t b_wire_validread(struct bvm *vm);
   int32_t b_wire_validread(struct bvm *vm) {
     int32_t top = be_top(vm); // Get the number of arguments
-    int32_t bus = getBus(vm);
+    int32_t bus = getBus(vm) - 1; // 0 or 1
     if (top == 4 && be_isint(vm, 2) && be_isint(vm, 3) && be_isint(vm, 4)) {
       uint8_t addr = be_toint(vm, 2);
       uint8_t reg = be_toint(vm, 3);
       uint8_t size = be_toint(vm, 4);
-      bool ok = I2cValidRead(addr, reg, size);  // TODO
+      bool ok = I2cValidRead(addr, reg, size, bus);  // TODO
       if (ok) {
         be_pushint(vm, i2c_buffer);
       } else {
         be_pushnil(vm);
       }
+      be_return(vm); // Return
+    }
+    be_raise(vm, kTypeError, nullptr);
+  }
+
+  // Berry: `find(address:int) -> bool` true if device responds
+  int32_t b_wire_detect(struct bvm *vm);
+  int32_t b_wire_detect(struct bvm *vm) {
+    int32_t top = be_top(vm); // Get the number of arguments
+    TwoWire & myWire = getWire(vm);
+    if (top == 2 && be_isint(vm, 2)) {
+      uint8_t addr = be_toint(vm, 2);
+      // check the presence of the device
+      myWire.beginTransmission((uint8_t)addr);
+      bool found = (0 == myWire.endTransmission());
+      be_pushbool(vm, found);
       be_return(vm); // Return
     }
     be_raise(vm, kTypeError, nullptr);
@@ -239,6 +259,9 @@ extern "C" {
   int32_t b_wire_scan(struct bvm *vm) __attribute__ ((weak, alias ("b_wire_i2cmissing")));
   int32_t b_wire_validwrite(struct bvm *vm) __attribute__ ((weak, alias ("b_wire_i2cmissing")));
   int32_t b_wire_validread(struct bvm *vm) __attribute__ ((weak, alias ("b_wire_i2cmissing")));
+  int32_t b_wire_readbytes(struct bvm *vm) __attribute__ ((weak, alias ("b_wire_i2cmissing")));
+  int32_t b_wire_writebytes(struct bvm *vm) __attribute__ ((weak, alias ("b_wire_i2cmissing")));
+  int32_t b_wire_detect(struct bvm *vm) __attribute__ ((weak, alias ("b_wire_i2cmissing")));
 #endif // USE_I2C
 }
 

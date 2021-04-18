@@ -83,11 +83,14 @@ const uint8_t MAX_SHUTTER_KEYS = 4;         // Max number of shutter keys or but
 const uint8_t MAX_PCF8574 = 4;              // Max number of PCF8574 devices
 const uint8_t MAX_RULE_SETS = 3;            // Max number of rule sets of size 512 characters
 const uint16_t MAX_RULE_SIZE = 512;         // Max number of characters in rules
+const uint16_t VL53L0X_MAX_SENSORS = 8;     // Max number of VL53L0X sensors
 
 #ifdef ESP32
 const uint8_t MAX_I2C = 2;                  // Max number of I2C controllers (ESP32 = 2)
+const uint8_t MAX_SPI = 2;                  // Max number of Hardware SPI controllers (ESP32 = 2)
 #else
 const uint8_t MAX_I2C = 0;                  // Max number of I2C controllers (ESP8266 = 0, no choice)
+const uint8_t MAX_SPI = 0;                  // Max number of Hardware SPI controllers (ESP8266 = 0, no choice)
 #endif
 
 // Changes to the following MAX_ defines need to be in line with enum SettingsTextIndex
@@ -233,7 +236,7 @@ const uint32_t LOOP_SLEEP_DELAY = 50;       // Lowest number of milliseconds to 
 #define KNX_ENERGY_POWER       21
 #define KNX_ENERGY_POWERFACTOR 22
 #define KNX_ENERGY_DAILY       23
-#define KNX_ENERGY_START       24
+#define KNX_ENERGY_YESTERDAY   24
 #define KNX_ENERGY_TOTAL       25
 #define KNX_SLOT1              26
 #define KNX_SLOT2              27
@@ -309,7 +312,7 @@ enum XsnsFunctions {FUNC_SETTINGS_OVERRIDE, FUNC_PIN_STATE, FUNC_MODULE_INIT, FU
                     FUNC_SET_POWER, FUNC_SET_DEVICE_POWER, FUNC_SHOW_SENSOR, FUNC_ANY_KEY,
                     FUNC_ENERGY_EVERY_SECOND, FUNC_ENERGY_RESET,
                     FUNC_RULES_PROCESS, FUNC_SERIAL, FUNC_FREE_MEM, FUNC_BUTTON_PRESSED,
-                    FUNC_WEB_ADD_BUTTON, FUNC_WEB_ADD_MANAGEMENT_BUTTON, FUNC_WEB_ADD_MAIN_BUTTON,
+                    FUNC_WEB_ADD_BUTTON, FUNC_WEB_ADD_CONSOLE_BUTTON, FUNC_WEB_ADD_MANAGEMENT_BUTTON, FUNC_WEB_ADD_MAIN_BUTTON,
                     FUNC_WEB_ADD_HANDLER, FUNC_SET_CHANNELS, FUNC_SET_SCHEME, FUNC_HOTPLUG_SCAN,
                     FUNC_DEVICE_GROUP_ITEM };
 
@@ -423,13 +426,13 @@ enum TuyaSupportedFunctions { TUYA_MCU_FUNC_NONE,
                                 TUYA_MCU_FUNC_REL6, TUYA_MCU_FUNC_REL7, TUYA_MCU_FUNC_REL8,
                               TUYA_MCU_FUNC_DIMMER = 21, TUYA_MCU_FUNC_DIMMER2, TUYA_MCU_FUNC_CT, TUYA_MCU_FUNC_RGB, TUYA_MCU_FUNC_WHITE,
                                 TUYA_MCU_FUNC_MODESET, TUYA_MCU_FUNC_REPORT1, TUYA_MCU_FUNC_REPORT2,
-                              TUYA_MCU_FUNC_POWER = 31, TUYA_MCU_FUNC_CURRENT, TUYA_MCU_FUNC_VOLTAGE, TUYA_MCU_FUNC_BATTERY_STATE, TUYA_MCU_FUNC_BATTERY_PERCENTAGE,
+                              TUYA_MCU_FUNC_POWER = 31, TUYA_MCU_FUNC_CURRENT, TUYA_MCU_FUNC_VOLTAGE, TUYA_MCU_FUNC_BATTERY_STATE, TUYA_MCU_FUNC_BATTERY_PERCENTAGE, TUYA_MCU_FUNC_POWER_COMBINED, TUYA_MCU_FUNC_POWER_TOTAL,
                               TUYA_MCU_FUNC_REL1_INV = 41, TUYA_MCU_FUNC_REL2_INV, TUYA_MCU_FUNC_REL3_INV, TUYA_MCU_FUNC_REL4_INV, TUYA_MCU_FUNC_REL5_INV,
                                 TUYA_MCU_FUNC_REL6_INV, TUYA_MCU_FUNC_REL7_INV, TUYA_MCU_FUNC_REL8_INV,
                               TUYA_MCU_FUNC_LOWPOWER_MODE = 51,
                               TUYA_MCU_FUNC_ENUM1 = 61, TUYA_MCU_FUNC_ENUM2, TUYA_MCU_FUNC_ENUM3, TUYA_MCU_FUNC_ENUM4,
                               TUYA_MCU_FUNC_TEMP = 71, TUYA_MCU_FUNC_TEMPSET, TUYA_MCU_FUNC_HUM, TUYA_MCU_FUNC_HUMSET,
-                              TUYA_MCU_FUNC_LX = 75, TUYA_MCU_FUNC_TVOC, TUYA_MCU_FUNC_CO2, TUYA_MCU_FUNC_ECO2,
+                              TUYA_MCU_FUNC_LX = 75, TUYA_MCU_FUNC_TVOC, TUYA_MCU_FUNC_CO2, TUYA_MCU_FUNC_ECO2, TUYA_MCU_FUNC_GAS,
                               TUYA_MCU_FUNC_TIMER1 = 81, TUYA_MCU_FUNC_TIMER2, TUYA_MCU_FUNC_TIMER3, TUYA_MCU_FUNC_TIMER4,
                               TUYA_MCU_FUNC_MOTOR_DIR = 97,
                               TUYA_MCU_FUNC_ERROR = 98,

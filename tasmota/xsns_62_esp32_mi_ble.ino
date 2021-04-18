@@ -336,7 +336,7 @@ struct mi_sensor_t{
 };
 
 struct MAC_t {
-  uint8_t buf[6];
+  uint8_t buf[7];
 };
 
 std::vector<mi_sensor_t> MIBLEsensors;
@@ -1490,7 +1490,7 @@ void MI32triggerTele(void){
 void MI32StatusInfo() {
   MI32.mode.shallShowStatusInfo = 0;
   Response_P(PSTR("{\"%s\":{\"found\":%u}}"), D_CMND_MI32, MIBLEsensors.size());
-  XdrvRulesProcess();
+  XdrvRulesProcess(0);
 }
 
 /*********************************************************************************************\
@@ -2082,7 +2082,7 @@ void CmndMi32Period(void) {
 }
 
 int findSlot(char *addrOrAlias){
-  uint8_t mac[6];
+  uint8_t mac[7];
   int res = BLE_ESP32::getAddr(mac, addrOrAlias);
   if (!res) return -1;
 
@@ -2330,7 +2330,7 @@ void CmndMi32Keys(void){
           break;
         }
 
-        uint8_t addr[6];
+        uint8_t addr[7];
         char *mac = p;
         int addrres = BLE_ESP32::getAddr(addr, p);
         if (!addrres){
@@ -2701,12 +2701,8 @@ void MI32ShowSomeSensors(){
     cnt++;
   }
   ResponseAppend_P(PSTR("}"));
-  MqttPublishPrefixTopic_P(TELE, PSTR(D_RSLT_SENSOR), Settings.flag.mqtt_sensor_retain);
+  MqttPublishPrefixTopicRulesProcess_P(TELE, PSTR(D_RSLT_SENSOR), Settings.flag.mqtt_sensor_retain);
   //AddLog(LOG_LEVEL_DEBUG,PSTR("M32: %s: show some %d %s"),D_CMND_MI32, MI32.mqttCurrentSlot, TasmotaGlobal.mqtt_data);
-
-#ifdef USE_RULES
-  RulesTeleperiod();  // Allow rule based HA messages
-#endif  // USE_RULES
 
 #ifdef USE_HOME_ASSISTANT
   if(hass_mode==2){
@@ -3095,9 +3091,7 @@ void MI32ShowTriggeredSensors(){
       }
       AddLog(LOG_LEVEL_DEBUG,PSTR("M32: %s: triggered %d %s"),D_CMND_MI32, sensor, TasmotaGlobal.mqtt_data);
 
-#ifdef USE_RULES
-      RulesTeleperiod();  // Allow rule based HA messages
-#endif  // USE_RULES
+      XdrvRulesProcess(0);
 
     } else { // else don't and clear
       ResponseClear();

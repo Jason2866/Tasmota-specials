@@ -1915,14 +1915,14 @@ void SML_Immediate_MQTT(const char *mp,uint8_t index,uint8_t mindex) {
 
 // web + json interface
 void SML_Show(boolean json) {
-  int8_t count,mindex,cindex=0;
+  int8_t count, mindex, cindex = 0;
   char tpowstr[32];
   char name[24];
   char unit[8];
   char jname[24];
   int8_t index=0,mid=0;
   char *mp=(char*)meter_p;
-  char *cp,nojson=0;
+  char *cp, nojson = 0;
   //char b_mqtt_data[MESSZ];
   //b_mqtt_data[0]=0;
 
@@ -1937,9 +1937,9 @@ void SML_Show(boolean json) {
 
         if (mindex<0 || mindex>=meters_used) mindex=0;
         if (meter_desc_p[mindex].prefix[0]=='*' && meter_desc_p[mindex].prefix[1]==0) {
-          nojson=1;
+          nojson = 1;
         } else {
-          nojson=0;
+          nojson = 0;
         }
         mp+=2;
         if (*mp=='=' && *(mp+1)=='h') {
@@ -2032,27 +2032,35 @@ void SML_Show(boolean json) {
             }
 
             if (json) {
-              if (!dvalid[index]) {
-                nojson = 1;
+              //if (dvalid[index]) {
+
                 //AddLog(LOG_LEVEL_INFO, PSTR("not yet valid line %d"), index);
-              }
+              //}
               // json export
               if (index==0) {
                   //snprintf_P(b_mqtt_data, sizeof(b_mqtt_data), "%s,\"%s\":{\"%s\":%s", b_mqtt_data,meter_desc_p[mindex].prefix,jname,tpowstr);
-                  if (!nojson) ResponseAppend_P(PSTR(",\"%s\":{\"%s\":%s"),meter_desc_p[mindex].prefix,jname,tpowstr);
+                  if (!nojson) {
+                    ResponseAppend_P(PSTR(",\"%s\":{\"%s\":%s"),meter_desc_p[mindex].prefix,jname,tpowstr);
+                  }
               }
               else {
                 if (lastmind!=mindex) {
                   // meter changed, close mqtt
                   //snprintf_P(b_mqtt_data, sizeof(b_mqtt_data), "%s}", b_mqtt_data);
-                  if (!nojson) ResponseAppend_P(PSTR("}"));
+                  if (!nojson) {
+                     ResponseAppend_P(PSTR("}"));
+                   }
                     // and open new
                     //snprintf_P(b_mqtt_data, sizeof(b_mqtt_data), "%s,\"%s\":{\"%s\":%s", b_mqtt_data,meter_desc_p[mindex].prefix,jname,tpowstr);
-                  if (!nojson) ResponseAppend_P(PSTR(",\"%s\":{\"%s\":%s"),meter_desc_p[mindex].prefix,jname,tpowstr);
+                  if (!nojson) {
+                    ResponseAppend_P(PSTR(",\"%s\":{\"%s\":%s"),meter_desc_p[mindex].prefix,jname,tpowstr);
+                  }
                   lastmind=mindex;
                 } else {
                   //snprintf_P(b_mqtt_data, sizeof(b_mqtt_data), "%s,\"%s\":%s", b_mqtt_data,jname,tpowstr);
-                  if (!nojson) ResponseAppend_P(PSTR(",\"%s\":%s"),jname,tpowstr);
+                  if (!nojson) {
+                    ResponseAppend_P(PSTR(",\"%s\":%s"),jname,tpowstr);
+                  }
                 }
               }
 
@@ -2073,7 +2081,9 @@ void SML_Show(boolean json) {
     if (json) {
      //snprintf_P(b_mqtt_data, sizeof(b_mqtt_data), "%s}", b_mqtt_data);
      //ResponseAppend_P(PSTR("%s"),b_mqtt_data);
-     if (!nojson) ResponseAppend_P(PSTR("}"));
+     if (!nojson) {
+       ResponseAppend_P(PSTR("}"));
+     }
    } else {
      //WSContentSend_PD(PSTR("%s"),b_mqtt_data);
    }
@@ -2114,7 +2124,7 @@ struct SML_COUNTER {
 uint8_t sml_counter_pinstate;
 
 uint8_t sml_cnt_index[MAX_COUNTERS] =  { 0, 1, 2, 3 };
-void ICACHE_RAM_ATTR SML_CounterIsr(void *arg) {
+void IRAM_ATTR SML_CounterIsr(void *arg) {
 uint32_t index = *static_cast<uint8_t*>(arg);
 
 uint32_t time = micros();
@@ -2293,8 +2303,26 @@ dddef_exit:
           script_meter_desc[index].type = *lp;
           lp++;
           if (*lp != ',') {
-            script_meter_desc[index].sopt = *lp&7;
-            lp++;
+            switch (*lp) {
+              case 'N':
+                lp++;
+                script_meter_desc[index].sopt = 0x10 | (*lp & 3);
+                lp++;
+                break;
+              case 'E':
+                lp++;
+                script_meter_desc[index].sopt = 0x20 | (*lp & 3);
+                lp++;
+                break;
+              case 'O':
+                lp++;
+                script_meter_desc[index].sopt = 0x30 | (*lp & 3);
+                lp++;
+                break;
+              default:
+                script_meter_desc[index].sopt = *lp&7;
+                lp++;
+            }
           } else {
             script_meter_desc[index].sopt = 0;
           }
@@ -2491,15 +2519,36 @@ init10:
 #endif
 
         SerialConfig smode = SERIAL_8N1;
-        if (meter_desc_p[meters].sopt == 2) {
-          smode = SERIAL_8N2;
-        }
-        if (meter_desc_p[meters].type=='M') {
-          smode = SERIAL_8E1;
+
+        if (meter_desc_p[meters].sopt & 0xf0) {
+          // new serial config
+          switch (meter_desc_p[meters].sopt >> 4) {
+            case 1:
+              if ((meter_desc_p[meters].sopt & 1) == 1) smode = SERIAL_8N1;
+              else smode = SERIAL_8N2;
+              break;
+            case 2:
+              if ((meter_desc_p[meters].sopt & 1) == 1) smode = SERIAL_8E1;
+              else smode = SERIAL_8E2;
+              break;
+            case 3:
+              if ((meter_desc_p[meters].sopt & 1) == 1) smode = SERIAL_8O1;
+              else smode = SERIAL_8O2;
+              break;
+          }
+        } else {
+          // depecated serial config
           if (meter_desc_p[meters].sopt == 2) {
-            smode = SERIAL_8E2;
+            smode = SERIAL_8N2;
+          }
+          if (meter_desc_p[meters].type=='M') {
+            smode = SERIAL_8E1;
+            if (meter_desc_p[meters].sopt == 2) {
+              smode = SERIAL_8E2;
+            }
           }
         }
+
 #ifdef ESP8266
         if (meter_ss[meters]->begin(meter_desc_p[meters].params)) {
           meter_ss[meters]->flush();

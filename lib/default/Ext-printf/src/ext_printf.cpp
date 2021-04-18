@@ -126,7 +126,7 @@ void * __va_cur_ptr4(va_list &va) {
 // >>> Reading a_ptr=0x3FFFFD70 *a_ptr=6
 // >>> Reading a_ptr=0x3FFFFD74 *a_ptr=7
 // >>> Reading a_ptr=0x3FFFFD78 *a_ptr=8
-#elif defined(__RISC_V__)
+#elif CONFIG_IDF_TARGET_ESP32C3  // ESP32-C3 RISC_V
 // #define __va_argsiz_tas(t)  	(((sizeof(t) + sizeof(int) - 1) / sizeof(int)) * sizeof(int))
 #define va_cur_ptr4(va,T) ( (T*) __va_cur_ptr4(va) )
 void * __va_cur_ptr4(va_list &va) {
@@ -213,7 +213,7 @@ char * copyStr(const char * str) {
 }
 
 const char ext_invalid_mem[] PROGMEM = "<--INVALID-->";
-const uint32_t min_valid_ptr = 0x3FF00000;    // addresses below this line are invalid
+const uint32_t min_valid_ptr = 0x3F000000;    // addresses below this line are invalid
 
 int32_t ext_vsnprintf_P(char * buf, size_t buf_len, const char * fmt_P, va_list va) {
   va_list va_cpy;
