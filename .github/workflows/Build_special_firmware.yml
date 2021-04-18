@@ -41,6 +41,7 @@ jobs:
     - name: Run PlatformIO
       run: |
         platformio run -e tasmota-zigbee
+        mv ./README.md ./build_output/firmware
     - uses: actions/upload-artifact@v2
       with:
         name: firmware
@@ -415,7 +416,6 @@ jobs:
     - name: Run PlatformIO
       run: |
         platformio run -e tasmota32-platinum
-        mv ./README.md ./build_output/firmware
     - uses: actions/upload-artifact@v2
       with:
         name: firmware
