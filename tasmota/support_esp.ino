@@ -512,6 +512,8 @@ float CpuTemperature(void) {
 */
 
 String GetDeviceHardware(void) {
+  // https://www.espressif.com/en/products/socs
+
 /*
 Source: esp-idf esp_system.h and esptool
 
@@ -559,19 +561,26 @@ typedef struct {
     uint32_t chip_ver = REG_GET_FIELD(EFUSE_BLK0_RDATA3_REG, EFUSE_RD_CHIP_VER_PKG);
     uint32_t pkg_version = chip_ver & 0x7;
 
+    AddLog(LOG_LEVEL_DEBUG_MORE, PSTR("HDW: ESP32 Model %d, Revision %d, Core %d, Package %d"), chip_info.model, chip_revision, chip_info.cores, chip_ver);
+
     switch (pkg_version) {
       case 0:
-        if (single_core) { return F("ESP32-S0WDQ6"); }
-        else {             return F("ESP32-D0WDQ6"); }
+        if (single_core) { return F("ESP32-S0WDQ6"); }     // Max 240MHz, Single core, QFN 6*6
+        else if (rev3)   { return F("ESP32-D0WDQ6-V3"); }  // Max 240MHz, Dual core, QFN 6*6
+        else {             return F("ESP32-D0WDQ6"); }     // Max 240MHz, Dual core, QFN 6*6
       case 1:
-        if (single_core) { return F("ESP32-S0WD"); }
-        else {             return F("ESP32-D0WD"); }
-      case 2:              return F("ESP32-D2WD");
-      case 4:              return F("ESP32-U4WDH");
+        if (single_core) { return F("ESP32-S0WD"); }       // Max 160MHz, Single core, QFN 5*5, ESP32-SOLO-1, ESP32-DevKitC
+        else if (rev3)   { return F("ESP32-D0WD-V3"); }    // Max 240MHz, Dual core, QFN 5*5, ESP32-WROOM-32E, ESP32_WROVER-E, ESP32-DevKitC
+        else {             return F("ESP32-D0WD"); }       // Max 240MHz, Dual core, QFN 5*5, ESP32-WROOM-32D, ESP32_WROVER-B, ESP32-DevKitC
+      case 2:              return F("ESP32-D2WD");         // Max 160MHz, Dual core, QFN 5*5, 2MB embedded flash
+      case 3:
+        if (single_core) { return F("ESP32-S0WD-OEM"); }   // Max 160MHz, Single core, QFN 5*5, Xiaomi Yeelight
+        else {             return F("ESP32-D0WD-OEM"); }   // Max 240MHz, Dual core, QFN 5*5
+      case 4:              return F("ESP32-U4WDH");        // Max 160MHz, Single core, QFN 5*5, 4MB embedded flash, ESP32-MINI-1, ESP32-DevKitM-1
       case 5:
-        if (rev3)        { return F("ESP32-PICO-V3"); }
-        else {             return F("ESP32-PICO-D4"); }
-      case 6:              return F("ESP32-PICO-V3-02");
+        if (rev3)        { return F("ESP32-PICO-V3"); }    // Max 240MHz, Dual core, LGA 7*7, ESP32-PICO-V3-ZERO, ESP32-PICO-V3-ZERO-DevKit
+        else {             return F("ESP32-PICO-D4"); }    // Max 240MHz, Dual core, LGA 7*7, 4MB embedded flash, ESP32-PICO-KIT
+      case 6:              return F("ESP32-PICO-V3-02");   // Max 240MHz, Dual core, LGA 7*7, 8MB embedded flash, 2MB embedded PSRAM, ESP32-PICO-MINI-02, ESP32-PICO-DevKitM-2
     }
 #endif  // CONFIG_IDF_TARGET_ESP32
     return F("ESP32");
@@ -590,16 +599,19 @@ typedef struct {
     uint32_t pkg_version = chip_ver & 0x7;
 //    uint32_t pkg_version = esp_efuse_get_pkg_ver();
 
+    AddLog(LOG_LEVEL_DEBUG_MORE, PSTR("HDW: ESP32 Model %d, Revision %d, Core %d, Package %d"), chip_info.model, chip_revision, chip_info.cores, chip_ver);
+
     switch (pkg_version) {
-      case 0:              return F("ESP32-S2");
-      case 1:              return F("ESP32-S2FH16");
-      case 2:              return F("ESP32-S2FH32");
+      case 0:              return F("ESP32-S2");           // Max 240MHz, Single core, QFN 7*7, ESP32-S2-WROOM, ESP32-S2-WROVER, ESP32-S2-Saola-1, ESP32-S2-Kaluga-1
+      case 1:              return F("ESP32-S2FH2");        // Max 240MHz, Single core, QFN 7*7, 2MB embedded flash, ESP32-S2-MINI-1, ESP32-S2-DevKitM-1
+      case 2:              return F("ESP32-S2FH4");        // Max 240MHz, Single core, QFN 7*7, 4MB embedded flash
+      case 3:              return F("ESP32-S2FN4R2");      // Max 240MHz, Single core, QFN 7*7, 4MB embedded flash, 2MB embedded PSRAM, , ESP32-S2-MINI-1U, ESP32-S2-DevKitM-1U
     }
 #endif  // CONFIG_IDF_TARGET_ESP32S2
     return F("ESP32-S2");
   }
   else if (4 == chip_model) {  // ESP32-S3
-    return F("ESP32-S3");
+    return F("ESP32-S3");                                  // Max 240MHz, Dual core, QFN 7*7, ESP32-S3-WROOM-1, ESP32-S3-DevKitC-1
   }
   else if (5 == chip_model) {  // ESP32-C3
 #ifdef CONFIG_IDF_TARGET_ESP32C3
@@ -615,14 +627,17 @@ typedef struct {
     uint32_t pkg_version = chip_ver & 0x7;
 //    uint32_t pkg_version = esp_efuse_get_pkg_ver();
 
+    AddLog(LOG_LEVEL_DEBUG_MORE, PSTR("HDW: ESP32 Model %d, Revision %d, Core %d, Package %d"), chip_info.model, chip_revision, chip_info.cores, chip_ver);
+
     switch (pkg_version) {
-      case 0:              return F("ESP32-C3");
+      case 0:              return F("ESP32-C3");           // Max 160MHz, Single core, QFN 5*5, ESP32-C3-WROOM-02, ESP32-C3-DevKitC-02
+      case 1:              return F("ESP32-C3FH4");        // Max 160MHz, Single core, QFN 5*5, 4MB embedded flash, ESP32-C3-MINI-1, ESP32-C3-DevKitM-1
     }
 #endif  // CONFIG_IDF_TARGET_ESP32C3
     return F("ESP32-C3");
   }
   else if (6 == chip_model) {  // ESP32-S3(beta3)
-    return F("ESP32-S3(beta3)");
+    return F("ESP32-S3");
   }
   else if (7 == chip_model) {  // ESP32-C6
 #ifdef CONFIG_IDF_TARGET_ESP32C6
@@ -637,6 +652,8 @@ typedef struct {
     uint32_t chip_ver = REG_GET_FIELD(EFUSE_RD_MAC_SPI_SYS_3_REG, EFUSE_PKG_VERSION);
     uint32_t pkg_version = chip_ver & 0x7;
 //    uint32_t pkg_version = esp_efuse_get_pkg_ver();
+
+    AddLog(LOG_LEVEL_DEBUG_MORE, PSTR("HDW: ESP32 Model %d, Revision %d, Core %d, Package %d"), chip_info.model, chip_revision, chip_info.cores, chip_ver);
 
     switch (pkg_version) {
       case 0:              return F("ESP32-C6");
