@@ -15,7 +15,6 @@
 - Tasmota Scripting instead of rules (Smart Meter Interface enabled)
 - Tasmota Ethernet ESP32 for wired LAN (needs Ethernet hardware module)
 - Tasmota M5Stack-core2 with scripting features
-- Tasmota ESP32-solo1 (experimental version for ESP32-solo1 MCU)
 - Tasmota Battery build for battery powered tuya sensors
 - Tasmota minicustom minimal even smaller (NO Webserver, you have to use mqtt!!)
 - Tasmota Mega at the bleeding edge - Almost every sensor included
