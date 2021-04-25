@@ -20,7 +20,7 @@
 #include <Arduino.h>
 #include "uDisplay.h"
 
-//#define UDSP_DEBUG
+#define UDSP_DEBUG
 
 const uint16_t udisp_colors[]={UDISP_BLACK,UDISP_WHITE,UDISP_RED,UDISP_GREEN,UDISP_BLUE,UDISP_CYAN,UDISP_MAGENTA,\
   UDISP_YELLOW,UDISP_NAVY,UDISP_DARKGREEN,UDISP_DARKCYAN,UDISP_MAROON,UDISP_PURPLE,UDISP_OLIVE,\
@@ -31,11 +31,29 @@ uint16_t uDisplay::GetColorFromIndex(uint8_t index) {
   return udisp_colors[index];
 }
 
-extern uint8_t *buffer;
-extern uint8_t color_type;
+uint16_t uDisplay::fgcol(void) {
+  return fg_col;
+}
+uint16_t uDisplay::bgcol(void) {
+  return bg_col;
+}
+
+int8_t uDisplay::color_type(void) {
+  return col_type;
+}
+
+
+uDisplay::~uDisplay(void) {
+  if (framebuffer) {
+    free(framebuffer);
+  }
+}
 
 uDisplay::uDisplay(char *lp) : Renderer(800, 600) {
   // analyse decriptor
+  pwr_cbp = 0;
+  dim_cbp = 0;
+  framebuffer = 0;
   col_mode = 16;
   sa_mode = 16;
   saw_3 = 0xff;
@@ -90,7 +108,7 @@ uDisplay::uDisplay(char *lp) : Renderer(800, 600) {
         }
         if (*lp1 == ',') lp1++;
       }
-      if (*lp1 != ':' && *lp1 != '\n') {
+      if (*lp1 != ':' && *lp1 != '\n' && *lp1 != ' ') {   // Add space char
         switch (section) {
           case 'H':
             // header line
@@ -103,13 +121,17 @@ uDisplay::uDisplay(char *lp) : Renderer(800, 600) {
             setheight(gys);
             bpp = next_val(&lp1);
             if (bpp == 1) {
-              color_type = uCOLOR_BW;
+              col_type = uCOLOR_BW;
             } else {
-              color_type = uCOLOR_COLOR;
+              col_type = uCOLOR_COLOR;
             }
             str2c(&lp1, ibuff, sizeof(ibuff));
             if (!strncmp(ibuff, "I2C", 3)) {
               interface = _UDSP_I2C;
+              wire_n = 0;
+              if (!strncmp(ibuff, "I2C2", 4)) {
+               wire_n = 1;
+              }
               i2caddr = next_hex(&lp1);
               i2c_scl = next_val(&lp1);
               i2c_sda = next_val(&lp1);
@@ -260,14 +282,22 @@ uDisplay::uDisplay(char *lp) : Renderer(800, 600) {
             lutptime = next_val(&lp1);
             lut3time = next_val(&lp1);
             break;
+          case 'B':
+            lvgl_param = next_val(&lp1);
+            break;
         }
       }
     }
-    if (*lp == '\n') {
+    if (*lp == '\n' || *lp == ' ') {   // Add space char
       lp++;
     } else {
       lp = strchr(lp, '\n');
-      if (!lp) break;
+      if (!lp) {
+        lp = strchr(lp, ' ');
+        if (!lp) {
+          break;
+        }
+      }
       lp++;
     }
   }
@@ -350,17 +380,24 @@ Renderer *uDisplay::Init(void) {
   }
 
   if (interface == _UDSP_I2C) {
-    wire = &Wire;
+    if (wire_n == 0) {
+      wire = &Wire;
+    }
+#ifdef ESP32
+    if (wire_n == 1) {
+      wire = &Wire1;
+    }
+#endif
     wire->begin(i2c_sda, i2c_scl);
     if (bpp < 16) {
-      if (buffer) free(buffer);
+      if (framebuffer) free(framebuffer);
 #ifdef ESP8266
-      buffer = (uint8_t*)calloc((gxs * gys * bpp) / 8, 1);
+      framebuffer = (uint8_t*)calloc((gxs * gys * bpp) / 8, 1);
 #else
       if (psramFound()) {
-        buffer = (uint8_t*)heap_caps_malloc((gxs * gys * bpp) / 8, MALLOC_CAP_SPIRAM | MALLOC_CAP_8BIT);
+        framebuffer = (uint8_t*)heap_caps_malloc((gxs * gys * bpp) / 8, MALLOC_CAP_SPIRAM | MALLOC_CAP_8BIT);
       } else {
-        buffer = (uint8_t*)calloc((gxs * gys * bpp) / 8, 1);
+        framebuffer = (uint8_t*)calloc((gxs * gys * bpp) / 8, 1);
       }
 #endif
     }
@@ -380,12 +417,12 @@ Renderer *uDisplay::Init(void) {
 
     if (ep_mode) {
   #ifdef ESP8266
-      buffer = (uint8_t*)calloc((gxs * gys * bpp) / 8, 1);
+      framebuffer = (uint8_t*)calloc((gxs * gys * bpp) / 8, 1);
   #else
       if (psramFound()) {
-        buffer = (uint8_t*)heap_caps_malloc((gxs * gys * bpp) / 8, MALLOC_CAP_SPIRAM | MALLOC_CAP_8BIT);
+        framebuffer = (uint8_t*)heap_caps_malloc((gxs * gys * bpp) / 8, MALLOC_CAP_SPIRAM | MALLOC_CAP_8BIT);
       } else {
-        buffer = (uint8_t*)calloc((gxs * gys * bpp) / 8, 1);
+        framebuffer = (uint8_t*)calloc((gxs * gys * bpp) / 8, 1);
       }
       #endif
     }
@@ -654,7 +691,7 @@ void uDisplay::Updateframe(void) {
     i2c_command(i2c_col_end);
 
     uint16_t count = gxs * ((gys + 7) / 8);
-    uint8_t *ptr   = buffer;
+    uint8_t *ptr   = framebuffer;
     wire->beginTransmission(i2caddr);
     i2c_command(saw_3);
     uint8_t bytesOut = 1;
@@ -695,7 +732,7 @@ void uDisplay::Updateframe(void) {
 			      wire->beginTransmission(i2caddr);
             wire->write(0x40);
             for ( k = 0; k < xs; k++, p++) {
-		            wire->write(buffer[p]);
+		            wire->write(framebuffer[p]);
             }
             wire->endTransmission();
 	      }
@@ -895,12 +932,27 @@ void uDisplay::Splash(void) {
 
 void uDisplay::setAddrWindow(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1) {
 
+  if (bpp != 16) {
+    // just save params or update frame
+    if (!x0 && !y0 && !x1 && !y1) {
+      if (!ep_mode) {
+        Updateframe();
+      }
+    } else {
+      seta_xp1 = x0;
+      seta_xp2 = x1;
+      seta_yp1 = y0;
+      seta_yp2 = y1;
+    }
+    return;
+  }
+
   if (!x0 && !y0 && !x1 && !y1) {
     SPI_CS_HIGH
     SPI_END_TRANSACTION
   } else {
-    SPI_CS_LOW
     SPI_BEGIN_TRANSACTION
+    SPI_CS_LOW
     setAddrWindow_int(x0, y0, x1 - x0, y1 - y0 );
   }
 }
@@ -955,8 +1007,29 @@ void uDisplay::setAddrWindow_int(uint16_t x, uint16_t y, uint16_t w, uint16_t h)
 }
 
 
+static inline uint8_t ulv_color_to1(uint16_t color) {
+  if (((color>>11) & 0x10) || ((color>>5) & 0x20) || (color & 0x10)) {
+      return 1;
+  }
+  else {
+      return 0;
+  }
+}
 void uDisplay::pushColors(uint16_t *data, uint16_t len, boolean first) {
   uint16_t color;
+
+  if (bpp != 16) {
+    // stupid monchrome version
+    for (uint32_t y = seta_yp1; y < seta_yp2; y++) {
+      for (uint32_t x = seta_xp1; x < seta_xp2; x++) {
+        uint16_t color = *data++;
+        drawPixel(x, y, ulv_color_to1(color));
+        len--;
+        if (!len) return;
+      }
+    }
+    return;
+  }
 
   while (len--) {
     color = *data++;
@@ -1076,7 +1149,11 @@ void uDisplay::DisplayOnff(int8_t on) {
     return;
   }
 
-  udisp_bpwr(on);
+  if (pwr_cbp) {
+    pwr_cbp(on);
+  }
+
+//  udisp_bpwr(on);
 
   if (interface == _UDSP_I2C) {
     if (on) {
@@ -1146,7 +1223,10 @@ void uDisplay::dim(uint8_t dim) {
     if (bpanel >= 0) {
       ledcWrite(ESP32_PWM_CHANNEL, dimmer);
     } else {
-      udisp_dimm(dim);
+      //udisp_dimm(dim);
+      if (dim_cbp) {
+        dim_cbp(dim);
+      }
     }
 #endif
 
@@ -1187,7 +1267,7 @@ void uDisplay::TS_RotConvert(int16_t *x, int16_t *y) {
 
 uint8_t uDisplay::strlen_ln(char *str) {
   for (uint32_t cnt = 0; cnt < 256; cnt++) {
-    if (!str[cnt] || str[cnt] == '\n') return cnt;
+    if (!str[cnt] || str[cnt] == '\n' || str[cnt] == ' ') return cnt;
   }
   return 0;
 }
@@ -1453,12 +1533,12 @@ void uDisplay::DisplayFrame_42(void) {
     spi_command_EPD(saw_2);
     for (uint16_t j = 0; j < Height; j++) {
         for (uint16_t i = 0; i < Width; i++) {
-            spi_data8_EPD(buffer[i + j * Width] ^ 0xff);
+            spi_data8_EPD(framebuffer[i + j * Width] ^ 0xff);
         }
     }
     spi_command_EPD(saw_3);
     delay(100);
-    //Serial.printf("EPD Diplayframe\n");
+    Serial.printf("EPD Diplayframe\n");
 }
 
 
@@ -1483,7 +1563,7 @@ void uDisplay::ClearFrame_42(void) {
 
    spi_command_EPD(saw_3);
    delay(100);
-   //Serial.printf("EPD Clearframe\n");
+   Serial.printf("EPD Clearframe\n");
 }
 
 
@@ -1497,7 +1577,7 @@ void uDisplay::SetLut(const unsigned char* lut) {
 
 void uDisplay::Updateframe_EPD(void) {
   if (ep_mode == 1) {
-    SetFrameMemory(buffer, 0, 0, gxs, gys);
+    SetFrameMemory(framebuffer, 0, 0, gxs, gys);
     DisplayFrame_29();
   } else {
     DisplayFrame_42();
@@ -1609,21 +1689,21 @@ void uDisplay::DrawAbsolutePixel(int x, int y, int16_t color) {
     }
     if (IF_INVERT_COLOR) {
         if (color) {
-            buffer[(x + y * w) / 8] |= 0x80 >> (x % 8);
+            framebuffer[(x + y * w) / 8] |= 0x80 >> (x % 8);
         } else {
-            buffer[(x + y * w) / 8] &= ~(0x80 >> (x % 8));
+            framebuffer[(x + y * w) / 8] &= ~(0x80 >> (x % 8));
         }
     } else {
         if (color) {
-            buffer[(x + y * w) / 8] &= ~(0x80 >> (x % 8));
+            framebuffer[(x + y * w) / 8] &= ~(0x80 >> (x % 8));
         } else {
-            buffer[(x + y * w) / 8] |= 0x80 >> (x % 8);
+            framebuffer[(x + y * w) / 8] |= 0x80 >> (x % 8);
         }
     }
 }
 
 void uDisplay::drawPixel_EPD(int16_t x, int16_t y, uint16_t color) {
-  if (!buffer) return;
+  if (!framebuffer) return;
   if ((x < 0) || (x >= width()) || (y < 0) || (y >= height()))
     return;
 

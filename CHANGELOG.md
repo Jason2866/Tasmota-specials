@@ -3,10 +3,31 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased] - Development
 
-## [9.3.1.4]
+## [9.4.0.2]
+### Added
+- Initial support for optional ``Template`` JSON fieldpair ``"CMND":"<any template related command>;<any template related command>;..."`` (#11788)
+
+## [Released]
+
+## [9.4.0] 20210423
+- Release Leslie
+
+## [9.4.0.1] 20210423
+### Added
+- Command ``Wifi 0/1`` for ESP8266 to turn wifi Off and On. When wifi is Off it is always returned On after a restart except for a wake-up from deepsleep (#11839)
+
+### Changed
+- Zigbee refactored storage for device configuration and device last known data (#11838)
+
+### Fixed
+- Command ``Power`` should not reset pulsetime (#11805)
+- Teleperiod rule handling regression from v9.3.1.2 (#11851)
+
+## [9.3.1.4] 20210422
 ### Added
 - Command ``TuyaTempSetRes 0..3`` to control Tuya Temperature Set Resolution (#11781)
-- ESP32 support for LVGL 7.11 with Berry binding by Stefan Hadinger (#11789)
+- ESP32 support for LVGL 7.11 with Berry binding by Stephan Hadinger (#11789)
+- Add ``Input`` GPIO type with no default action, to be read via Berry
 
 ## [9.3.1.3] 20210419
 ### Added
@@ -94,8 +115,6 @@ All notable changes to this project will be documented in this file.
 - ESP32 flash script for Odroid and Core2 (#11227)
 - ESP32 WS2812 bitbang support (#11248)
 - DS18x20 driver timing issue (#11270)
-
-## [Released]
 
 ## [9.3.1] 20210223
 - Release Kenneth
@@ -645,7 +664,7 @@ All notable changes to this project will be documented in this file.
 - Support for analog anemometer by Matteo Albinola (#8283)
 - Support for OpenTherm by Yuriy Sannikov (#8373)
 - Support for Thermostat control by arijav (#8212)
-- Automatic compression of Rules to achieve ~60% compression by Stefan Hadinger
+- Automatic compression of Rules to achieve ~60% compression by Stephan Hadinger
 - Command ``SetOption93 1`` to control caching of compressed rules
 - Rule trigger at root level like ``on loadavg<50 do power 2 endon`` after ``state`` command
 - Zigbee support for router and end-device mode
@@ -742,7 +761,7 @@ All notable changes to this project will be documented in this file.
 - Support for HDC1080 Temperature and Humidity sensor by Luis Teixeira (#7888)
 - Commands ``SwitchMode 13`` PushOn and ``SwitchMode 14`` PushOnInverted (#7912)
 - Command ``HumOffset -10.0 .. 10.0`` to set global humidity sensor offset (#7934)
-- Zigbee support for Hue emulation by Stefan Hadinger
+- Zigbee support for Hue emulation by Stephan Hadinger
 - Dew Point to Temperature and Humidity sensors
 - Support for ElectriQ iQ-wifiMOODL RGBW light by Ian King (#7947)
 
@@ -944,7 +963,7 @@ All notable changes to this project will be documented in this file.
 ### 7.1.2.5 20191213
 
 - Change some Settings locations freeing up space for future single char allowing variable length text
-- Add Zigbee support for Xiaomi Aqara Vibration Sensor and Presence Sensor by Stefan Hadinger
+- Add Zigbee support for Xiaomi Aqara Vibration Sensor and Presence Sensor by Stephan Hadinger
 - Add Shutter functions ramp up/down and MQTT reporting by Stefan Bode
 
 ### 7.1.2.4 20191209
@@ -957,7 +976,7 @@ All notable changes to this project will be documented in this file.
 - Add Yaw, Pitch and Roll support for MPU6050 by Philip Barclay (#7058)
 - Add reporting of raw weight to JSON from HX711 to overcome auto-tare functionality by @tobox (#7171)
 - Add command ``Sensor34 9 <weight code>`` to set minimum delta to trigger JSON message by @tobox (#7188)
-- Fix flashing H801 led at boot by Stefan Hadinger (#7165, #649)
+- Fix flashing H801 led at boot by Stephan Hadinger (#7165, #649)
 - Fix duplicated ``Backlog`` when using Event inside a Backlog by Adrian Scillato (#7178, #7147)
 - Fix Gui Timer when using a negative zero offset of -00:00 by Peter Ooms (#7174)
 
@@ -969,7 +988,7 @@ All notable changes to this project will be documented in this file.
 
 - Remove rule trigger ``tele_power1#state`` due to compatibility
 - Add command ``SerialConfig 0..23`` or ``SerialConfig 8N1`` to select Serial Config based in PR by Luis Teixeira (#7108)
-- Add save call stack in RTC memory in case of crash, command ``Status 12`` to dump the stack by Stefan Hadinger
+- Add save call stack in RTC memory in case of crash, command ``Status 12`` to dump the stack by Stephan Hadinger
 - Add Home Assistant force update by Frederico Leoni (#7140, #7074)
 
 ### 7.1.2.1 20191206

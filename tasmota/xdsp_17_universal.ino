@@ -25,7 +25,6 @@
 
 #include <uDisplay.h>
 
-uDisplay *udisp;
 bool udisp_init_done = false;
 uint8_t ctouch_counter;
 extern uint8_t color_type;
@@ -38,18 +37,18 @@ extern FS *ffsp;
 
 #define DISPDESC_SIZE 1000
 
+
+void Core2DisplayPower(uint8_t on);
+void Core2DisplayDim(uint8_t dim);
+
 //#define DSP_ROM_DESC
 
 /*********************************************************************************************/
 #ifdef DSP_ROM_DESC
 /* sample descriptor */
 const char DSP_SAMPLE_DESC[] PROGMEM =
-// name,xs,ys,bpp,interface, (HEX) address, scl,sda,reset
-// '*' means take pin number from tasmota
 ":H,SH1106,128,64,1,I2C,3c,*,*,*\n"
-// splash settings, font, size, fgcol, bgcol, x,y
 ":S,0,1,1,0,40,20\n"
-// init register settings, must be in HEX
 ":I\n"
 "AE\n"
 "D5,80\n"
@@ -67,9 +66,7 @@ const char DSP_SAMPLE_DESC[] PROGMEM =
 "A4\n"
 "A6\n"
 "AF\n"
-// switch display off
 ":o,AE\n"
-// switch display on
 ":O,AF\n"
 ":A,00,10,40,00,02\n"
 ":i,A6,A7\n"
@@ -77,21 +74,27 @@ const char DSP_SAMPLE_DESC[] PROGMEM =
 
 #endif // DSP_ROM_DESC
 /*********************************************************************************************/
-
-void Init_uDisp(void) {
+Renderer *Init_uDisplay(const char *desc, int8_t cs) {
 char *ddesc = 0;
 char *fbuff;
+uDisplay *udisp;
 
-  if (TasmotaGlobal.gpio_optiona.udisplay_driver) {
+  if (TasmotaGlobal.gpio_optiona.udisplay_driver || desc) {
+
     Settings.display_model = XDSP_17;
 
-    color_type = COLOR_BW;
-
     fbuff = (char*)calloc(DISPDESC_SIZE, 1);
-    if (!fbuff) return;
+    if (!fbuff) return 0;
+
+    if (desc) {
+      memcpy_P(fbuff, desc, DISPDESC_SIZE - 1);
+      ddesc = fbuff;
+      AddLog(LOG_LEVEL_INFO, PSTR("DSP: const char descriptor used"));
+    }
+
 
 #ifdef USE_UFILESYS
-    if (ffsp  && !TasmotaGlobal.no_autoexec) {
+    if (ffsp  && !TasmotaGlobal.no_autoexec && !ddesc) {
       File fp;
       fp = ffsp->open("/dispdesc.txt", "r");
       if (fp > 0) {
@@ -148,24 +151,44 @@ char *fbuff;
     if (!ddesc) {
       AddLog(LOG_LEVEL_INFO, PSTR("DSP: No valid descriptor found"));
       if (fbuff) free(fbuff);
-      return;
+      return 0;
     }
     // now replace tasmota vars before passing to driver
-    char *cp = strstr(ddesc, "I2C,");
+    char *cp = strstr(ddesc, "I2C");
     if (cp) {
-      cp += 4;
+      cp += 3;
+      uint8_t wire_n = 1;
+      if (*cp == '1' || *cp == '2') {
+        wire_n = *cp & 3;
+        cp += 2;
+      } else {
+        cp++;
+      }
       //,3c,22,21,-1
       uint8_t i2caddr = strtol(cp, &cp, 16);
       int8_t scl, sda;
-      scl = replacepin(&cp, Pin(GPIO_I2C_SCL));
-      sda = replacepin(&cp, Pin(GPIO_I2C_SDA));
+      scl = replacepin(&cp, Pin(GPIO_I2C_SCL, wire_n - 1));
+      sda = replacepin(&cp, Pin(GPIO_I2C_SDA, wire_n - 1));
       replacepin(&cp, Pin(GPIO_OLED_RESET));
 
-      Wire.begin(sda, scl);
+      if (wire_n == 1) {
+        Wire.begin(sda, scl);
+      }
+#ifdef ESP32
+      if (wire_n == 2) {
+        Wire1.begin(sda, scl);
+      }
+      if (I2cSetDevice(i2caddr, wire_n - 1)) {
+        I2cSetActiveFound(i2caddr, "DSP-I2C", wire_n - 1);
+      }
+#endif // ESP32
+
+#ifdef ESP8266
       if (I2cSetDevice(i2caddr)) {
         I2cSetActiveFound(i2caddr, "DSP-I2C");
       }
-
+#endif // ESP8266
+      //AddLog(LOG_LEVEL_INFO, PSTR("DSP: i2c %x, %d, %d, %d!"), i2caddr, wire_n, scl, sda);
     }
 
     cp = strstr(ddesc, "SPI,");
@@ -173,9 +196,22 @@ char *fbuff;
       cp += 4;
       //; 7 params nr,cs,sclk,mosi,dc,bl,reset,miso
       //SPI,*,*,*,*,*,*,*
+      if (cs < 0) {
+        switch (*cp) {
+          case '1':
+            cs = Pin(GPIO_SPI_CS);
+            break;
+          case '2':
+            cs = Pin(GPIO_SPI_CS, 1);
+            break;
+          default:
+            cs = Pin(GPIO_SSPI_CS);
+            break;
+        }
+      }
       if (*cp == '1') {
         cp+=2;
-        replacepin(&cp, Pin(GPIO_SPI_CS));
+        replacepin(&cp, cs);
         replacepin(&cp, Pin(GPIO_SPI_CLK));
         replacepin(&cp, Pin(GPIO_SPI_MOSI));
         replacepin(&cp, Pin(GPIO_SPI_DC));
@@ -184,7 +220,7 @@ char *fbuff;
         replacepin(&cp, Pin(GPIO_SPI_MISO));
       } else if (*cp == '2') {
         cp+=2;
-        replacepin(&cp, Pin(GPIO_SPI_CS, 1));
+        replacepin(&cp, cs);
         replacepin(&cp, Pin(GPIO_SPI_CLK, 1));
         replacepin(&cp, Pin(GPIO_SPI_MOSI, 1));
         replacepin(&cp, Pin(GPIO_SPI_DC, 1));
@@ -194,7 +230,7 @@ char *fbuff;
       } else {
         // soft spi pins
         cp+=2;
-        replacepin(&cp, Pin(GPIO_SSPI_CS));
+        replacepin(&cp, cs);
         replacepin(&cp, Pin(GPIO_SSPI_SCLK));
         replacepin(&cp, Pin(GPIO_SSPI_MOSI));
         replacepin(&cp, Pin(GPIO_SSPI_DC));
@@ -212,7 +248,10 @@ char *fbuff;
 */
 
     // init renderer
-    if (udisp) delete udisp;
+    if (renderer) {
+      delete renderer;
+      AddLog(LOG_LEVEL_INFO, PSTR("DSP: reinit"));
+    }
     udisp  = new uDisplay(ddesc);
 
     // checck for touch option TI1 or TI2
@@ -226,29 +265,33 @@ char *fbuff;
 
       uint8_t i2caddr = strtol(cp, &cp, 16);
       int8_t scl, sda;
-
+      scl = replacepin(&cp, Pin(GPIO_I2C_SCL, wire_n));
+      sda = replacepin(&cp, Pin(GPIO_I2C_SDA, wire_n));
       if (wire_n == 0) {
-        scl = replacepin(&cp, Pin(GPIO_I2C_SCL));
-        sda = replacepin(&cp, Pin(GPIO_I2C_SDA));
         Wire.begin(sda, scl);
       }
 #ifdef ESP32
       if (wire_n == 1) {
-        scl = replacepin(&cp, Pin(GPIO_I2C_SCL, 1));
-        sda = replacepin(&cp, Pin(GPIO_I2C_SDA, 1));
         Wire1.begin(sda, scl, 400000);
       }
-#endif
-      //AddLog(LOG_LEVEL_INFO, PSTR("DSP: touch %x, %d, %d, %d!"), i2caddr, wire_n, scl, sda);
       if (I2cSetDevice(i2caddr, wire_n)) {
         I2cSetActiveFound(i2caddr, "FT5206", wire_n);
       }
+#endif // ESP32
+
+#ifdef ESP8266
+      //AddLog(LOG_LEVEL_INFO, PSTR("DSP: touch %x, %d, %d, %d!"), i2caddr, wire_n, scl, sda);
+      if (I2cSetDevice(i2caddr)) {
+        I2cSetActiveFound(i2caddr, "FT5206");
+      }
+#endif // ESP8266
+
       // start digitizer
 #ifdef ESP32
-      if (!wire_n) Touch_Init(Wire);
-      else Touch_Init(Wire1);
+      if (!wire_n) FT5206_Touch_Init(Wire);
+      else FT5206_Touch_Init(Wire1);
 #else
-      if (!wire_n) Touch_Init(Wire);
+      if (!wire_n) FT5206_Touch_Init(Wire);
 #endif
     }
 #endif
@@ -258,7 +301,7 @@ char *fbuff;
     if (cp) {
       cp+=4;
       uint8_t touch_cs = replacepin(&cp, Pin(GPIO_XPT2046_CS));
-	    Touch_Init(touch_cs);
+	    XPT2046_Touch_Init(touch_cs);
     }
 #endif
 
@@ -266,31 +309,38 @@ char *fbuff;
     if (fbuff) free(fbuff);
 
     renderer = udisp->Init();
-    if (!renderer) return;
+    if (!renderer) return 0;
 
     Settings.display_width = renderer->width();
     Settings.display_height = renderer->height();
-    fg_color = udisp->fgcol();
-    bg_color = udisp->bgcol();
+    fg_color = renderer->fgcol();
+    bg_color = renderer->bgcol();
+    color_type = renderer->color_type();
+
+#ifdef USE_M5STACK_CORE2
+    renderer->SetPwrCB(Core2DisplayPower);
+    renderer->SetDimCB(Core2DisplayDim);
+#endif
 
     renderer->DisplayInit(DISPLAY_INIT_MODE, Settings.display_size, Settings.display_rotate, Settings.display_font);
     renderer->dim(Settings.display_dimmer);
 
 #ifdef SHOW_SPLASH
-    udisp->Splash();
+    renderer->Splash();
 #endif
 
     udisp_init_done = true;
-    AddLog(LOG_LEVEL_INFO, PSTR("DSP: %s!"), udisp->devname());
-  }
-}
+    AddLog(LOG_LEVEL_INFO, PSTR("DSP: %s!"), renderer->devname());
 
+    return renderer;
+  }
+  return 0;
+}
 
 /*********************************************************************************************/
 
 
-void Core2DisplayPower(uint8_t on);
-void Core2DisplayDim(uint8_t dim);
+/*
 
 void udisp_bpwr(uint8_t on) {
 #ifdef USE_M5STACK_CORE2
@@ -304,8 +354,10 @@ void udisp_dimm(uint8_t dim) {
 #endif
 }
 
+*/
+
 void TS_RotConvert(int16_t *x, int16_t *y) {
-  if (udisp) udisp->TS_RotConvert(x, y);
+  if (renderer) renderer->TS_RotConvert(x, y);
 }
 
 #if defined(USE_FT5206) || defined(USE_XPT2046)
@@ -415,7 +467,7 @@ bool Xdsp17(uint8_t function)
   bool result = false;
 
   if (FUNC_DISPLAY_INIT_DRIVER == function) {
-    Init_uDisp();
+    Init_uDisplay(0, -1);
   }
   else if (udisp_init_done && (XDSP_17 == Settings.display_model)) {
     switch (function) {
@@ -430,17 +482,11 @@ bool Xdsp17(uint8_t function)
 #endif  // USE_DISPLAY_MODES1TO5
 
 #if defined(USE_FT5206) || defined(USE_XPT2046)
-#ifdef USE_TOUCH_BUTTONS
         case FUNC_DISPLAY_EVERY_50_MSECOND:
-#if defined(USE_FT5206)
-          if (FT5206_found) {
-#elif defined(USE_XPT2046)
-          if (XPT2046_found) {
-#endif
+          if (FT5206_found || XPT2046_found) {
             udisp_CheckTouch();
           }
           break;
-#endif // USE_TOUCH_BUTTONS
 #endif // USE_FT5206
 
     }

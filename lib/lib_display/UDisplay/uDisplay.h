@@ -72,14 +72,16 @@ enum uColorType { uCOLOR_BW, uCOLOR_COLOR };
 class uDisplay : public Renderer {
  public:
   uDisplay(char *);
+  ~uDisplay(void);
   Renderer *Init(void);
   void DisplayInit(int8_t p,int8_t size,int8_t rot,int8_t font);
   void Updateframe();
   void DisplayOnff(int8_t on);
   void Splash(void);
   char *devname(void);
-  uint16_t fgcol(void) const { return fg_col; };
-  uint16_t bgcol(void) const { return bg_col; };
+  uint16_t fgcol(void);
+  uint16_t bgcol(void);
+  int8_t color_type(void);
   void dim(uint8_t dim);
   uint16_t GetColorFromIndex(uint8_t index);
   void setRotation(uint8_t m);
@@ -88,6 +90,8 @@ class uDisplay : public Renderer {
   void pushColors(uint16_t *data, uint16_t len, boolean first);
   void TS_RotConvert(int16_t *x, int16_t *y);
   void invertDisplay(boolean i);
+  void SetPwrCB(pwr_cb cb) { pwr_cbp = cb; };
+  void SetDimCB(dim_cb cb) { dim_cbp = cb; };
 
  private:
    void setAddrWindow(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1);
@@ -137,10 +141,12 @@ class uDisplay : public Renderer {
    void setAddrWindow_int(uint16_t x, uint16_t y, uint16_t w, uint16_t h);
    char dname[16];
    int8_t bpp;
+   uint8_t col_type;
    uint8_t interface;
    uint8_t i2caddr;
    int8_t i2c_scl;
    TwoWire *wire;
+   int8_t wire_n;
    int8_t i2c_sda;
    uint8_t i2c_col_start;
    uint8_t i2c_col_end;
@@ -199,6 +205,10 @@ class uDisplay : public Renderer {
    uint8_t lut_array[LUTMAXSIZE][5];
    uint8_t lut_cnt[5];
    uint8_t lut_cmd[5];
+   uint16_t seta_xp1;
+   uint16_t seta_xp2;
+   uint16_t seta_yp1;
+   uint16_t seta_yp2;
 };
 
 
