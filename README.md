@@ -8,7 +8,7 @@
 
 ## Build variants:
 
-- Tasmota Zigbee gateway build (based on TI CC2530)
+- Tasmota Zigbee gateway build (based on TI MCU, ESP with 4Mb flash needed)
 - Tasmota Rules with all the extras enabled
 - Tasmota Thermostat (enabled Thermostat driver and Temp sensors)
 - Tasmota GPS (GPS driver enabled)
