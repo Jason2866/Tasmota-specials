@@ -10,7 +10,7 @@
 
 - Tasmota Zigbee gateway build (based on TI MCU, ESP with 4Mb flash needed)
 - Tasmota Rules with all the extras enabled
-- Tasmota Thermostat (enabled Thermostat driver and Temp sensors)
+- Tasmota Thermostat (Thermostat, PID driver and Temp sensors enabled)
 - Tasmota GPS (GPS driver enabled)
 - Tasmota Scripting instead of rules (Smart Meter Interface enabled)
 - Tasmota Ethernet ESP32 for wired LAN (needs Ethernet hardware module)
