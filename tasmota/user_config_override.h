@@ -1337,7 +1337,16 @@ Thermostat
 // -- Thermostat control ----------------------------
 #define USE_THERMOSTAT                           // Add support for Thermostat
 
-#define USE_TIMEPROP
+#define USE_TIMEPROP    //  include the timeprop feature (+1.2k)
+   // for single output
+   #define TIMEPROP_NUM_OUTPUTS          1       // how many outputs to control (with separate alogorithm for each)
+   #define TIMEPROP_CYCLETIMES           60      // cycle time seconds
+   #define TIMEPROP_DEADTIMES            0       // actuator action time seconds
+   #define TIMEPROP_OPINVERTS            false   // whether to invert the output
+   #define TIMEPROP_FALLBACK_POWERS      0       // falls back to this if too long betwen power updates
+   #define TIMEPROP_MAX_UPDATE_INTERVALS 120     // max no secs that are allowed between power updates (0 to disable)
+   #define TIMEPROP_RELAYS               1       // which relay to control 1:8
+
 #define USE_PID                                  // include the pid feature (+4.3k)
    #define PID_SETPOINT                  19.5    // Setpoint value. This is the process value that the process is
                                                  // aiming for.
