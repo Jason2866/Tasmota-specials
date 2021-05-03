@@ -2,7 +2,7 @@
 #define _USER_CONFIG_OVERRIDE_H_
 
 // Force the compiler to show a warning to confirm that this file is inlcuded.
-#warning **** Using Settings from this File ***
+#pragma message "**** Using Settings from this File ***"
 
 
 
@@ -17,7 +17,7 @@ ooooo     ooo ooooo      ooo oooooooooo.   oooooooooooo oooooooooooo ooooo ooooo
    `YbodP'    o8o        `8  o888bood8P'   o888ooooood8 o888o        o888o o8o        `8  o888ooooood8 ooooooooooo o88o     o8888o o888ooooood8 o888ooooood8 
 */
 #ifdef CUSTOM_CONFIG_REMOVALS  // ******************************************************************
-#warning **** Removed some defines to save code space ****
+#pragma message "*** Removed some defines to save code space ****"
 
 #undef USER_TEMPLATE
 
