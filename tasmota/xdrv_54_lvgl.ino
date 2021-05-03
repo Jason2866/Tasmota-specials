@@ -22,6 +22,7 @@
 
 #include <renderer.h>
 #include "lvgl.h"
+#include "tasmota_lvgl_assets.h"    // force compilation of assets
 
 #define XDRV_54             54
 
@@ -117,6 +118,65 @@ static void guiTask(void *pvParameter) {
 
   /* A task should NEVER return */
   vTaskDelete(NULL);
+}
+
+
+/************************************************************
+ * Main screen refresh function
+ ************************************************************/
+// This is the flush function required for LittlevGL screen updates.
+// It receives a bounding rect and an array of pixel data (conveniently
+// already in 565 format, so the Earth was lucky there).
+void lv_flush_callback(lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t *color_p);
+void lv_flush_callback(lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t *color_p) {
+  // Get pointer to glue object from indev user data
+  Adafruit_LvGL_Glue *glue = (Adafruit_LvGL_Glue *)disp->user_data;
+
+  uint16_t width = (area->x2 - area->x1 + 1);
+  uint16_t height = (area->y2 - area->y1 + 1);
+
+  // check if we are currently doing a screenshot
+  if (glue->getScreenshotFile() != nullptr) {
+    // save pixels to file
+    int32_t btw = (width * height * LV_COLOR_DEPTH + 7) / 8;
+    while (btw > 0) {
+#if (LV_COLOR_DEPTH == 16) && (LV_COLOR_16_SWAP == 1)
+      uint16_t * pix = (uint16_t*) color_p;
+      for (uint32_t i = 0; i < btw / 2; i++) (pix[i] = pix[i] << 8 | pix[i] >> 8);
+#endif
+      int32_t ret = glue->getScreenshotFile()->write((const uint8_t*) color_p, btw);
+      if (ret >= 0) {
+        btw -= ret;
+      } else {
+        btw = 0;  // abort
+      }
+    }
+    lv_disp_flush_ready(disp);
+    return; // ok
+  }
+
+  Renderer *display = glue->display;
+
+  if (!glue->first_frame) {
+      //display->dmaWait();  // Wait for prior DMA transfer to complete
+      //display->endWrite(); // End transaction from any prior call
+  } else {
+      glue->first_frame = false;
+  }
+
+  uint32_t pixels_len = width * height;
+  uint32_t chrono_start = millis();
+  display->setAddrWindow(area->x1, area->y1, area->x1+width, area->y1+height);
+  display->pushColors((uint16_t *)color_p, pixels_len, false);
+  display->setAddrWindow(0,0,0,0);
+  uint32_t chrono_time = millis() - chrono_start;
+
+  lv_disp_flush_ready(disp);
+
+  if (pixels_len >= 10000 && (!display->lvgl_param.use_dma)) {
+    AddLog(LOG_LEVEL_DEBUG, D_LOG_LVGL "Refreshed %d pixels in %d ms (%i pix/ms)", pixels_len, chrono_time,
+            chrono_time > 0 ? pixels_len / chrono_time : -1);
+  }
 }
 
 /************************************************************
@@ -254,14 +314,16 @@ void start_lvgl(const char * uconfig) {
     return;
   }
 
-  if (uconfig && !renderer) {
-#ifdef USE_UNIVERSAL_DISPLAY
+  if (!renderer || uconfig) {
+#ifdef USE_UNIVERSAL_DISPLAY    // TODO - we will probably support only UNIV_DISPLAY
     renderer  = Init_uDisplay((char*)uconfig, -1);
     if (!renderer) return;
 #else
     return;
 #endif
   }
+
+  renderer->DisplayOnff(true);
 
   // **************************************************
   // Initialize the glue between Adafruit and LVGL

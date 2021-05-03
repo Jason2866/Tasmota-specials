@@ -69,6 +69,9 @@ keywords if then else endif, or, and are better readable for beginners (others m
 #define MAX_SARRAY_NUM 32
 #endif
 
+#include <renderer.h>
+extern Renderer *renderer;
+
 uint32_t EncodeLightId(uint8_t relay_id);
 uint32_t DecodeLightId(uint32_t hue_id);
 
@@ -209,7 +212,7 @@ void alt_eeprom_readBytes(uint32_t adr, uint32_t len, uint8_t *buf) {
 #define EPOCH_OFFSET 1546300800
 #endif
 
-enum {OPER_EQU=1,OPER_PLS,OPER_MIN,OPER_MUL,OPER_DIV,OPER_PLSEQU,OPER_MINEQU,OPER_MULEQU,OPER_DIVEQU,OPER_EQUEQU,OPER_NOTEQU,OPER_GRTEQU,OPER_LOWEQU,OPER_GRT,OPER_LOW,OPER_PERC,OPER_XOR,OPER_AND,OPER_OR,OPER_ANDEQU,OPER_OREQU,OPER_XOREQU,OPER_PERCEQU};
+enum {OPER_EQU=1,OPER_PLS,OPER_MIN,OPER_MUL,OPER_DIV,OPER_PLSEQU,OPER_MINEQU,OPER_MULEQU,OPER_DIVEQU,OPER_EQUEQU,OPER_NOTEQU,OPER_GRTEQU,OPER_LOWEQU,OPER_GRT,OPER_LOW,OPER_PERC,OPER_XOR,OPER_AND,OPER_OR,OPER_ANDEQU,OPER_OREQU,OPER_XOREQU,OPER_PERCEQU,OPER_SHLEQU,OPER_SHREQU,OPER_SHL,OPER_SHR};
 enum {SCRIPT_LOGLEVEL=1,SCRIPT_TELEPERIOD,SCRIPT_EVENT_HANDLED,SML_JSON_ENABLE,SCRIPT_EPOFFS};
 
 
@@ -1508,17 +1511,17 @@ char *isvar(char *lp, uint8_t *vtype, struct T_INDEX *tind, float *fp, char *sp,
     if (isdigit(*lp) || (*lp=='-' && isdigit(*(lp+1))) || *lp=='.') {
       // isnumber
         if (fp) {
-          if (*lp=='0' && *(lp+1)=='x') {
+          if (*lp == '0' && *(lp + 1) == 'x') {
             lp += 2;
-            *fp = strtol(lp, 0, 16);
+            *fp = strtol(lp, &lp, 16);
           } else {
             *fp = CharToFloat(lp);
+            if (*lp == '-') lp++;
+            while (isdigit(*lp) || *lp == '.') {
+              if (*lp == 0 || *lp == SCRIPT_EOL) break;
+              lp++;
+            }
           }
-        }
-        if (*lp=='-') lp++;
-        while (isdigit(*lp) || *lp=='.') {
-          if (*lp==0 || *lp==SCRIPT_EOL) break;
-          lp++;
         }
         tind->bits.constant = 1;
         tind->bits.is_string = 0;
@@ -2352,7 +2355,7 @@ chknext:
           goto exit;
         }
         if (!strncmp(vname, "fsm", 3)) {
-          fvar=glob_script_mem.script_sd_found;
+          fvar=(uint32_t)ufsp;
           //card_init();
           goto exit;
         }
@@ -2599,6 +2602,47 @@ chknext:
           len = 0;
           goto strexit;
         }
+#ifdef USE_SCRIPT_I2C
+        if (!strncmp(vname, "ia", 2)) {
+          uint8_t bus = 0;
+          lp += 2;
+          if (*lp == '2') {
+            lp++;
+            bus = 1;
+          }
+          lp = GetNumericArgument(lp + 1, OPER_EQU, &fvar, gv);
+          fvar = script_i2c(0, fvar, bus);
+          lp++;
+          len = 0;
+          goto exit;
+        }
+        if (!strncmp(vname, "iw(", 3)) {
+          lp = GetNumericArgument(lp + 3, OPER_EQU, &fvar, gv);
+          SCRIPT_SKIP_SPACES
+          // arg2
+          float fvar2;
+          lp = GetNumericArgument(lp, OPER_EQU, &fvar2, gv);
+          fvar = script_i2c(1, fvar, fvar2);
+          lp++;
+          len = 0;
+          goto exit;
+        }
+        if (!strncmp(vname, "ir", 2)) {
+          uint8_t bytes = 1;
+          lp += 2;
+          if (*lp != '(') {
+            bytes = *lp & 0xf;
+            if (bytes < 1) bytes = 1;
+            if (bytes > 4) bytes = 4;
+            lp++;
+          }
+          lp = GetNumericArgument(lp + 1, OPER_EQU, &fvar, gv);
+          fvar = script_i2c(2, fvar, bytes);
+          lp++;
+          len = 0;
+          goto exit;
+        }
+#endif // USE_SCRIPT_I2C
         break;
       case 'l':
         if (!strncmp(vname, "lip", 3)) {
@@ -2624,12 +2668,13 @@ chknext:
 #ifdef USE_LVGL
         if (!strncmp(vname, "lvgl(", 5)) {
           lp = GetNumericArgument(lp + 5, OPER_EQU, &fvar, gv);
-          fvar = lvgl_test(fvar);
+          SCRIPT_SKIP_SPACES
+          fvar = lvgl_test(&lp, fvar);
           lp++;
           len = 0;
           goto exit;
         }
-#endif
+#endif // USE_LVGL
         break;
       case 'm':
         if (!strncmp(vname, "med(", 4)) {
@@ -3298,7 +3343,7 @@ chknext:
           goto exit;
         }
 #endif // USE_TTGO_WATCH
-#if defined(USE_FT5206)
+#if defined(USE_FT5206) || defined(USE_XPT2046) || defined(USE_LILYGO47)
         if (!strncmp(vname, "wtch(", 5)) {
           lp = GetNumericArgument(lp + 5, OPER_EQU, &fvar, gv);
           fvar = Touch_Status(fvar);
@@ -3421,22 +3466,42 @@ char *getop(char *lp, uint8_t *operand) {
             }
             break;
         case '>':
-            if (*(lp + 1)=='=') {
+            if (*(lp + 1)=='>') {
+              if (*(lp + 2) == '=') {
+                *operand = OPER_SHREQU;
+                return lp + 3;
+              } else {
+                *operand = OPER_SHR;
+                return lp + 2;
+              }
+            } else {
+              if (*(lp + 1)=='=') {
                 *operand = OPER_GRTEQU;
                 return lp + 2;
-            } else {
+              } else {
                 *operand = OPER_GRT;
                 return lp + 1;
 
+              }
             }
             break;
         case '<':
-            if (*(lp + 1)=='=') {
+            if (*(lp + 1)=='<') {
+              if (*(lp + 2) == '=') {
+                *operand = OPER_SHLEQU;
+                return lp + 3;
+              } else {
+                *operand = OPER_SHL;
+                return lp + 2;
+              }
+            } else {
+              if (*(lp + 1)=='=') {
                 *operand = OPER_LOWEQU;
                 return lp + 2;
-            } else {
+              } else {
                 *operand = OPER_LOW;
                 return lp + 1;
+              }
             }
             break;
         case '%':
@@ -3590,6 +3655,12 @@ struct T_INDEX ind;
                 break;
             case OPER_OR:
                 fvar = (uint32_t)fvar | (uint32_t)fvar1;
+                break;
+            case OPER_SHL:
+                fvar = (uint32_t)fvar << (uint32_t)fvar1;
+                break;
+            case OPER_SHR:
+                fvar = (uint32_t)fvar >> (uint32_t)fvar1;
                 break;
             default:
                 break;
@@ -4693,6 +4764,12 @@ int16_t Run_script_sub(const char *type, int8_t tlen, struct GVARS *gv) {
                           case OPER_XOREQU:
                               *dfvar = (uint32_t)*dfvar ^ (uint32_t)fvar;
                               break;
+                          case OPER_SHLEQU:
+                              *dfvar = (uint32_t)*dfvar << (uint32_t)fvar;
+                              break;
+                          case OPER_SHREQU:
+                              *dfvar = (uint32_t)*dfvar >> (uint32_t)fvar;
+                              break;
                           default:
                               // error
                               break;
@@ -5250,8 +5327,8 @@ void HandleScriptConfiguration(void) {
     WSContentSend_P(HTTP_FORM_SCRIPT1b);
 
 #ifdef USE_SCRIPT_FATFS
-    if (glob_script_mem.script_sd_found) {
-      WSContentSend_P(HTTP_FORM_SCRIPT1d);
+    if (ufsp) {
+      //WSContentSend_P(HTTP_FORM_SCRIPT1d);
       if (glob_script_mem.flink[0][0]) WSContentSend_P(HTTP_FORM_SCRIPT1c, 1, glob_script_mem.flink[0]);
       if (glob_script_mem.flink[1][0]) WSContentSend_P(HTTP_FORM_SCRIPT1c, 2, glob_script_mem.flink[1]);
     }
@@ -6416,10 +6493,12 @@ char buff[512];
     // screen copy
     #define fileHeaderSize 14
     #define infoHeaderSize 40
-    if (buffer) {
-      uint8_t *bp = buffer;
+
+    if (renderer && renderer->framebuffer) {
+      uint8_t *bp = renderer->framebuffer;
       uint8_t *lbuf = (uint8_t*)special_malloc(Settings.display_width * 3 + 2);
       if (!lbuf) return;
+      int8_t bpp = renderer->disp_bpp;
       uint8_t *lbp;
       uint8_t fileHeader[fileHeaderSize];
       createBitmapFileHeader(Settings.display_height , Settings.display_width , fileHeader);
@@ -6427,23 +6506,58 @@ char buff[512];
       uint8_t infoHeader[infoHeaderSize];
       createBitmapInfoHeader(Settings.display_height, Settings.display_width, infoHeader );
       Webserver->client().write((uint8_t *)infoHeader, infoHeaderSize);
-      for (uint32_t lins = 0; lins<Settings.display_height; lins++) {
-        lbp = lbuf + (Settings.display_width * 3);
-        for (uint32_t cols = 0; cols<Settings.display_width; cols += 8) {
-          uint8_t bits = 0x80;
-          while (bits) {
-            if (!((*bp) & bits)) {
-              *--lbp = 0xff;
-              *--lbp = 0xff;
-              *--lbp = 0xff;
-            } else {
-              *--lbp = 0;
-              *--lbp = 0;
-              *--lbp = 0;
+
+      if (bpp == -1) {
+        for (uint32_t lins = Settings.display_height - 1; lins >= 0 ; lins--) {
+          lbp = lbuf;
+          for (uint32_t cols = 0; cols < Settings.display_width; cols ++) {
+            uint8_t pixel = 0;
+            if (bp[cols + (lins / 8) * Settings.display_width] & (1 << (lins & 7))) {
+              pixel = 0xff;
             }
-            bits = bits>>1;
+            *lbp++ = pixel;
+            *lbp++ = pixel;
+            *lbp++ = pixel;
           }
-          bp++;
+          Webserver->client().write((const char*)lbuf, Settings.display_width * 3);
+        }
+      } else {
+        for (uint32_t lins = 0; lins<Settings.display_height; lins++) {
+          lbp = lbuf + (Settings.display_width * 3);
+          if (bpp == 4) {
+            for (uint32_t cols = 0; cols < Settings.display_width; cols += 2) {
+              uint8_t pixel;
+              for (uint32_t cnt = 0; cnt <= 1; cnt++) {
+                if (cnt & 1) {
+                  pixel = *bp >> 4;
+                } else {
+                  pixel = *bp & 0xf;
+                }
+                pixel *= 15;
+                *--lbp = pixel;
+                *--lbp = pixel;
+                *--lbp = pixel;
+              }
+              bp++;
+            }
+          } else {
+            for (uint32_t cols = 0; cols < Settings.display_width; cols += 8) {
+              uint8_t bits = 0x80;
+              while (bits) {
+                if (!((*bp) & bits)) {
+                  *--lbp = 0xff;
+                  *--lbp = 0xff;
+                  *--lbp = 0xff;
+                } else {
+                  *--lbp = 0;
+                  *--lbp = 0;
+                  *--lbp = 0;
+                }
+                bits = bits>>1;
+              }
+              bp++;
+            }
+          }
         }
         Webserver->client().write((const char*)lbuf, Settings.display_width * 3);
       }
@@ -7713,92 +7827,280 @@ void cpy2lf(char *dst, uint32_t dstlen, char *src) {
   }
 }
 
+#ifdef USE_SCRIPT_I2C
+uint8_t script_i2c_addr;
+TwoWire *script_i2c_wire;
+uint32_t script_i2c(uint8_t sel, uint8_t val, uint8_t val1) {
+  switch (sel) {
+    case 0:
+      script_i2c_addr = val;
+#ifdef ESP32
+      if (val1 == 0) script_i2c_wire = &Wire;
+      else script_i2c_wire = &Wire1;
+#else
+      script_i2c_wire = &Wire;
+#endif
+      script_i2c_wire->beginTransmission(script_i2c_addr);
+      return (0 == script_i2c_wire->endTransmission());
+      break;
+    case 1:
+      script_i2c_wire->beginTransmission(script_i2c_addr);
+      script_i2c_wire->write(val);
+      script_i2c_wire->write(val1);
+      script_i2c_wire->endTransmission();
+      break;
+    case 2:
+      script_i2c_wire->beginTransmission(script_i2c_addr);
+      script_i2c_wire->write(val);
+      script_i2c_wire->endTransmission();
+      script_i2c_wire->requestFrom((int)script_i2c_addr, (int)val1);
+      uint32_t rval = 0;
+      for (uint8_t cnt = 0; cnt < val1; cnt++) {
+        rval <<= 8;
+        rval |= script_i2c_wire->read();
+      }
+      return rval;
+      break;
+  }
+  return 0;
+}
+#endif // USE_SCRIPT_I2C
+
+
 #ifdef USE_LVGL
 #include <renderer.h>
 #include "lvgl.h"
 
-
-const char ili9342[] PROGMEM =
-":H,ILI9342,320,240,16,SPI,1,*,*,*,*,*,*,*,40\n"
-":S,2,1,3,0,100,100\n"
-":I\n"
-"EF,3,03,80,02\n"
-"CF,3,00,C1,30\n"
-"ED,4,64,03,12,81\n"
-"E8,3,85,00,78\n"
-"CB,5,39,2C,00,34,02\n"
-"F7,1,20\n"
-"EA,2,00,00\n"
-"C0,1,23\n"
-"C1,1,10\n"
-"C5,2,3e,28\n"
-"C7,1,86\n"
-"36,1,48\n"
-"37,1,00\n"
-"3A,1,55\n"
-"B1,2,00,18\n"
-"B6,3,08,82,27\n"
-"F2,1,00\n"
-"26,1,01\n"
-"E0,0F,0F,31,2B,0C,0E,08,4E,F1,37,07,10,03,0E,09,00\n"
-"E1,0F,00,0E,14,03,11,07,31,C1,48,08,0F,0C,31,36,0F\n"
-"21,80\n"
-"11,80\n"
-"29,80\n"
-":o,28\n"
-":O,29\n"
-":A,2A,2B,2C,16\n"
-":R,36\n"
-":0,08,00,00,00\n"
-":1,A8,00,00,01\n"
-":2,C8,00,00,02\n"
-":3,68,00,00,03\n"
-":i,21,20\n"
-":TI2,38,22,21\n"
-"#\n";
+#define MAX_LVGL_OBJS 8
+uint8_t lvgl_numobjs;
+lv_obj_t *lvgl_buttons[MAX_LVGL_OBJS];
 
 void start_lvgl(const char * uconfig);
+lv_event_t lvgl_last_event;
+uint8_t lvgl_last_object;
+uint8_t lvgl_last_slider;
+static lv_obj_t * kb;
+static lv_obj_t * ta;
+
+void lvgl_set_last(lv_obj_t * obj, lv_event_t event);
+void lvgl_set_last(lv_obj_t * obj, lv_event_t event) {
+  lvgl_last_event = event;
+  lvgl_last_object = 0;
+  for (uint8_t cnt = 0; cnt < MAX_LVGL_OBJS; cnt++) {
+    if (lvgl_buttons[cnt] == obj) {
+      lvgl_last_object = cnt + 1;
+      return;
+    }
+  }
+}
+
 
 void btn_event_cb(lv_obj_t * btn, lv_event_t event);
 void btn_event_cb(lv_obj_t * btn, lv_event_t event) {
-    if (event == LV_EVENT_CLICKED) {
-      AddLog_P(LOG_LEVEL_INFO,PSTR(">>> clicked"));
+  lvgl_set_last(btn, event);
+  if (event == LV_EVENT_CLICKED) {
+    Run_Scripter(">lvb", 4, 0);
+  }
+}
+
+void slider_event_cb(lv_obj_t * sld, lv_event_t event);
+void slider_event_cb(lv_obj_t * sld, lv_event_t event) {
+  lvgl_set_last(sld, event);
+  lvgl_last_slider = lv_slider_get_value(sld);
+  if (event == LV_EVENT_VALUE_CHANGED) {
+    Run_Scripter(">lvs", 4, 0);
+  }
+}
+
+static void kb_create(void);
+static void ta_event_cb(lv_obj_t * ta_local, lv_event_t e);
+static void kb_event_cb(lv_obj_t * keyboard, lv_event_t e);
+
+static void kb_event_cb(lv_obj_t * keyboard, lv_event_t e) {
+    lv_keyboard_def_event_cb(kb, e);
+    if(e == LV_EVENT_CANCEL) {
+        lv_keyboard_set_textarea(kb, NULL);
+        lv_obj_del(kb);
+        kb = NULL;
     }
-    AddLog_P(LOG_LEVEL_INFO,PSTR(">>> clicked"));
+}
+
+static void kb_create(void) {
+    kb = lv_keyboard_create(lv_scr_act(), NULL);
+    lv_keyboard_set_cursor_manage(kb, true);
+    lv_obj_set_event_cb(kb, kb_event_cb);
+    lv_keyboard_set_textarea(kb, ta);
+}
+
+static void ta_event_cb(lv_obj_t * ta_local, lv_event_t e) {
+    if(e == LV_EVENT_CLICKED && kb == NULL) {
+      kb_create();
+    }
 }
 
 
-int32_t lvgl_test(int32_t p) {
-  start_lvgl(ili9342);
-  lv_obj_clean(lv_scr_act());
-
-  lv_obj_t *label1 =  lv_label_create(lv_scr_act(), NULL);
-
-  /*Modify the Label's text*/
-  lv_label_set_text(label1, "Hello world!");
-
-    /* Align the Label to the center
-     * NULL means align on parent (which is the screen now)
-     * 0, 0 at the end means an x, y offset after alignment*/
-  lv_obj_align(label1, NULL, LV_ALIGN_CENTER, 0, 0);
-
-
-  lvgl_setup();
-
-  /*Add a button*/
-   lv_obj_t *btn1 = lv_btn_create(lv_scr_act(), NULL);           /*Add to the active screen*/
-   lv_obj_set_pos(btn1, 2, 2);                                    /*Adjust the position*/
-   lv_obj_set_size(btn1, 96, 30);                                 /* set size of button */
-   lv_obj_set_event_cb(btn1, btn_event_cb);
-
-   /*Add text*/
-   lv_obj_t *label = lv_label_create(btn1, NULL);                  /*Put on 'btn1'*/
-   lv_label_set_text(label, "Click");
-
-
-
-  return 0;
+void lvgl_StoreObj(lv_obj_t *obj);
+void lvgl_StoreObj(lv_obj_t *obj) {
+  if (lvgl_numobjs < MAX_LVGL_OBJS) {
+    lvgl_buttons[lvgl_numobjs] = obj;
+    lvgl_numobjs++;
+  }
 }
+
+int32_t lvgl_test(char **lpp, int32_t p) {
+  char *lp = *lpp;
+  lv_obj_t *obj;
+  lv_obj_t *label;
+  float xp, yp, xs, ys, min, max;
+  char str[SCRIPT_MAXSSIZE];
+  int32_t res = 0;
+
+  switch (p) {
+    case 0:
+      start_lvgl(0);
+      lvgl_numobjs = 0;
+      for (uint8_t cnt = 0; cnt < MAX_LVGL_OBJS; cnt++) {
+        lvgl_buttons[cnt] = 0;
+      }
+      break;
+
+    case 1:
+      lv_obj_clean(lv_scr_act());
+      break;
+
+    case 2:
+      // create button;
+      lp = GetNumericArgument(lp, OPER_EQU, &xp, 0);
+      SCRIPT_SKIP_SPACES
+      lp = GetNumericArgument(lp, OPER_EQU, &yp, 0);
+      SCRIPT_SKIP_SPACES
+      lp = GetNumericArgument(lp, OPER_EQU, &xs, 0);
+      SCRIPT_SKIP_SPACES
+      lp = GetNumericArgument(lp, OPER_EQU, &ys, 0);
+      SCRIPT_SKIP_SPACES
+      lp = GetStringArgument(lp, OPER_EQU, str, 0);
+      SCRIPT_SKIP_SPACES
+
+      obj = lv_btn_create(lv_scr_act(), NULL);
+      lv_obj_set_pos(obj, xp, yp);
+      lv_obj_set_size(obj, xs, ys);
+      lv_obj_set_event_cb(obj, btn_event_cb);
+      label = lv_label_create(obj, NULL);
+      lv_label_set_text(label, str);
+      lvgl_StoreObj(obj);
+      break;
+
+    case 3:
+      lp = GetNumericArgument(lp, OPER_EQU, &xp, 0);
+      SCRIPT_SKIP_SPACES
+      lp = GetNumericArgument(lp, OPER_EQU, &yp, 0);
+      SCRIPT_SKIP_SPACES
+      lp = GetNumericArgument(lp, OPER_EQU, &xs, 0);
+      SCRIPT_SKIP_SPACES
+      lp = GetNumericArgument(lp, OPER_EQU, &ys, 0);
+      SCRIPT_SKIP_SPACES
+
+      obj = lv_slider_create(lv_scr_act(), NULL);
+      lv_obj_set_pos(obj, xp, yp);
+      lv_obj_set_size(obj, xs, ys);
+      lv_obj_set_event_cb(obj, slider_event_cb);
+      lvgl_StoreObj(obj);
+      break;
+
+    case 4:
+      lp = GetNumericArgument(lp, OPER_EQU, &xp, 0);
+      SCRIPT_SKIP_SPACES
+      lp = GetNumericArgument(lp, OPER_EQU, &yp, 0);
+      SCRIPT_SKIP_SPACES
+      lp = GetNumericArgument(lp, OPER_EQU, &xs, 0);
+      SCRIPT_SKIP_SPACES
+      lp = GetNumericArgument(lp, OPER_EQU, &ys, 0);
+      SCRIPT_SKIP_SPACES
+      lp = GetNumericArgument(lp, OPER_EQU, &min, 0);
+      SCRIPT_SKIP_SPACES
+      lp = GetNumericArgument(lp, OPER_EQU, &max, 0);
+      SCRIPT_SKIP_SPACES
+
+      obj = lv_gauge_create(lv_scr_act(), NULL);
+      lv_obj_set_pos(obj, xp, yp);
+      lv_obj_set_size(obj, xs, ys);
+      lv_gauge_set_range(obj, min, max);
+      lvgl_StoreObj(obj);
+      break;
+
+    case 5:
+      lp = GetNumericArgument(lp, OPER_EQU, &min, 0);
+      SCRIPT_SKIP_SPACES
+      lp = GetNumericArgument(lp, OPER_EQU, &max, 0);
+      SCRIPT_SKIP_SPACES
+      if (lvgl_buttons[(uint8_t)min - 1]) {
+        lv_gauge_set_value(lvgl_buttons[(uint8_t)min - 1], 0, max);
+      }
+      break;
+
+    case 6:
+      // create label;
+      lp = GetNumericArgument(lp, OPER_EQU, &xp, 0);
+      SCRIPT_SKIP_SPACES
+      lp = GetNumericArgument(lp, OPER_EQU, &yp, 0);
+      SCRIPT_SKIP_SPACES
+      lp = GetNumericArgument(lp, OPER_EQU, &xs, 0);
+      SCRIPT_SKIP_SPACES
+      lp = GetNumericArgument(lp, OPER_EQU, &ys, 0);
+      SCRIPT_SKIP_SPACES
+      lp = GetStringArgument(lp, OPER_EQU, str, 0);
+      SCRIPT_SKIP_SPACES
+
+      obj = lv_label_create(lv_scr_act(), NULL);
+      lv_obj_set_pos(obj, xp, yp);
+      lv_obj_set_size(obj, xs, ys);
+      lv_label_set_text(obj, str);
+      lvgl_StoreObj(obj);
+      break;
+
+    case 7:
+      lp = GetNumericArgument(lp, OPER_EQU, &min, 0);
+      SCRIPT_SKIP_SPACES
+      lp = GetStringArgument(lp, OPER_EQU, str, 0);
+      SCRIPT_SKIP_SPACES
+      if (lvgl_buttons[(uint8_t)min - 1]) {
+        lv_label_set_text(lvgl_buttons[(uint8_t)min - 1], str);
+      }
+      break;
+
+    case 8:
+      {
+      ta  = lv_textarea_create(lv_scr_act(), NULL);
+      lv_obj_align(ta, NULL, LV_ALIGN_IN_TOP_MID, 0, LV_DPI / 16);
+      lv_obj_set_event_cb(ta, ta_event_cb);
+      lv_textarea_set_text(ta, "");
+      lv_coord_t max_h = LV_VER_RES / 2 - LV_DPI / 8;
+      if (lv_obj_get_height(ta) > max_h) lv_obj_set_height(ta, max_h);
+      kb_create();
+      }
+      break;
+
+    case 50:
+      res = lvgl_last_object;
+      break;
+    case 51:
+      res = lvgl_last_event;
+      break;
+    case 52:
+      res = lvgl_last_slider;
+      break;
+
+
+    default:
+      start_lvgl(0);
+      lvgl_setup();
+      break;
+  }
+
+  *lpp = lp;
+  return res;
+}
+
 
 lv_obj_t          *tabview,        // LittlevGL tabview object
                   *gauge,          // Gauge object (on first of three tabs)
@@ -7898,7 +8200,7 @@ void lvgl_setup(void) {
 }
 
 
-#endif
+#endif // USE_LVGL
 
 /*********************************************************************************************\
  * Interface

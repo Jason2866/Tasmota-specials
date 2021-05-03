@@ -55,7 +55,7 @@ The following binary downloads have been compiled with ESP8266/Arduino library c
 
 Above binaries are also available as gzipped version allowing faster uploads.
 
-The attached binaries can also be downloaded from http://ota.tasmota.com/tasmota/release. The links can be used for OTA upgrades too like ``OtaUrl http://ota.tasmota.com/tasmota/release/tasmota.bin.gz``
+The binaries can be downloaded from either https://github.com/arendst/Tasmota/tree/release-firmware or http://ota.tasmota.com/tasmota/release. The latter links can be used for OTA upgrades too like ``OtaUrl http://ota.tasmota.com/tasmota/release/tasmota.bin.gz``
 
 ### ESP32 based
 The following binary downloads have been compiled with ESP32/Arduino library core version **1.0.6**.
@@ -70,7 +70,7 @@ The following binary downloads have been compiled with ESP32/Arduino library cor
 - **tasmota32-odroidgo.bin** = The Odroid-Go version is specifically tailored to Odroid_go hardware.
 - **tasmota32-core2.bin** = The Core2 version is specifically tailored to M5Stack Core2 hardware.
 
-The attached binaries can also be downloaded from http://ota.tasmota.com/tasmota32/release. The links can be used for OTA upgrades too like ``OtaUrl http://ota.tasmota.com/tasmota32/release/tasmota32.bin``
+The binaries can be downloaded from either https://github.com/arendst/Tasmota/tree/release-firmware or http://ota.tasmota.com/tasmota32/release. The latter links can be used for OTA upgrades too like ``OtaUrl http://ota.tasmota.com/tasmota32/release/tasmota32.bin``
 
 [List](MODULES.md) of embedded modules.
 
@@ -78,7 +78,14 @@ The attached binaries can also be downloaded from http://ota.tasmota.com/tasmota
 
 ## Changelog v9.4.0.2
 ### Added
-- Initial support for optional ``Template`` JSON fieldpair ``"CMND":"<any template related command>;<any template related command>;..."`` [#11788](https://github.com/arendst/Tasmota/issues/11788)
+- Initial support for optional ``Template`` JSON fieldpair ``"CMND":"<any template related command>|<any template related command>|..."`` [#11788](https://github.com/arendst/Tasmota/issues/11788)
+- ESP32 pulldown buttons ``Button_d`` and ``Button_id`` and switches ``Switch_d`` [#10814](https://github.com/arendst/Tasmota/issues/10814)
+- Support for MQTT using Azure IoT Hub by Kevin Saye [#11906](https://github.com/arendst/Tasmota/issues/11906)
+- Make Telegram command ``TmState`` persistent [#11965](https://github.com/arendst/Tasmota/issues/11965)
+- Zigbee firmware for Tube's Zigbee coordinator based on EFR32 and ESP32
+- Zigbee firmware 6.7.9 for Sonoff ZBBridge
+- Defines ``USER_RULE1``, ``USER_RULE2`` and ``USER_RULE3`` to store rules at compile time
+- Define ``USER_BACKLOG`` to store commands at compile time to be executed at firmware load or when executing command ``reset``
 
 ### Breaking Changed
 

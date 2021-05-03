@@ -420,6 +420,41 @@ static void WebGetArg(const char* arg, char* out, size_t max)
 //  out[max-1] = '\0';  // Ensure terminating NUL
 }
 
+String AddWebCommand(const char* command, const char* arg, const char* dflt) {
+  // OK but fixed max argument
+  char param[200];                             // Allow parameter with lenght up to 199 characters
+  WebGetArg(arg, param, sizeof(param));
+  uint32_t len = strlen(param);
+  char cmnd[232];
+  snprintf_P(cmnd, sizeof(cmnd), PSTR(";%s %s"), command, (0 == len) ? dflt : (StrCaseStr_P(command, PSTR("Password")) && (len < 5)) ? "" : param);
+  return String(cmnd);
+
+/*
+  // Any argument size (within stack space) +48 bytes
+  String param = Webserver->arg((const __FlashStringHelper *)arg);
+  uint32_t len = param.length();
+//  char cmnd[len + strlen_P(command) + strlen_P(dflt) + 4];
+  char cmnd[64 + len];
+  snprintf_P(cmnd, sizeof(cmnd), PSTR(";%s %s"), command, (0 == len) ? dflt : (StrCaseStr_P(command, PSTR("Password")) && (len < 5)) ? "" : param.c_str());
+  return String(cmnd);
+*/
+/*
+  // Exception (3) +24 bytes
+  String result = F(";");
+  result += command;
+  result += F(" ");
+  String param = Webserver->arg((const __FlashStringHelper *)arg);
+  uint32_t len = param.length();
+  if (0 == len) {
+    result += dflt;
+  }
+  else if (!(StrCaseStr_P(command, PSTR("Password")) && (len < 5))) {
+    result += param;
+  }
+  return result;
+*/
+}
+
 static bool WifiIsInManagerMode(){
   return (HTTP_MANAGER == Web.state || HTTP_MANAGER_RESET_ONLY == Web.state);
 }
@@ -1976,27 +2011,14 @@ void HandleWifiConfiguration(void) {
 }
 
 void WifiSaveSettings(void) {
-  char tmp1[TOPSZ];
-  WebGetArg(PSTR("h"), tmp1, sizeof(tmp1));   // Host name
-  char tmp2[TOPSZ];
-  WebGetArg(PSTR("c"), tmp2, sizeof(tmp2));   // Cors domain
-  char tmp3[TOPSZ];
-  WebGetArg(PSTR("s1"), tmp3, sizeof(tmp3));  // Ssid1
-  char tmp4[TOPSZ];
-  WebGetArg(PSTR("s2"), tmp4, sizeof(tmp4));  // Ssid2
-  char tmp5[TOPSZ];
-  WebGetArg(PSTR("p1"), tmp5, sizeof(tmp5));  // Password1
-  char tmp6[TOPSZ];
-  WebGetArg(PSTR("p2"), tmp6, sizeof(tmp6));  // Password2
-  char command[300];
-  snprintf_P(command, sizeof(command), PSTR(D_CMND_BACKLOG "0 " D_CMND_HOSTNAME " %s;" D_CMND_CORS " %s;" D_CMND_SSID "1 %s;" D_CMND_SSID "2 %s;" D_CMND_PASSWORD "3 %s;" D_CMND_PASSWORD "4 %s"),
-    (!strlen(tmp1)) ? "1" : tmp1,
-    (!strlen(tmp2)) ? "1" : tmp2,
-    (!strlen(tmp3)) ? "1" : tmp3,
-    (!strlen(tmp4)) ? "1" : tmp4,
-    (!strlen(tmp5)) ? "\"" : (strlen(tmp5) < 5) ? "" : tmp5,
-    (!strlen(tmp6)) ? "\"" : (strlen(tmp6) < 5) ? "" : tmp6);
-  ExecuteWebCommand(command);
+  String cmnd = F(D_CMND_BACKLOG "0 ");
+  cmnd += AddWebCommand(PSTR(D_CMND_HOSTNAME), PSTR("h"), PSTR("1"));
+  cmnd += AddWebCommand(PSTR(D_CMND_CORS), PSTR("c"), PSTR("1"));
+  cmnd += AddWebCommand(PSTR(D_CMND_SSID "1"), PSTR("s1"), PSTR("1"));
+  cmnd += AddWebCommand(PSTR(D_CMND_SSID "2"), PSTR("s2"), PSTR("1"));
+  cmnd += AddWebCommand(PSTR(D_CMND_PASSWORD "3"), PSTR("p1"), PSTR("\""));
+  cmnd += AddWebCommand(PSTR(D_CMND_PASSWORD "4"), PSTR("p2"), PSTR("\""));
+  ExecuteWebCommand((char*)cmnd.c_str());
 }
 
 /*-------------------------------------------------------------------------------------------*/
@@ -2039,30 +2061,15 @@ void HandleLoggingConfiguration(void) {
 }
 
 void LoggingSaveSettings(void) {
-  char tmp1[CMDSZ];
-  WebGetArg(PSTR("l0"), tmp1, sizeof(tmp1));  // Serial log level
-  char tmp2[CMDSZ];
-  WebGetArg(PSTR("l1"), tmp2, sizeof(tmp2));  // Web log level
-  char tmp3[CMDSZ];
-  WebGetArg(PSTR("l2"), tmp3, sizeof(tmp3));  // Mqtt log level
-  char tmp4[CMDSZ];
-  WebGetArg(PSTR("l3"), tmp4, sizeof(tmp4));  // Syslog level
-  char tmp5[TOPSZ];
-  WebGetArg(PSTR("lh"), tmp5, sizeof(tmp5));  // Syslog host name
-  char tmp6[CMDSZ];
-  WebGetArg(PSTR("lp"), tmp6, sizeof(tmp6));  // Syslog port number
-  char tmp7[CMDSZ];
-  WebGetArg(PSTR("lt"), tmp7, sizeof(tmp7));  // Teleperiod
-  char command[200];
-  snprintf_P(command, sizeof(command), PSTR(D_CMND_BACKLOG "0 " D_CMND_SERIALLOG " %s;" D_CMND_WEBLOG " %s;" D_CMND_MQTTLOG " %s;" D_CMND_SYSLOG " %s;" D_CMND_LOGHOST " %s;" D_CMND_LOGPORT " %s;" D_CMND_TELEPERIOD " %s"),
-    (!strlen(tmp1)) ? STR(SERIAL_LOG_LEVEL) : tmp1,
-    (!strlen(tmp2)) ? STR(WEB_LOG_LEVEL) : tmp2,
-    (!strlen(tmp3)) ? STR(MQTT_LOG_LEVEL) : tmp3,
-    (!strlen(tmp4)) ? STR(SYS_LOG_LEVEL) : tmp4,
-    (!strlen(tmp5)) ? SYS_LOG_HOST : tmp5,
-    (!strlen(tmp6)) ? STR(SYS_LOG_PORT) : tmp6,
-    (!strlen(tmp7)) ? STR(TELE_PERIOD) : tmp7);
-  ExecuteWebCommand(command);
+  String cmnd = F(D_CMND_BACKLOG "0 ");
+  cmnd += AddWebCommand(PSTR(D_CMND_SERIALLOG), PSTR("l0"), STR(SERIAL_LOG_LEVEL));
+  cmnd += AddWebCommand(PSTR(D_CMND_WEBLOG), PSTR("l1"), STR(WEB_LOG_LEVEL));
+  cmnd += AddWebCommand(PSTR(D_CMND_MQTTLOG), PSTR("l2"), STR(MQTT_LOG_LEVEL));
+  cmnd += AddWebCommand(PSTR(D_CMND_SYSLOG), PSTR("l3"), STR(SYS_LOG_LEVEL));
+  cmnd += AddWebCommand(PSTR(D_CMND_LOGHOST), PSTR("lh"), PSTR("1"));
+  cmnd += AddWebCommand(PSTR(D_CMND_LOGPORT), PSTR("lp"), PSTR("1"));
+  cmnd += AddWebCommand(PSTR(D_CMND_TELEPERIOD), PSTR("lt"), PSTR("1"));
+  ExecuteWebCommand((char*)cmnd.c_str());
 }
 
 /*-------------------------------------------------------------------------------------------*/
@@ -2130,35 +2137,31 @@ void HandleOtherConfiguration(void) {
 }
 
 void OtherSaveSettings(void) {
-  char tmp1[400];                             // Needs to hold complete ESP32 template of minimal 230 chars
-  WebGetArg(PSTR("dn"), tmp1, sizeof(tmp1));  // Device name
-  char tmp2[TOPSZ];
-  WebGetArg(PSTR("wp"), tmp2, sizeof(tmp2));  // Web password
-  char command[600];
-  snprintf_P(command, sizeof(command), PSTR(D_CMND_BACKLOG "0 " D_CMND_WEBPASSWORD "2 %s;" D_CMND_SO "3 %d;" D_CMND_DEVICENAME " %s"),
-    (!strlen(tmp2)) ? "\"" : (strlen(tmp2) < 5) ? "" : tmp2,
-    Webserver->hasArg(F("b1")),               // SetOption3 - Enable MQTT
-    (!strlen(tmp1)) ? "\"" : tmp1);
-
+  String cmnd = F(D_CMND_BACKLOG "0 ");
+  cmnd += AddWebCommand(PSTR(D_CMND_WEBPASSWORD "2"), PSTR("wp"), PSTR("\""));
+  cmnd += F(";" D_CMND_SO "3 ");
+  cmnd += Webserver->hasArg(F("b1"));
+  cmnd += AddWebCommand(PSTR(D_CMND_DEVICENAME), PSTR("dn"), PSTR("\""));
   char webindex[5];
+  char cmnd2[24];                             // ";Module 0;Template "
   for (uint32_t i = 0; i < MAX_FRIENDLYNAMES; i++) {
     snprintf_P(webindex, sizeof(webindex), PSTR("a%d"), i);
-    WebGetArg(webindex, tmp1, sizeof(tmp1));  // Friendly name 1 to 8
-    snprintf_P(command, sizeof(command), PSTR("%s;" D_CMND_FN"%d %s"), command, i +1, (!strlen(tmp1)) ? "\"" : tmp1);
+    snprintf_P(cmnd2, sizeof(cmnd2), PSTR(D_CMND_FN "%d"), i +1);
+    cmnd += AddWebCommand(cmnd2, webindex, PSTR("\""));
   }
 
 #ifdef USE_EMULATION
 #if defined(USE_EMULATION_WEMO) || defined(USE_EMULATION_HUE)
-  WebGetArg(PSTR("b2"), tmp1, sizeof(tmp1));  // Emulation
-  snprintf_P(command, sizeof(command), PSTR("%s;" D_CMND_EMULATION " %s"), command, (!strlen(tmp1)) ? "0" : tmp1);
+  cmnd += AddWebCommand(PSTR(D_CMND_EMULATION), PSTR("b2"), PSTR("0"));
 #endif  // USE_EMULATION_WEMO || USE_EMULATION_HUE
 #endif  // USE_EMULATION
 
-  WebGetArg(PSTR("t1"), tmp1, sizeof(tmp1));  // Template
-  if (strlen(tmp1)) {  // {"NAME":"12345678901234","GPIO":[255,255,255,255,255,255,255,255,255,255,255,255,255],"FLAG":255,"BASE":255,"CMND":"SO123 1;SO99 0"}
-    snprintf_P(command, sizeof(command), PSTR("%s;%s" D_CMND_TEMPLATE " %s"), command, (Webserver->hasArg(F("t2"))) ? PSTR(D_CMND_MODULE " 0;") : "", tmp1);
+  String tmpl = Webserver->arg(F("t1"));    // {"NAME":"12345678901234","GPIO":[255,255,255,255,255,255,255,255,255,255,255,255,255],"FLAG":255,"BASE":255,"CMND":"SO123 1;SO99 0"}
+  if (tmpl.length() && (tmpl.length() < MQTT_MAX_PACKET_SIZE)) {
+    snprintf_P(cmnd2, sizeof(cmnd2), PSTR(";%s" D_CMND_TEMPLATE " "), (Webserver->hasArg(F("t2"))) ? PSTR(D_CMND_MODULE " 0;") : "");
+    cmnd += cmnd2 + tmpl;
   }
-  ExecuteWebCommand(command);
+  ExecuteWebCommand((char*)cmnd.c_str());
 }
 
 /*-------------------------------------------------------------------------------------------*/

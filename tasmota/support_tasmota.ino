@@ -1149,7 +1149,7 @@ void Every250mSeconds(void)
           }
 #endif  // FIRMWARE_MINIMAL
           if (ota_retry_counter < OTA_ATTEMPTS / 2) {
-            if (strstr_P(TasmotaGlobal.mqtt_data, PSTR(".gz"))) {      // Might be made case insensitive...
+            if (StrCaseStr_P(TasmotaGlobal.mqtt_data, PSTR(".gz"))) {
               ota_retry_counter = 1;
             } else {
               strcat_P(TasmotaGlobal.mqtt_data, PSTR(".gz"));
@@ -1682,6 +1682,19 @@ void GpioInit(void)
         mpin -= (AGPIO(GPIO_KEY1_INV_NP) - AGPIO(GPIO_KEY1));
       }
 #ifdef ESP32
+      else if ((mpin >= AGPIO(GPIO_SWT1_PD)) && (mpin < (AGPIO(GPIO_SWT1_PD) + MAX_SWITCHES))) {
+        SwitchPulldownFlag(mpin - AGPIO(GPIO_SWT1_PD));
+        mpin -= (AGPIO(GPIO_SWT1_PD) - AGPIO(GPIO_SWT1));
+      }
+      else if ((mpin >= AGPIO(GPIO_KEY1_PD)) && (mpin < (AGPIO(GPIO_KEY1_PD) + MAX_KEYS))) {
+        ButtonPulldownFlag(mpin - AGPIO(GPIO_KEY1_PD));    //  0 .. 3
+        mpin -= (AGPIO(GPIO_KEY1_PD) - AGPIO(GPIO_KEY1));
+      }
+      else if ((mpin >= AGPIO(GPIO_KEY1_INV_PD)) && (mpin < (AGPIO(GPIO_KEY1_INV_PD) + MAX_KEYS))) {
+        ButtonPulldownFlag(mpin - AGPIO(GPIO_KEY1_INV_PD));  //  0 .. 3
+        ButtonInvertFlag(mpin - AGPIO(GPIO_KEY1_INV_PD));    //  0 .. 3
+        mpin -= (AGPIO(GPIO_KEY1_INV_PD) - AGPIO(GPIO_KEY1));
+      }
       else if ((mpin >= AGPIO(GPIO_KEY1_TC)) && (mpin < (AGPIO(GPIO_KEY1_TC) + MAX_KEYS))) {
         ButtonTouchFlag(mpin - AGPIO(GPIO_KEY1_TC));  //  0 .. 3
         mpin -= (AGPIO(GPIO_KEY1_TC) - AGPIO(GPIO_KEY1));
