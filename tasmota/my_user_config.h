@@ -955,6 +955,7 @@
 \*********************************************************************************************/
 
 #ifdef USE_CONFIG_OVERRIDE
+  #pragma once
   #include "user_config_override.h"         // Configuration overrides for my_user_config.h
 #endif
 
