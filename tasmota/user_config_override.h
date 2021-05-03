@@ -4,6 +4,7 @@
 // Force the compiler to show a warning to confirm that this file is inlcuded.
 #ifndef OVERRIDE_MESSAGE_PRINTED
 #define OVERRIDE_MESSAGE_PRINTED
+#pragma once
 #include "override_message.h"
 #endif
 
