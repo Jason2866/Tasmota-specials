@@ -1,13 +1,5 @@
 #ifndef _USER_CONFIG_OVERRIDE_H_
 #define _USER_CONFIG_OVERRIDE_H_
-#pragma once
-
-// Force the compiler to show a warning to confirm that this file is inlcuded.
-#ifndef OVERRIDE_MESSAGE_PRINTED
-#define OVERRIDE_MESSAGE_PRINTED
-#pragma once
-#include "override_message.h"
-#endif
 
 // THIS SECTION IS USED TO REMOVE EVERYTHING LISTED FROM DEFAULT BINARY
 /*
@@ -20,7 +12,6 @@ ooooo     ooo ooooo      ooo oooooooooo.   oooooooooooo oooooooooooo ooooo ooooo
    `YbodP'    o8o        `8  o888bood8P'   o888ooooood8 o888o        o888o o8o        `8  o888ooooood8 ooooooooooo o88o     o8888o o888ooooood8 o888ooooood8 
 */
 #ifdef CUSTOM_CONFIG_REMOVALS  // ******************************************************************
-#pragma message "*** Removed some defines to save code space ****"
 
 #undef USER_TEMPLATE
 
@@ -2172,46 +2163,6 @@ o888o           `YbodP'    o888ooooood8 o888ooooood8 o888o  o888o    `YbodP'    
 #define USE_BLE_ESP32                            // Enable new BLE driver
 
 #endif  // CUSTOM_CONFIG_ODROID *******************************************************************
-
-
-
-/*********************************************************************************************\
- * [tasmota32-M5stack_core2.bin]
-\*********************************************************************************************/
-
-#ifdef FIRMWARE_M5STACK_CORE2  // *************************************************************
-
-#warning **** Building M5stack_core2 variant  ****
-
-#undef OTA_URL
-#define OTA_URL                " "  // [OtaUrl]
-
-#define USE_SCRIPT
-#ifdef USE_SCRIPT
-  #undef USE_RULES
-  #define MAXVARS 75
-  #define MAXSVARS 15
-  #define MAXFILT 10
-  #define UFSYS_SIZE 8192
-  #define USE_SCRIPT_TASK
-  #define LARGE_ARRAYS
-  #define SCRIPT_LARGE_VNBUFF
-  #define USE_SCRIPT_GLOBVARS
-  #define USE_SCRIPT_SUB_COMMAND
-  #define USE_ANGLE_FUNC
-  #define SCRIPT_FULL_WEBPAGE
-  #define SCRIPT_GET_HTTPS_JP
-  #define USE_GOOGLE_CHARTS
-#endif  // USE_SCRIPT
-
-//#define USE_BLE_ESP32                            // Enable new BLE driver
-//#define USE_MI_ESP32
- 
-//#define USE_IBEACON                              // Add support for bluetooth LE passive scan of ibeacon devices (uses HM17 module)
-
-#endif  // FIRMWARE_M5STACK_CORE2 *******************************************************************
-
-
 
 
 /*
