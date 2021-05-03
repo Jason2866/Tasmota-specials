@@ -2,9 +2,10 @@
 #define _USER_CONFIG_OVERRIDE_H_
 
 // Force the compiler to show a warning to confirm that this file is inlcuded.
-#pragma message "**** Using Settings from this File ***"
-
-
+#ifndef OVERRIDE_MESSAGE_PRINTED
+#define OVERRIDE_MESSAGE_PRINTED
+#include "override_message.h"
+#endif
 
 // THIS SECTION IS USED TO REMOVE EVERYTHING LISTED FROM DEFAULT BINARY
 /*
