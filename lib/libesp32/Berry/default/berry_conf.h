@@ -8,11 +8,9 @@
 #ifndef BERRY_CONF_H
 #define BERRY_CONF_H
 
-#pragma once
 #include <assert.h>
 
 #ifdef COMPILE_BERRY_LIB
-  #pragma once
   #include "my_user_config.h"
   #include "tasmota_configurations.h"
 #endif
