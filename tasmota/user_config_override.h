@@ -1,5 +1,6 @@
 #ifndef _USER_CONFIG_OVERRIDE_H_
 #define _USER_CONFIG_OVERRIDE_H_
+#pragma once
 
 // Force the compiler to show a warning to confirm that this file is inlcuded.
 #ifndef OVERRIDE_MESSAGE_PRINTED
