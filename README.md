@@ -4,13 +4,13 @@
 
 ## The special firmware files are [here](https://github.com/Jason2866/Tasmota-specials/tree/firmware/firmware). Official ✨ Tasmota ✨ firmware files are [here](https://github.com/arendst/Tasmota/tree/firmware/firmware)
 
-## For flashing Tasmota firmware on ESP8266 or ESP32 you can use [ESP_Flasher](https://github.com/Jason2866/ESP_Flasher/releases) (Only Windows and Mac executables are tested)
+## For flashing Tasmota firmware on ESP8266 or ESP32 you can use [ESP_Flasher](https://github.com/Jason2866/ESP_Flasher/releases) (Windows and Mac executables)
 
 ## Build variants:
 
-- Tasmota Zigbee gateway build (based on TI CC2530)
+- Tasmota Zigbee gateway build (based on TI MCU, ESP with 4Mb flash needed)
 - Tasmota Rules with all the extras enabled
-- Tasmota Thermostat (enabled Thermostat driver and Temp sensors)
+- Tasmota Thermostat (Thermostat, PID driver and Temp sensors enabled)
 - Tasmota GPS (GPS driver enabled)
 - Tasmota Scripting instead of rules (Smart Meter Interface enabled)
 - Tasmota Ethernet ESP32 for wired LAN (needs Ethernet hardware module)
