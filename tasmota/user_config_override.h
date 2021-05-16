@@ -2957,10 +2957,11 @@ o888o        o888ooooood8 o88o     o8888o     o888o     o888o o8o        `8     
 #define USE_LVGL
 #define USE_DISPLAY
 #define USE_XPT2046
+#define USE_FT5206
 #define USE_UNIVERSAL_DISPLAY
 //#define USE_DISPLAY_LVGL_ONLY
 #undef USE_DISPLAY_MODES1TO5
-
+#define USE_SPLASH
 #define USE_ENHANCED_GUI_WIFI_SCAN
 
 #define USE_UFILESYS
