@@ -2944,6 +2944,29 @@ o888o        o888ooooood8 o88o     o8888o     o888o     o888o o8o        `8     
 
 #endif  // CUSTOM_CONFIG_PLATINUM *******************************************************************
 
+#ifdef CUSTOM_CONFIG_UDISPLAY  // *******************************************************************
+
+#ifdef  ESP32
+#undef CODE_IMAGE_STR
+#define CODE_IMAGE_STR "udisplay"
+
+#define USE_WEBSERVER                            // Enable web server and Wifi Manager (+66k code, +8k mem)
+  #define USE_JAVASCRIPT_ES6                     // Enable ECMAScript6 syntax using less JavaScript code bytes (fails on IE11)
+
+#define USE_UFILESYS
+#define GUI_TRASH_FILE
+#define USE_SPI
+#define USE_LVGL
+#define USE_DISPLAY
+#define USE_XPT2046
+#define USE_UNIVERSAL_DISPLAY
+//#define USE_DISPLAY_LVGL_ONLY
+#undef USE_DISPLAY_MODES1TO5
+#endif
+
+#endif  // CUSTOM_CONFIG_UDISPLAY *******************************************************************
+
+
 /*********************************************************************************************\
  * Debug features
 \*********************************************************************************************/
