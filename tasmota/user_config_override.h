@@ -2966,6 +2966,9 @@ o888o        o888ooooood8 o88o     o8888o     o888o     o888o o8o        `8     
 #define USE_SPLASH
 #define USE_ENHANCED_GUI_WIFI_SCAN
 
+#define USE_BERRY                                // Enable Berry scripting language
+//#define USE_BERRY_PSRAM                        // Allocate Berry memory in PSRAM if PSRAM is connected - this might be slightly slower but leaves main memory intact
+
 #define USE_UFILESYS
 #define USE_SDCARD
   #define GUI_TRASH_FILE
