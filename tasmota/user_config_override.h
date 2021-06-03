@@ -2955,13 +2955,18 @@ o888o        o888ooooood8 o88o     o8888o     o888o     o888o o8o        `8     
 #define USE_WEBSERVER                            // Enable web server and Wifi Manager (+66k code, +8k mem)
   #define USE_JAVASCRIPT_ES6                     // Enable ECMAScript6 syntax using less JavaScript code bytes (fails on IE11)
 
+#define USE_I2S
 #define USE_SPI
 #define USE_LVGL
 #define USE_DISPLAY
 #define USE_XPT2046
 #define USE_FT5206
+#define USE_MPU6886
+#define USE_BM8563
+#define USE_MLX90614
+
 #define USE_UNIVERSAL_DISPLAY
-//#define USE_DISPLAY_LVGL_ONLY
+#define USE_DISPLAY_LVGL_ONLY
 #undef USE_DISPLAY_MODES1TO5
 #define USE_SPLASH
 #define USE_ENHANCED_GUI_WIFI_SCAN
@@ -3089,6 +3094,8 @@ o888o        o888ooooood8 o88o     o8888o     o888o     o888o o8o        `8     
 #define USE_RDM6300                              // Add support for RDM6300 125kHz RFID Reader (+0k8)
 //#define USE_IBEACON                              // Add support for bluetooth LE passive scan of ibeacon devices (uses HM17 module)
 //#define USE_GPS                                  // Add support for GPS and NTP Server for becoming Stratus 1 Time Source (+ 3.1kb flash, +132 bytes RAM)
+
+#define USE_IR_REMOTE
 
 //#define USE_BLE_ESP32                            // (ESP32 only) Add support for native BLE on ESP32 - use new driver
 //#define USE_MI_ESP32                             // (ESP32 only) Add support for ESP32 as a BLE-bridge (+9k2 mem, +292k flash)
