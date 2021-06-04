@@ -704,14 +704,27 @@ void WSContentFlush(void) {
   }
 }
 
-void _WSContentSendBuffer(const char* content) {
+void WSContentSend(const char* content, size_t size) {
+  WSContentFlush();
+  _WSContentSend(content, size);
+}
+
+void _WSContentSendBuffer(bool decimal, const char * formatP, va_list arg) {
+  char* content = ext_vsnprintf_malloc_P(formatP, arg);
   if (content == nullptr) { return; }              // Avoid crash
 
   int len = strlen(content);
-  if (0 == len) {                                  // No content
-    return;
+  if (0 == len) { return; }                        // No content
+
+  if (decimal && (D_DECIMAL_SEPARATOR[0] != '.')) {
+    for (uint32_t i = 0; i < len; i++) {
+      if ('.' == content[i]) {
+        content[i] = D_DECIMAL_SEPARATOR[0];
+      }
+    }
   }
-  else if (len < CHUNKED_BUFFER_SIZE) {            // Append chunk buffer with small content
+
+  if (len < CHUNKED_BUFFER_SIZE) {                 // Append chunk buffer with small content
     Web.chunk_buffer += content;
     len = Web.chunk_buffer.length();
   }
@@ -722,43 +735,24 @@ void _WSContentSendBuffer(const char* content) {
   if (strlen(content) >= CHUNKED_BUFFER_SIZE) {    // Content is oversize
     _WSContentSend(content);                       // Send content
   }
-}
 
-void WSContentSend(const char* content, size_t size) {
-  WSContentFlush();
-  _WSContentSend(content, size);
+  free(content);
 }
 
 void WSContentSend_P(const char* formatP, ...) {   // Content send snprintf_P char data
   // This uses char strings. Be aware of sending %% if % is needed
   va_list arg;
   va_start(arg, formatP);
-  char* content = ext_vsnprintf_malloc_P(formatP, arg);
+  _WSContentSendBuffer(false, formatP, arg);
   va_end(arg);
-
-  _WSContentSendBuffer(content);
-  free(content);
 }
 
 void WSContentSend_PD(const char* formatP, ...) {  // Content send snprintf_P char data checked for decimal separator
   // This uses char strings. Be aware of sending %% if % is needed
   va_list arg;
   va_start(arg, formatP);
-  char* content = ext_vsnprintf_malloc_P(formatP, arg);
+  _WSContentSendBuffer(true, formatP, arg);
   va_end(arg);
-
-  if (D_DECIMAL_SEPARATOR[0] != '.') {
-    if (content == nullptr) { return; }            // Avoid crash
-    size_t len = strlen(content);
-    for (uint32_t i = 0; i < len; i++) {
-      if ('.' == content[i]) {
-        content[i] = D_DECIMAL_SEPARATOR[0];
-      }
-    }
-  }
-
-  _WSContentSendBuffer(content);
-  free(content);
 }
 
 void WSContentStart_P(const char* title, bool auth)
@@ -800,11 +794,8 @@ void WSContentSendStyle_P(const char* formatP, ...)
     // This uses char strings. Be aware of sending %% if % is needed
     va_list arg;
     va_start(arg, formatP);
-    char* content = ext_vsnprintf_malloc_P(formatP, arg);
+    _WSContentSendBuffer(false, formatP, arg);
     va_end(arg);
-
-    _WSContentSendBuffer(content);
-    free(content);
   }
   WSContentSend_P(HTTP_HEAD_STYLE3, WebColor(COL_TEXT),
 #ifdef FIRMWARE_MINIMAL
@@ -1782,13 +1773,8 @@ void HandleWifiConfiguration(void) {
       TasmotaGlobal.save_data_counter = 0;               // Stop auto saving data - Updating Settings
       Settings.save_data = 0;
 
-      if (MAX_WIFI_OPTION == Web.old_wificonfig) {
-        Web.old_wificonfig = Settings.sta_config;
-        //AddLog(LOG_LEVEL_INFO,PSTR("WFM: save wificonfig %d and set to 2 (settings=%d)"), Web.old_wificonfig, Settings.sta_config);
-      } else {
-        //AddLog(LOG_LEVEL_INFO,PSTR("WFM: wificonfig already saved %d, set to 2 (settings=%d)"), Web.old_wificonfig, Settings.sta_config);
-      }
-      TasmotaGlobal.wifi_state_flag = Settings.sta_config = WIFI_MANAGER;;
+      if (MAX_WIFI_OPTION == Web.old_wificonfig) { Web.old_wificonfig = Settings.sta_config; }
+      TasmotaGlobal.wifi_state_flag = Settings.sta_config = WIFI_MANAGER;
 
       TasmotaGlobal.sleep = 0;                           // Disable sleep
       TasmotaGlobal.restart_flag = 0;                    // No restart
@@ -2271,7 +2257,7 @@ void HandleInformation(void)
 #endif
   if (Settings.flag4.network_wifi) {
     int32_t rssi = WiFi.RSSI();
-    WSContentSend_P(PSTR("}1" D_AP "%d " D_SSID " (" D_RSSI ")}2%s (%d%%, %d dBm)"), Settings.sta_active +1, HtmlEscape(SettingsText(SET_STASSID1 + Settings.sta_active)).c_str(), WifiGetRssiAsQuality(rssi), rssi);
+    WSContentSend_P(PSTR("}1" D_AP "%d " D_SSID " (" D_RSSI ")}2%s (%d%%, %d dBm) 11%c"), Settings.sta_active +1, HtmlEscape(SettingsText(SET_STASSID1 + Settings.sta_active)).c_str(), WifiGetRssiAsQuality(rssi), rssi, pgm_read_byte(&kWifiPhyMode[WiFi.getPhyMode() & 0x3]) );
     WSContentSend_P(PSTR("}1" D_HOSTNAME "}2%s%s"), TasmotaGlobal.hostname, (Mdns.begun) ? PSTR(".local") : "");
 #if LWIP_IPV6
     String ipv6_addr = WifiGetIPv6();
@@ -3268,9 +3254,6 @@ bool Xdrv01(uint8_t function)
 //          TasmotaGlobal.blinks = 255;                    // Signal wifi connection with blinks
           if (MAX_WIFI_OPTION != Web.old_wificonfig) {
             TasmotaGlobal.wifi_state_flag = Settings.sta_config = Web.old_wificonfig;
-            //AddLog(LOG_LEVEL_INFO,PSTR("WFM: Restore wificonfig %d"), Web.old_wificonfig);
-          } else {
-            //AddLog(LOG_LEVEL_INFO,PSTR("WFM: Keep wificonfig %d"), Settings.sta_config);
           }
           TasmotaGlobal.save_data_counter = Web.save_data_counter;
           Settings.save_data = Web.save_data_counter;
