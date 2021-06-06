@@ -355,8 +355,17 @@ void NewHAssDiscovery(void)
 
 // NEW DISCOVERY
 
-void TryResponseAppend_P(const char *format, ...)
-{
+void TryResponseAppend_P(const char *format, ...) {
+#ifdef MQTT_DATA_STRING
+  va_list arg;
+  va_start(arg, format);
+  char* mqtt_data = ext_vsnprintf_malloc_P(format, arg);
+  va_end(arg);
+  if (mqtt_data != nullptr) {
+    TasmotaGlobal.mqtt_data += mqtt_data;
+    free(mqtt_data);
+  }
+#else
   va_list args;
   va_start(args, format);
   char dummy[2];
@@ -378,6 +387,7 @@ void TryResponseAppend_P(const char *format, ...)
     vsnprintf_P(TasmotaGlobal.mqtt_data + mlen, slen, format, args);
   }
   va_end(args);
+#endif
 }
 
 void HAssAnnounceRelayLight(void)
@@ -878,7 +888,11 @@ void HAssAnnounceSensors(void)
     TasmotaGlobal.tele_period = tele_period_save;
     size_t sensordata_len = ResponseLength();
     char sensordata[sensordata_len+2];   // dynamically adjust the size
+#ifdef MQTT_DATA_STRING
+    strcpy(sensordata, TasmotaGlobal.mqtt_data.c_str());    // we can use strcpy since the buffer has the right size
+#else
     strcpy(sensordata, TasmotaGlobal.mqtt_data);    // we can use strcpy since the buffer has the right size
+#endif
 
     // ******************* JSON TEST *******************
     // char sensordata[512];
