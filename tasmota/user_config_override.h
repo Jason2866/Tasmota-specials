@@ -2961,14 +2961,19 @@ o888o        o888ooooood8 o88o     o8888o     o888o     o888o o8o        `8     
 #define USE_DISPLAY
 #define USE_XPT2046
 #define USE_FT5206
-#define USE_MPU6886
+#define USE_MPU_ACCEL
 #define USE_BM8563
 #define USE_MLX90614
 
 #define USE_UNIVERSAL_DISPLAY
 #define USE_DISPLAY_LVGL_ONLY
 #undef USE_DISPLAY_MODES1TO5
-#define USE_SPLASH
+#undef SHOW_SPLASH
+#undef USE_DISPLAY_LCD
+#undef USE_DISPLAY_SSD1306
+#undef USE_DISPLAY_MATRIX
+#undef USE_DISPLAY_SEVENSEG
+
 #define USE_ENHANCED_GUI_WIFI_SCAN
 
 #define USE_BERRY                                // Enable Berry scripting language
