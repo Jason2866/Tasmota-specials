@@ -3,7 +3,23 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased] - Development
 
-## [9.4.0.6]
+## [9.5.0.1]
+### Changed
+- ESP32 core library from v1.0.6 to v1.0.7
+- Force ESP32 defines USE_UFILESYS, GUI_TRASH_FILE and #define GUI_EDIT_FILE
+- Speed up initial GUI console refresh
+- Simplified configuration for ir-full and removal of tasmota-ircustom
+
+### Fixed
+- ESP32 Webcam add boundary marker before sending mjpeg image (#12376)
+- DDS238-2 wrong reactive power value (#12283)
+
+## [Released]
+
+## [9.5.0] 20210617
+- Release Michael (Rossi)
+
+## [9.4.0.6] 20210617
 ### Added
 - Command ``MqttWifiTimeout 100..20000`` to control MQTT Wi-Fi connection timeout default set to 200 mS (#12222)
 
@@ -89,8 +105,6 @@ All notable changes to this project will be documented in this file.
 - Wrong flash size detection when saving Zigbee device information on ESP8266 (#11870)
 - Prometheus metrics parse error on DS18x20 (#11931)
 - DS18x20 name search id (#11958)
-
-## [Released]
 
 ## [9.4.0] 20210423
 - Release Leslie
