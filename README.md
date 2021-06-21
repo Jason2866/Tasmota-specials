@@ -9,7 +9,6 @@
 ## Build variants:
 
 - Tasmota TLS (TLS for mqtt enabled)
-- Tasmota Zigbee gateway build (based on TI MCU, ESP with 4Mb flash needed)
 - Tasmota Rules with all the extras enabled
 - Tasmota Thermostat (Thermostat, PID driver and Temp sensors enabled)
 - Tasmota GPS (GPS driver enabled)
