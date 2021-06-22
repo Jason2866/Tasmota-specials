@@ -14,7 +14,8 @@
 - Tasmota GPS (GPS driver enabled)
 - Tasmota Scripting instead of rules (Smart Meter Interface enabled)
 - Tasmota Ethernet ESP32 for wired LAN (needs Ethernet hardware module)
-- Tasmota U-Display ESP32 (uses experimental Universal Display Driver) 
+- Tasmota U-Display ESP32 (uses Universal Display Driver)
+- Experimental Tasmota32 for the ESP32-C3 (tasmota32c3)
 - Tasmota Battery build for battery powered tuya sensors
 - Tasmota minicustom minimal even smaller (NO Webserver, you have to use mqtt!!)
 - Tasmota Mega at the bleeding edge - Almost every sensor included
