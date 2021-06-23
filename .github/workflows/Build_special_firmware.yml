@@ -423,6 +423,29 @@ jobs:
         path: ./build_output
 
 
+  tasmota32-minicustom:
+    needs: tasmota_pull
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set up Python
+      uses: actions/setup-python@v1
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -U platformio
+        platformio upgrade --dev
+        platformio update
+    - name: Run PlatformIO
+      run: |
+        platformio run -e tasmota32-minicustom
+    - uses: actions/upload-artifact@v2
+      with:
+        name: firmware
+        path: ./build_output
+
+
   tasmota32-udisplay:
     needs: tasmota_pull
     runs-on: ubuntu-latest
@@ -469,7 +492,7 @@ jobs:
 
 
   Upload:
-    needs: [tasmota-tls, tasmota-fullrules, tasmota-platinum, tasmota-minicustom, tasmota32-scripting, tasmota32-tls, tasmota32-mega, tasmota32-fullrules, tasmota32-platinum, tasmota32-ethernet, tasmota32-gps, tasmota32-udisplay, tasmota32c3, tasmota32-battery]
+    needs: [tasmota-tls, tasmota-fullrules, tasmota-platinum, tasmota-minicustom, tasmota32-scripting, tasmota32-tls, tasmota32-mega, tasmota32-fullrules, tasmota32-platinum, tasmota32-minicustom, tasmota32-ethernet, tasmota32-gps, tasmota32-udisplay, tasmota32c3, tasmota32-battery]
     runs-on: ubuntu-latest
     continue-on-error: true
     steps:
