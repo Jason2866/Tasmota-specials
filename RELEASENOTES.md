@@ -98,12 +98,14 @@ The latter links can be used for OTA upgrades too like ``OtaUrl http://ota.tasmo
 ## Changelog v9.5.0.1
 ### Added
 - Enable UFILESYS, GUI_TRASH_FILE and GUI_EDIT_FILE for any device compiled with more than 1M flash size
+- Support for AM2320 Temperature and Humidity Sensor by Lars Wessels [#12485](https://github.com/arendst/Tasmota/issues/12485)
 
 ### Changed
 - ESP32 core library from v1.0.6 to v1.0.7
 - Force ESP32 defines USE_UFILESYS, GUI_TRASH_FILE and #define GUI_EDIT_FILE
 - Speed up initial GUI console refresh
 - Simplified configuration for ir-full and removal of tasmota-ircustom [#12428](https://github.com/arendst/Tasmota/issues/12428)
+- Update timing DHT11, AM2301 (DHT21, DHT22, AM2302, AM2321), SI7021 [#12488](https://github.com/arendst/Tasmota/issues/12488)
 
 ### Fixed
 - DDS238-2 wrong reactive power value [#12283](https://github.com/arendst/Tasmota/issues/12283)
