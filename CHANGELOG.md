@@ -7,12 +7,14 @@ All notable changes to this project will be documented in this file.
 ### Added
 - Initial support for Tasmota Mesh (TasMesh) providing node/broker communication using ESP-NOW (#11939)
 - MQTT minimum password length restriction in GUI (#12553)
+- Command ``SetOption127 1`` to force Wifi in no-sleep mode even if ``Sleep 0`` is not enabled
 
 ### Changed
 - ESP32 core library from v1.0.7 to v1.0.7.1
 - ESP32 Ethernet Phy Type information to IDF v3+
 - Allow buttons to work in AP normal mode (#12518)
 - Enable Ping and rule features for any device compiled with more than 1M flash size (#12539)
+- Setting hostname to fixing ArduinoESP32 core 2.0.0
 
 ### Fixed
 - ESP32-C3 settings layout for configuration backup and restore
