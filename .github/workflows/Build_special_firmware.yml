@@ -23,7 +23,7 @@ jobs:
         git switch -c work
         git remote add -f Tasmota "https://github.com/arendst/Tasmota.git"
         git merge Tasmota/development --allow-unrelated-histories
-        rm README.md
+        ls *
         mv README.save README.md
         git add -f README.md
         git commit
