@@ -6,7 +6,6 @@ on:
     - special_builder
     paths-ignore:
     - '.github/**' # Ignore changes towards the .github directory
-    - 'README.md'
 
   schedule:
     - cron: '0 * * * *'
@@ -17,12 +16,18 @@ jobs:
     continue-on-error: true
     steps:
     - uses: actions/checkout@v1
+    - name: Save README.md
+    - run: mv README.md README.save
     - name: Use latest Tasmota development
       run: |
         git config --local user.name "Platformio BUILD"
         git switch -c work
         git remote add -f Tasmota "https://github.com/arendst/Tasmota.git"
         git merge Tasmota/development --allow-unrelated-histories
+        del README.md
+        mv README.save README.md
+        git add -f README.md
+        git commit
     - name: Push Tasmota   # Push updates of latest Tasmota development to repo
       uses: ad-m/github-push-action@master
       with:
