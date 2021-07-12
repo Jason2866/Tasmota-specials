@@ -24,7 +24,7 @@ jobs:
         git remote add -f Tasmota "https://github.com/arendst/Tasmota.git"
         git merge Tasmota/development --allow-unrelated-histories
         ls *
-        mv README.save README.md
+        mv -f README.save README.md
         git add -f README.md
         git commit --allow-empty -m "use actual development" # hack to use latest dev build to compile now, not next time
     - name: Push Tasmota   # Push updates of latest Tasmota development to repo
