@@ -2,7 +2,11 @@ name: Build_special_firmware
 
 on:
   push:
-    branches: special_builder
+    branches:
+    - special_builder
+    paths-ignore:
+    - '.github/**' # Ignore changes towards the .github directory
+
   schedule:
     - cron: '0 * * * *'
 
