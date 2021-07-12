@@ -26,7 +26,7 @@ jobs:
         ls *
         mv README.save README.md
         git add -f README.md
-        git commit --allow-empty -m "commit even nothing new is there"
+        git commit --allow-empty -m "use actual development" # hack to use latest dev build to compile now, not next time
     - name: Push Tasmota   # Push updates of latest Tasmota development to repo
       uses: ad-m/github-push-action@master
       with:
