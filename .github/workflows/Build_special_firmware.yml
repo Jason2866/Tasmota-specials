@@ -16,10 +16,9 @@ jobs:
     continue-on-error: true
     steps:
     - uses: actions/checkout@v1
-    - name: Save README.md
-    - run: mv README.md README.save
     - name: Use latest Tasmota development
       run: |
+        mv README.md README.save
         git config --local user.name "Platformio BUILD"
         git switch -c work
         git remote add -f Tasmota "https://github.com/arendst/Tasmota.git"
