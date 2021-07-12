@@ -26,7 +26,7 @@ jobs:
         ls *
         mv README.save README.md
         git add -f README.md
-        git commit
+        git commit --allow-empty
     - name: Push Tasmota   # Push updates of latest Tasmota development to repo
       uses: ad-m/github-push-action@master
       with:
