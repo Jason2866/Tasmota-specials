@@ -1,0 +1,30 @@
+{
+  "build": {
+    "arduino":{
+      "ldscript": "esp32c3_out.ld"
+    },
+    "core": "esp32",
+    "f_cpu": "160000000L",
+    "f_flash": "80000000L",
+    "flash_mode": "dout",
+    "mcu": "esp32c3",
+    "variant": "esp32c3",
+    "partitions": "esp32_partition_app1856k_no_OTA.csv"
+  },
+  "connectivity": [
+    "wifi"
+  ],
+  "frameworks": [
+    "arduino"
+  ],
+  "name": "Espressif Generic ESP32-C3 2M Flash, Tasmota 1856k Code no OTA, small SPIFFS",
+  "upload": {
+    "flash_size": "2MB",
+    "maximum_ram_size": 327680,
+    "maximum_size": 2097152,
+    "require_upload_port": true,
+    "speed": 460800
+  },
+  "url": "https://docs.espressif.com/projects/esp-idf/en/latest",
+  "vendor": "Espressif"
+}
