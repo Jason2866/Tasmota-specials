@@ -34,7 +34,7 @@ jobs:
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         branch: 'special_builder'
-        force: true
+        #force: true
 
   tasmota-tls:
     needs: tasmota_pull
