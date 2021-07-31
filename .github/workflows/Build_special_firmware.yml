@@ -26,7 +26,7 @@ jobs:
         git config user.email github-actions@github.com
         git remote add -f Tasmota "https://github.com/arendst/Tasmota.git" --track development
         git merge Tasmota/development --allow-unrelated-histories
-        git push origin special_builder
+        #git push origin special_builder
         #git commit -m "use actual development" # hack to use latest dev build to compile now, not next time. Fail and abort if no changes in Tasmota repo
     - name: Push Tasmota   # Push updates of latest Tasmota development to repo
       uses: ad-m/github-push-action@master
