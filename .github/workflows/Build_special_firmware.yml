@@ -45,10 +45,7 @@ jobs:
       uses: actions/setup-python@v1
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip
-        pip install -U platformio
-        platformio upgrade --dev
-        platformio update
+        pip install -U https://github.com/platformio/platformio-core/archive/develop.zip
     - name: Run PlatformIO
       run: |
         platformio run -e tasmota-tls
@@ -69,10 +66,7 @@ jobs:
       uses: actions/setup-python@v1
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip
-        pip install -U platformio
-        platformio upgrade --dev
-        platformio update
+        pip install -U https://github.com/platformio/platformio-core/archive/develop.zip
     - name: Run PlatformIO
       run: |
         platformio run -e tasmota-gps
@@ -93,10 +87,7 @@ jobs:
       uses: actions/setup-python@v1
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip
-        pip install -U platformio
-        platformio upgrade --dev
-        platformio update
+        pip install -U https://github.com/platformio/platformio-core/archive/develop.zip
     - name: Run PlatformIO
       run: |
         platformio run -e tasmota-battery
@@ -117,10 +108,7 @@ jobs:
       uses: actions/setup-python@v1
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip
-        pip install -U platformio
-        platformio upgrade --dev
-        platformio update
+        pip install -U https://github.com/platformio/platformio-core/archive/develop.zip
     - name: Run PlatformIO
       run: |
         platformio run -e tasmota-scripting
@@ -141,10 +129,7 @@ jobs:
       uses: actions/setup-python@v1
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip
-        pip install -U platformio
-        platformio upgrade --dev
-        platformio update
+        pip install -U https://github.com/platformio/platformio-core/archive/develop.zip
     - name: Run PlatformIO
       run: |
         platformio run -e tasmota-mega
@@ -165,10 +150,7 @@ jobs:
       uses: actions/setup-python@v1
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip
-        pip install -U platformio
-        platformio upgrade --dev
-        platformio update
+        pip install -U https://github.com/platformio/platformio-core/archive/develop.zip
     - name: Run PlatformIO
       run: |
         platformio run -e tasmota-thermostat
@@ -189,10 +171,7 @@ jobs:
       uses: actions/setup-python@v1
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip
-        pip install -U platformio
-        platformio upgrade --dev
-        platformio update
+        pip install -U https://github.com/platformio/platformio-core/archive/develop.zip
     - name: Run PlatformIO
       run: |
         platformio run -e tasmota-fullrules
@@ -213,10 +192,7 @@ jobs:
       uses: actions/setup-python@v1
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip
-        pip install -U platformio
-        platformio upgrade --dev
-        platformio update
+        pip install -U https://github.com/platformio/platformio-core/archive/develop.zip
     - name: Run PlatformIO
       run: |
         platformio run -e tasmota-platinum
@@ -237,10 +213,7 @@ jobs:
       uses: actions/setup-python@v1
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip
-        pip install -U platformio
-        platformio upgrade --dev
-        platformio update
+        pip install -U https://github.com/platformio/platformio-core/archive/develop.zip
     - name: Run PlatformIO
       run: |
         platformio run -e tasmota-minicustom
@@ -262,10 +235,7 @@ jobs:
       uses: actions/setup-python@v1
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip
-        pip install -U platformio
-        platformio upgrade --dev
-        platformio update
+        pip install -U https://github.com/platformio/platformio-core/archive/develop.zip
     - name: Run PlatformIO
       run: |
         platformio run -e tasmota32-tls
@@ -286,10 +256,7 @@ jobs:
       uses: actions/setup-python@v1
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip
-        pip install -U platformio
-        platformio upgrade --dev
-        platformio update
+        pip install -U https://github.com/platformio/platformio-core/archive/develop.zip
     - name: Run PlatformIO
       run: |
         platformio run -e tasmota32-zigbee
@@ -310,10 +277,7 @@ jobs:
       uses: actions/setup-python@v1
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip
-        pip install -U platformio
-        platformio upgrade --dev
-        platformio update
+        pip install -U https://github.com/platformio/platformio-core/archive/develop.zip
     - name: Run PlatformIO
       run: |
         platformio run -e tasmota32-gps
@@ -334,10 +298,7 @@ jobs:
       uses: actions/setup-python@v1
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip
-        pip install -U platformio
-        platformio upgrade --dev
-        platformio update
+        pip install -U https://github.com/platformio/platformio-core/archive/develop.zip
     - name: Run PlatformIO
       run: |
         platformio run -e tasmota32-battery
@@ -358,10 +319,7 @@ jobs:
       uses: actions/setup-python@v1
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip
-        pip install -U platformio
-        platformio upgrade --dev
-        platformio update
+        pip install -U https://github.com/platformio/platformio-core/archive/develop.zip
     - name: Run PlatformIO
       run: |
         platformio run -e tasmota32-scripting
@@ -382,10 +340,7 @@ jobs:
       uses: actions/setup-python@v1
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip
-        pip install -U platformio
-        platformio upgrade --dev
-        platformio update
+        pip install -U https://github.com/platformio/platformio-core/archive/develop.zip
     - name: Run PlatformIO
       run: |
         platformio run -e tasmota32-mega
@@ -406,10 +361,7 @@ jobs:
       uses: actions/setup-python@v1
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip
-        pip install -U platformio
-        platformio upgrade --dev
-        platformio update
+        pip install -U https://github.com/platformio/platformio-core/archive/develop.zip
     - name: Run PlatformIO
       run: |
         platformio run -e tasmota32-ethernet
@@ -430,10 +382,7 @@ jobs:
       uses: actions/setup-python@v1
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip
-        pip install -U platformio
-        platformio upgrade --dev
-        platformio update
+        pip install -U https://github.com/platformio/platformio-core/archive/develop.zip
     - name: Run PlatformIO
       run: |
         platformio run -e tasmota32-fullrules
@@ -454,10 +403,7 @@ jobs:
       uses: actions/setup-python@v1
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip
-        pip install -U platformio
-        platformio upgrade --dev
-        platformio update
+        pip install -U https://github.com/platformio/platformio-core/archive/develop.zip
     - name: Run PlatformIO
       run: |
         platformio run -e tasmota32-platinum
@@ -479,10 +425,7 @@ jobs:
       uses: actions/setup-python@v1
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip
-        pip install -U platformio
-        platformio upgrade --dev
-        platformio update
+        pip install -U https://github.com/platformio/platformio-core/archive/develop.zip
     - name: Run PlatformIO
       run: |
         platformio run -e tasmota32-minicustom
@@ -504,10 +447,7 @@ jobs:
       uses: actions/setup-python@v1
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip
-        pip install -U platformio
-        platformio upgrade --dev
-        platformio update
+        pip install -U https://github.com/platformio/platformio-core/archive/develop.zip
     - name: Run PlatformIO
       run: |
         platformio run -e tasmota32-udisplay
@@ -528,10 +468,7 @@ jobs:
       uses: actions/setup-python@v1
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip
-        pip install -U platformio
-        platformio upgrade --dev
-        platformio update
+        pip install -U https://github.com/platformio/platformio-core/archive/develop.zip
     - name: Run PlatformIO
       run: |
         platformio run -e tasmota32c3
@@ -553,10 +490,7 @@ jobs:
       uses: actions/setup-python@v1
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip
-        pip install -U platformio
-        platformio upgrade --dev
-        platformio update
+        pip install -U https://github.com/platformio/platformio-core/archive/develop.zip
     - name: Run PlatformIO
       run: |
         platformio run -e tasmota32c3_2M
