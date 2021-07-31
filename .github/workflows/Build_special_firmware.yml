@@ -25,7 +25,7 @@ jobs:
         git config --local user.name "Platformio BUILD"
         git config user.email github-actions@github.com
         git remote add -f Tasmota "https://github.com/arendst/Tasmota.git" --track development
-        git status --porcelain > status.txt
+        git status --porcelain &> status.txt
         echo "$(<status.txt)"
         git add status.txt
         git commit -m "status flag"
