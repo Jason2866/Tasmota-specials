@@ -591,7 +591,6 @@ jobs:
     - name: Transfer the new binaries into the repository
       run: |
         git config --local user.name "Platformio BUILD"
-        #git rm -r --cached .
         git add -f ./*
         git commit -m "http://tasmota.com"
     - name: Push the firmware files to branch firmware
