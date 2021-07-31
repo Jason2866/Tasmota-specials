@@ -1,0 +1,14 @@
+tasks:
+  - before: platformio upgrade
+  - command: platformio run -e tasmota
+
+image:
+  file: .gitpod.Dockerfile
+
+vscode:
+  extensions:
+    - eamodio.gitlens
+    - Atishay-Jain.All-Autocomplete
+    - CoenraadS.bracket-pair-colorizer
+    - esbenp.prettier-vscode
+    - shardulm94.trailing-spaces
