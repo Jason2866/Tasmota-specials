@@ -28,8 +28,6 @@ jobs:
         git status
         git merge Tasmota/development --allow-unrelated-histories
         git status
-        git push
-        git status
         #git commit -m "use actual development" # hack to use latest dev build to compile now, not next time. Fail and abort if no changes in Tasmota repo
     - name: Push Tasmota   # Push updates of latest Tasmota development to repo
       uses: ad-m/github-push-action@master
