@@ -28,6 +28,7 @@ jobs:
         git status --porcelain > status.txt
         echo "$(<status.txt)"
         git add status.txt
+        git commit -m "status flag"
         git merge Tasmota/development --allow-unrelated-histories
         git status
     - name: Push updates of latest Tasmota development to repo
