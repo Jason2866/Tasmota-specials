@@ -11,10 +11,12 @@ on:
   schedule:
     - cron: '0 * * * *'
 
+permissions: read-all|write-all
+
 jobs:
   tasmota_pull:
     runs-on: ubuntu-latest
-    continue-on-error: true
+    continue-on-error: false
     steps:
     - uses: actions/checkout@v1
       with:
@@ -25,7 +27,7 @@ jobs:
         git switch -c work
         git remote add -f Tasmota "https://github.com/arendst/Tasmota.git" --track development
         git merge Tasmota/development --allow-unrelated-histories
-        git commit --allow-empty -m "use actual development" # hack to use latest dev build to compile now, not next time
+        git commit -m "use actual development" # hack to use latest dev build to compile now, not next time. Fail and abort if no changes in Tasmota repo
     - name: Push Tasmota   # Push updates of latest Tasmota development to repo
       uses: ad-m/github-push-action@master
       with:
