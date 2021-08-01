@@ -2,9 +2,9 @@ name: Build_special_firmware
 
 on:
   workflow_dispatch:  # Manually start a workflow
+
   push:
-    branches:
-    - special_builder
+    branches: special_builder
     paths-ignore:
     - '.github/**' # Ignore changes towards the .github directory
 
