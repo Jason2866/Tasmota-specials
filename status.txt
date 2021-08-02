@@ -1,15 +1,1 @@
-Merge made by the 'recursive' strategy.
- CHANGELOG.md                                       |   4 +
- RELEASENOTES.md                                    |   2 +
- lib/lib_audio/ESP8266Audio/src/AudioOutputI2S.cpp  |   8 +-
- .../ESP8266Audio/src/AudioOutputI2SNoDAC.cpp       |  10 +-
- lib/lib_audio/ESP8266AudioAttention.md             |  82 +++++++++
- platformio_tasmota_cenv_sample.ini                 |  14 ++
- tasmota/settings.ino                               |   4 +
- tasmota/support_features.ino                       |   8 +-
- tasmota/tasmota_globals.h                          |   6 +
- tasmota/xdrv_58_range_extender.ino                 | 192 +++++++++++++--------
- tasmota/xsns_83_neopool.ino                        | 128 ++++++++++----
- tools/decode-status.py                             |   4 +-
- 12 files changed, 351 insertions(+), 111 deletions(-)
- create mode 100644 lib/lib_audio/ESP8266AudioAttention.md
+Already up to date.
