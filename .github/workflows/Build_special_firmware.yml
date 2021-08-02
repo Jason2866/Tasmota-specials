@@ -26,11 +26,11 @@ jobs:
         git config --local user.email github-actions@github.com
         git remote add -f Tasmota "https://github.com/arendst/Tasmota.git" --track development
         git switch -c work
+        git merge Tasmota/development --allow-unrelated-histories
         git status --porcelain &> status.txt
         echo "$(<status.txt)"
         git add status.txt
         git commit -m "status flag"
-        git merge Tasmota/development --allow-unrelated-histories
         git status
     - name: Push updates of latest Tasmota development to repo
       uses: ad-m/github-push-action@master
