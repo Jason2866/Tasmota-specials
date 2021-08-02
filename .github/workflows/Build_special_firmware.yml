@@ -25,7 +25,7 @@ jobs:
         git config --global user.email "${GH_USERNAME}@users.noreply.github.com"
         git config --global user.name "${GH_USERNAME}"
         git remote add -f Tasmota "https://github.com/arendst/Tasmota.git" --track development
-        git push
+        git switch -c work
         git status --porcelain &> status.txt
         echo "$(<status.txt)"
         git add status.txt
