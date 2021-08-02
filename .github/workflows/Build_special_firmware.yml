@@ -22,8 +22,8 @@ jobs:
         ref: special_builder
     - name: Use latest Tasmota development
       run: |
-        git config --global user.email "${GH_USERNAME}@users.noreply.github.com"
-        git config --global user.name "${GH_USERNAME}"
+        git config --local user.name "Platformio BUILD"
+        git config --local user.email github-actions@github.com
         git remote add -f Tasmota "https://github.com/arendst/Tasmota.git" --track development
         git switch -c work
         git status --porcelain &> status.txt
