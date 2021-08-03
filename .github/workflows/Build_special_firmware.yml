@@ -163,6 +163,27 @@ jobs:
         name: firmware
         path: ./build_output
 
+  tasmota-rangeextender:
+    needs: tasmota_pull
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        ref: special_builder
+    - name: Set up Python
+      uses: actions/setup-python@v1
+    - name: Install dependencies
+      run: |
+        pip install -U https://github.com/platformio/platformio-core/archive/develop.zip
+    - name: Run PlatformIO
+      run: |
+        platformio run -e tasmota-rangeextender
+    - uses: actions/upload-artifact@v2
+      with:
+        name: firmware
+        path: ./build_output
+
   tasmota-fullrules:
     needs: tasmota_pull
     runs-on: ubuntu-latest
@@ -504,7 +525,7 @@ jobs:
         path: ./build_output
 
   Upload:
-    needs: [tasmota-tls, tasmota-fullrules, tasmota-platinum, tasmota-minicustom, tasmota32-scripting, tasmota32-tls, tasmota32-mega, tasmota32-fullrules, tasmota32-platinum, tasmota32-minicustom, tasmota32-ethernet, tasmota32-gps, tasmota32-udisplay, tasmota32c3, tasmota32c3_2M, tasmota32-battery]
+    needs: [tasmota-tls, tasmota-fullrules, tasmota-platinum, tasmota-rangeextender, tasmota-minicustom, tasmota32-scripting, tasmota32-tls, tasmota32-mega, tasmota32-fullrules, tasmota32-platinum, tasmota32-minicustom, tasmota32-ethernet, tasmota32-gps, tasmota32-udisplay, tasmota32c3, tasmota32c3_2M, tasmota32-battery]
     runs-on: ubuntu-latest
     continue-on-error: true
     steps:
