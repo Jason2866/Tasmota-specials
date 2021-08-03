@@ -1,6 +1,6 @@
 Merge made by the 'recursive' strategy.
- CHANGELOG.md                  |  3 +++
- RELEASENOTES.md               |  1 +
- tasmota/settings.h            |  2 +-
- tasmota/xlgt_05_sonoff_l1.ino | 14 ++++++--------
- 4 files changed, 11 insertions(+), 9 deletions(-)
+ lib/lib_audio/ESP8266Audio/src/AudioOutputI2S.cpp            |  6 +++++-
+ lib/lib_audio/ESP8266Audio/src/AudioOutputI2SNoDAC.cpp       |  6 +++++-
+ lib/lib_basic/NeoPixelBus/src/internal/NeoEsp8266DmaMethod.h | 10 +++++-----
+ platformio_tasmota_cenv_sample.ini                           |  4 ++--
+ 4 files changed, 17 insertions(+), 9 deletions(-)
