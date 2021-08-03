@@ -30,7 +30,7 @@ jobs:
         echo "$(<status.txt)"
         git add status.txt
         git commit -m "status flag"
-        git status
+        #git status
     - name: Push updates of latest Tasmota development to repo
       uses: ad-m/github-push-action@master
       with:
