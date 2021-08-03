@@ -19,6 +19,7 @@ Official ✨ Tasmota ✨ firmware files are [here](https://github.com/arendst/Ta
 - Tasmota U-Display ESP32 (uses Universal Display Driver)
 - Experimental Tasmota32 for the ESP32-C3 (tasmota32c3) and 2M no OTA variant (tasmota32c3_2M)
 - Tasmota Battery build for battery powered tuya sensors
+- Tasmota RangeExtender (Tasmota acts as AP)
 - Tasmota minicustom minimal even smaller (NO Webserver, you have to use mqtt!!)
 - Tasmota Mega at the bleeding edge - Almost every sensor included
 - Tasmota Platinum nearly ALL enabled IT.IS.HUGE! (only for devices with >=4Mb flash)<br>
