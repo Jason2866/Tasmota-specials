@@ -1,1 +1,6 @@
-Already up to date.
+Merge made by the 'recursive' strategy.
+ CHANGELOG.md                  |  3 +++
+ RELEASENOTES.md               |  1 +
+ tasmota/settings.h            |  2 +-
+ tasmota/xlgt_05_sonoff_l1.ino | 14 ++++++--------
+ 4 files changed, 11 insertions(+), 9 deletions(-)
