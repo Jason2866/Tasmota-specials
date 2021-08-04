@@ -1,3 +1,1 @@
-Merge made by the 'recursive' strategy.
- tasmota/support_rotary.ino | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Already up to date.
