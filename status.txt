@@ -1,4 +1,1 @@
-Merge made by the 'recursive' strategy.
- tasmota/my_user_config.h      |  3 ++-
- tasmota/xdrv_01_webserver.ino | 31 ++++++++++++++++++++++++++++---
- 2 files changed, 30 insertions(+), 4 deletions(-)
+Already up to date.
