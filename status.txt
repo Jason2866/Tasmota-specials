@@ -1,6 +1,1 @@
-Merge made by the 'recursive' strategy.
- CHANGELOG.md               | 2 +-
- RELEASENOTES.md            | 2 +-
- tasmota/support_rotary.ino | 9 +++------
- tasmota/tasmota_template.h | 4 ++--
- 4 files changed, 7 insertions(+), 10 deletions(-)
+Already up to date.
