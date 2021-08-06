@@ -1,3 +1,1 @@
-Merge made by the 'recursive' strategy.
- pio-tools/gzip-firmware.py | 27 ++++++++++++++++++++++++---
- 1 file changed, 24 insertions(+), 3 deletions(-)
+Already up to date.
