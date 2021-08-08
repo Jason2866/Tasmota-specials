@@ -1,3 +1,1 @@
-Merge made by the 'recursive' strategy.
- pio-tools/name-firmware.py | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+Already up to date.
