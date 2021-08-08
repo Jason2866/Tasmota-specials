@@ -40,7 +40,7 @@ For initial configuration this release supports Webserver based **WifiManager** 
 
 ## Initial installation
 
-Easy initial installation of Tasmota can be performed using the [Tasmota WebInstaller](https://arendst.github.io/Tasmota/).
+Easy initial installation of Tasmota can be performed using the [Tasmota WebInstaller](https://arendst.github.io/Tasmota-firmware/).
 
 ## Provided Binary Downloads
 
@@ -60,7 +60,7 @@ The following binary downloads have been compiled with ESP8266/Arduino library c
 Above binaries are also available as gzipped version allowing faster uploads.
 
 Latest released binaries can be downloaded from
-- https://github.com/arendst/Tasmota/tree/release-firmware
+- https://github.com/arendst/Tasmota-firmware/tree/main/release-firmware
 - http://ota.tasmota.com/tasmota/release
 
 Historical binaries can be downloaded from
@@ -84,7 +84,7 @@ The following binary downloads have been compiled with ESP32/Arduino library cor
 - **tasmota32-core2.bin** = The Core2 version is specifically tailored to M5Stack Core2 hardware for 8M+ flash.
 
 Latest released binaries can be downloaded from
-- https://github.com/arendst/Tasmota/tree/release-firmware
+- https://github.com/arendst/Tasmota-firmware/tree/main/release-firmware
 - http://ota.tasmota.com/tasmota32/release
 
 Historical binaries can be downloaded from
@@ -98,12 +98,14 @@ The latter links can be used for OTA upgrades too like ``OtaUrl http://ota.tasmo
 
 [Complete list](BUILDS.md) of available feature and sensors.
 
-## Changelog v9.5.0.4
+## Changelog v9.5.0.5
 ### Added
-- Release of [Tasmota WebInstaller](https://arendst.github.io/Tasmota/)
-- Command ``SetOption127 1`` to force Wifi in no-sleep mode even if ``Sleep 0`` is not enabled
+- Release of [Tasmota WebInstaller](https://arendst.github.io/Tasmota-firmware/)
+- Command ``SetOption127 1`` to force Wi-Fi in no-sleep mode even if ``Sleep 0`` is not enabled
 - Command ``SetSensor1..127 0|1`` to globally disable individual sensor driver
+- Neopool commands ``NPPHRes``, ``NPCLRes`` and ``NPIonRes`` [#12813](https://github.com/arendst/Tasmota/issues/12813)
 - Support for second DNS server
+- Support for (Yeelight) Mi Desk Pro using binary tasmota32solo1.bin
 - Initial support for Tasmota Mesh (TasMesh) providing node/broker communication using ESP-NOW [#11939](https://github.com/arendst/Tasmota/issues/11939)
 - Berry ESP32 partition manager [#12465](https://github.com/arendst/Tasmota/issues/12465)
 - Berry ESP32 support for I2S audio mp3 playback
@@ -113,6 +115,8 @@ The latter links can be used for OTA upgrades too like ``OtaUrl http://ota.tasmo
 - Support for Technoline WS2300-15 Anemometer [#12573](https://github.com/arendst/Tasmota/issues/12573)
 - Support for Telaire T6700 Series CO2 sensor by Alexander Savchenko [#12618](https://github.com/arendst/Tasmota/issues/12618)
 - Support for CAN bus and Freedom Won Battery Management System by Marius Bezuidenhout [#12651](https://github.com/arendst/Tasmota/issues/12651)
+- Optional IP filter to command ``TCPStart`` [#12806](https://github.com/arendst/Tasmota/issues/12806)
+- Inital support for Wi-Fi extender [#12784](https://github.com/arendst/Tasmota/issues/12784)
 
 ### Changed
 - ESP32 core library from v1.0.6 to v1.0.7.3
@@ -125,6 +129,9 @@ The latter links can be used for OTA upgrades too like ``OtaUrl http://ota.tasmo
 - Extended supported sensor driver range to 128
 - Disable PSRAM on unsupported hardware
 - ESP32 remove GPIO initialization to INPUT from not used GPIOs to allow JTAG support
+- Relax NTP poll if no ntpserver can be resolved by DNS
+- Move firmware binaries to https://github.com/arendst/Tasmota-firmware/tree/main/release-firmware
+- Make Sonoff L1 MusicSync persistent [#12008](https://github.com/arendst/Tasmota/issues/12008)
 - Simplified configuration for ir-full and removal of tasmota-ircustom [#12428](https://github.com/arendst/Tasmota/issues/12428)
 - Refactor platformio [#12442](https://github.com/arendst/Tasmota/issues/12442)
 - Allow buttons to work in AP normal mode [#12518](https://github.com/arendst/Tasmota/issues/12518)
@@ -149,3 +156,4 @@ The latter links can be used for OTA upgrades too like ``OtaUrl http://ota.tasmo
 - ESP32 do not use chip temperature sensor as global temperature if external temperature sensor is used [#12630](https://github.com/arendst/Tasmota/issues/12630)
 - Discovery fails when using ``%hostname%`` in a topic [#12710](https://github.com/arendst/Tasmota/issues/12710)
 - ESP32 buzzer in PWM mode exception (#12717)[#12717](https://github.com/arendst/Tasmota/issues/12717)
+- Neopool communication error [#12813](https://github.com/arendst/Tasmota/issues/12813)

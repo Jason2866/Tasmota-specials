@@ -1,7 +1,7 @@
 /*
   AudioOutputI2S
   Base class for I2S interface port
-  
+
   Copyright (C) 2017  Earle F. Philhower, III
 
   This program is free software: you can redistribute it and/or modify
@@ -22,7 +22,11 @@
 #ifdef ESP32
   #include "driver/i2s.h"
 #elif defined(ARDUINO_ARCH_RP2040) || defined(ESP8266)
-  #include <i2s.h>
+  #ifdef ARDUINO_ESP8266_MAJOR    //this define was added in ESP8266 Arduino Core version v3.0.1
+    #include "core_esp8266_i2s.h" //for Arduino core >= 3.0.1
+  #else
+    #include "i2s.h"              //for Arduino core <= 3.0.0
+  #endif
 #endif
 #include "AudioOutputI2S.h"
 
@@ -269,7 +273,11 @@ bool AudioOutputI2S::ConsumeSample(int16_t sample[2])
     {
       s32 = ((Amplify(ms[RIGHTCHANNEL])) << 16) | (Amplify(ms[LEFTCHANNEL]) & 0xffff);
     }
-    return i2s_write_bytes((i2s_port_t)portNo, (const char *)&s32, sizeof(uint32_t), 0);
+// Deprecated. Use i2s_write
+//    return i2s_write_bytes((i2s_port_t)portNo, (const char *)&s32, sizeof(uint32_t), 0);
+    size_t bytes_written;
+    i2s_write((i2s_port_t)portNo, (const char*)&s32, sizeof(uint32_t), &bytes_written, 0);
+    return bytes_written;
   #elif defined(ESP8266)
     uint32_t s32 = ((Amplify(ms[RIGHTCHANNEL])) << 16) | (Amplify(ms[LEFTCHANNEL]) & 0xffff);
     return i2s_write_sample_nb(s32); // If we can't store it, return false.  OTW true
