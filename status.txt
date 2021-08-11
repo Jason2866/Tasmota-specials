@@ -1,5 +1,1 @@
-Merge made by the 'recursive' strategy.
- tasmota/settings.h   | 13 +++----------
- tasmota/settings.ino |  2 +-
- tasmota/tasmota.h    |  1 +
- 3 files changed, 5 insertions(+), 11 deletions(-)
+Already up to date.
