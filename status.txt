@@ -1,1 +1,5 @@
-Already up to date.
+Merge made by the 'recursive' strategy.
+ CHANGELOG.md                |  1 +
+ RELEASENOTES.md             |  1 +
+ tasmota/xnrg_07_ade7953.ino | 44 +++++++++++++++++++++++++++++++++-----------
+ 3 files changed, 35 insertions(+), 11 deletions(-)
