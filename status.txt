@@ -1,1 +1,12 @@
-Already up to date.
+Merge made by the 'recursive' strategy.
+ CHANGELOG.md                 |   1 +
+ RELEASENOTES.md              |   1 +
+ tasmota/my_user_config.h     |   9 +
+ tasmota/settings.h           |   2 +-
+ tasmota/support_features.ino |   4 +-
+ tasmota/tasmota.h            |   2 +-
+ tasmota/xdrv_interface.ino   |  58 +++---
+ tasmota/xsns_90_influxdb.ino | 449 +++++++++++++++++++++++++++++++++++++++++++
+ tools/decode-status.py       |   4 +-
+ 9 files changed, 496 insertions(+), 34 deletions(-)
+ create mode 100644 tasmota/xsns_90_influxdb.ino
