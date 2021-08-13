@@ -1,4 +1,1 @@
-Merge made by the 'recursive' strategy.
- tasmota/xdrv_02_9_mqtt.ino   |  5 +++++
- tasmota/xsns_90_influxdb.ino | 29 +++++++++++++++++++----------
- 2 files changed, 24 insertions(+), 10 deletions(-)
+Already up to date.
