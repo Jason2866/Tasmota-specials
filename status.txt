@@ -1,1 +1,3 @@
-Already up to date.
+Merge made by the 'recursive' strategy.
+ tasmota/xsns_90_influxdb.ino | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
