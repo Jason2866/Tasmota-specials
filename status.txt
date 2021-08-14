@@ -1,4 +1,1 @@
-Merge made by the 'recursive' strategy.
- tasmota/support.ino          |  6 ++++++
- tasmota/xdrv_59_influxdb.ino | 14 ++++++++++----
- 2 files changed, 16 insertions(+), 4 deletions(-)
+Already up to date.
