@@ -1,2 +1,6 @@
-Already up to date.
 Merge made by the 'recursive' strategy.
+ CHANGELOG.md                  |  1 +
+ RELEASENOTES.md               |  1 +
+ tasmota/settings.h            |  2 +-
+ tasmota/xdrv_01_webserver.ino | 20 +++++++++++++++++++-
+ 4 files changed, 22 insertions(+), 2 deletions(-)
