@@ -1,1 +1,17 @@
-Already up to date.
+Merge made by the 'recursive' strategy.
+ tasmota/support.ino                     | 28 +++++++----------
+ tasmota/support_command.ino             |  2 +-
+ tasmota/xdrv_01_webserver.ino           |  6 +---
+ tasmota/xdrv_02_9_mqtt.ino              | 40 +++++++----------------
+ tasmota/xdrv_10_rules.ino               |  6 +---
+ tasmota/xdrv_10_scripter.ino            | 56 ++++++++-------------------------
+ tasmota/xdrv_12_home_assistant.ino      |  6 +---
+ tasmota/xdrv_13_display.ino             | 21 +++----------
+ tasmota/xdrv_16_tuyamcu.ino             |  6 +---
+ tasmota/xdrv_23_zigbee_5_converters.ino |  6 +---
+ tasmota/xdrv_23_zigbee_8_parsers.ino    |  6 +---
+ tasmota/xdrv_23_zigbee_9_serial.ino     | 12 ++-----
+ tasmota/xdrv_52_3_berry_tasmota.ino     |  6 +---
+ tasmota/xdrv_59_influxdb.ino            |  2 +-
+ tasmota/xsns_62_esp32_mi_ble.ino        | 24 +++-----------
+ 15 files changed, 55 insertions(+), 172 deletions(-)
