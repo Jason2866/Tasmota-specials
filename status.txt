@@ -1,3 +1,1 @@
-Merge made by the 'recursive' strategy.
- tasmota/xsns_87_mcp2515.ino | 159 ++++++++++++++++++++++++++++++++++++++------
- 1 file changed, 138 insertions(+), 21 deletions(-)
+Already up to date.
