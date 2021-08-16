@@ -1,1 +1,27 @@
-Already up to date.
+Removing tasmota/berry/examples/lvgl_demo_M5stack_black.be
+Merge made by the 'recursive' strategy.
+ CHANGELOG.md                                       |   3 +
+ lib/libesp32/Berry/default/be_modtab.c             |   4 +
+ lib/libesp32/Berry/default/berry_conf.h            |  11 +-
+ lib/libesp32/Berry/default/embedded/Tasmota.be     |   4 +-
+ lib/libesp32/Berry/generate/be_fixed_strict.h      |  17 ++
+ lib/libesp32/Berry/src/be_api.c                    |  14 +-
+ lib/libesp32/Berry/src/be_class.c                  |  30 ++-
+ lib/libesp32/Berry/src/be_code.c                   | 104 +++++++---
+ lib/libesp32/Berry/src/be_exec.c                   |  26 ++-
+ lib/libesp32/Berry/src/be_globallib.c              |   2 +-
+ lib/libesp32/Berry/src/be_module.c                 |  15 +-
+ lib/libesp32/Berry/src/be_opcodes.h                |   2 +-
+ lib/libesp32/Berry/src/be_parser.c                 | 213 +++++++++++++-------
+ lib/libesp32/Berry/src/be_parser.h                 |  14 +-
+ lib/libesp32/Berry/src/be_strictlib.c              |  40 ++++
+ lib/libesp32/Berry/src/be_vm.c                     |  74 +++----
+ lib/libesp32/Berry/src/be_vm.h                     |   5 +
+ tasmota/berry/examples/lvgl_demo_M5stack_black.be  | 219 ---------------------
+ .../berry/examples/watch_renaissance/autoexec.be   |   6 +-
+ tasmota/berry/modules/partition.be                 |   8 +-
+ tasmota/xdrv_52_9_berry.ino                        |   3 +-
+ 21 files changed, 427 insertions(+), 387 deletions(-)
+ create mode 100644 lib/libesp32/Berry/generate/be_fixed_strict.h
+ create mode 100644 lib/libesp32/Berry/src/be_strictlib.c
+ delete mode 100644 tasmota/berry/examples/lvgl_demo_M5stack_black.be
