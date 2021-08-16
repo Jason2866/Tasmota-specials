@@ -1,6 +1,1 @@
-Merge made by the 'recursive' strategy.
- pio-tools/gzip-firmware.py | 58 ++++++++++++++++++++++++------------------
- pio-tools/name-firmware.py | 63 +++++++++++++---------------------------------
- pio-tools/tasmotapiolib.py | 49 ++++++++++++++++++++++++++++++++++++
- 3 files changed, 100 insertions(+), 70 deletions(-)
- create mode 100644 pio-tools/tasmotapiolib.py
+Already up to date.
