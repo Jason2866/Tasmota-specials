@@ -1,10 +1,6 @@
 Merge made by the 'recursive' strategy.
- lib/libesp32/Berry/default/be_modtab.c             |   2 +
- lib/libesp32/Berry/default/be_tasmotalib.c         | 124 +++++++++++++++------
- lib/libesp32/Berry/default/be_timer_class.c        | 108 ++++++++++++++++++
- lib/libesp32/Berry/default/embedded/Tasmota.be     |  36 +++++-
- lib/libesp32/Berry/generate/be_const_strtab.h      |   1 +
- lib/libesp32/Berry/generate/be_const_strtab_def.h  |   5 +-
- .../Berry/generate/be_fixed_be_class_tasmota.h     | 105 ++++++++---------
- 7 files changed, 286 insertions(+), 95 deletions(-)
- create mode 100644 lib/libesp32/Berry/default/be_timer_class.c
+ pio-tools/gzip-firmware.py | 58 ++++++++++++++++++++++++------------------
+ pio-tools/name-firmware.py | 63 +++++++++++++---------------------------------
+ pio-tools/tasmotapiolib.py | 49 ++++++++++++++++++++++++++++++++++++
+ 3 files changed, 100 insertions(+), 70 deletions(-)
+ create mode 100644 pio-tools/tasmotapiolib.py
