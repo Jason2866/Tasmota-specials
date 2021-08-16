@@ -1,5 +1,1 @@
-Merge made by the 'recursive' strategy.
- CHANGELOG.md              | 6 +++++-
- RELEASENOTES.md           | 2 +-
- tasmota/tasmota_version.h | 2 +-
- 3 files changed, 7 insertions(+), 3 deletions(-)
+Already up to date.
