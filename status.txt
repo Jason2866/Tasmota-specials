@@ -1,1 +1,10 @@
-Already up to date.
+Merge made by the 'recursive' strategy.
+ lib/libesp32/Berry/default/be_modtab.c             |   2 +
+ lib/libesp32/Berry/default/be_tasmotalib.c         | 124 +++++++++++++++------
+ lib/libesp32/Berry/default/be_timer_class.c        | 108 ++++++++++++++++++
+ lib/libesp32/Berry/default/embedded/Tasmota.be     |  36 +++++-
+ lib/libesp32/Berry/generate/be_const_strtab.h      |   1 +
+ lib/libesp32/Berry/generate/be_const_strtab_def.h  |   5 +-
+ .../Berry/generate/be_fixed_be_class_tasmota.h     | 105 ++++++++---------
+ 7 files changed, 286 insertions(+), 95 deletions(-)
+ create mode 100644 lib/libesp32/Berry/default/be_timer_class.c
