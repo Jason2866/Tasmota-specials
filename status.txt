@@ -1,5 +1,1 @@
-Merge made by the 'recursive' strategy.
- pio-tools/gzip-firmware.py |  6 ++++--
- pio-tools/tasmotapiolib.py | 42 ++++++++++++++++++++++++++++++++++++++++--
- tasmota/xdrv_02_9_mqtt.ino |  4 ++--
- 3 files changed, 46 insertions(+), 6 deletions(-)
+Already up to date.
