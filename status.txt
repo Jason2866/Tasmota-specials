@@ -1,4 +1,1 @@
-Merge made by the 'recursive' strategy.
- CHANGELOG.md                                        |  3 +++
- .../ESP32-to-ESP8266-compat/src/esp8266toEsp32.h    | 21 +++++++++++++++------
- 2 files changed, 18 insertions(+), 6 deletions(-)
+Already up to date.
