@@ -1,1 +1,4 @@
-Already up to date.
+Merge made by the 'recursive' strategy.
+ .gitignore                         |  1 +
+ platformio_tasmota_cenv_sample.ini | 11 +++++++++++
+ 2 files changed, 12 insertions(+)
