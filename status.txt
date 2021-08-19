@@ -1,6 +1,1 @@
-Merge made by the 'recursive' strategy.
- lib/libesp32/Berry/default/embedded/Tasmota.be | 1 +
- tasmota/xdrv_10_rules.ino                      | 9 +++++++++
- tasmota/xdrv_52_9_berry.ino                    | 7 ++++---
- tasmota/xdrv_interface.ino                     | 4 ++--
- 4 files changed, 16 insertions(+), 5 deletions(-)
+Already up to date.
