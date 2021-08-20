@@ -1,1 +1,30 @@
-Already up to date.
+Merge made by the 'recursive' strategy.
+ tasmota/language/af_AF.h      | 2 ++
+ tasmota/language/bg_BG.h      | 2 ++
+ tasmota/language/cs_CZ.h      | 2 ++
+ tasmota/language/de_DE.h      | 2 ++
+ tasmota/language/el_GR.h      | 2 ++
+ tasmota/language/en_GB.h      | 2 ++
+ tasmota/language/es_ES.h      | 2 ++
+ tasmota/language/fr_FR.h      | 2 ++
+ tasmota/language/fy_NL.h      | 2 ++
+ tasmota/language/he_HE.h      | 2 ++
+ tasmota/language/hu_HU.h      | 2 ++
+ tasmota/language/it_IT.h      | 2 ++
+ tasmota/language/ko_KO.h      | 2 ++
+ tasmota/language/nl_NL.h      | 2 ++
+ tasmota/language/pl_PL.h      | 2 ++
+ tasmota/language/pt_BR.h      | 2 ++
+ tasmota/language/pt_PT.h      | 2 ++
+ tasmota/language/ro_RO.h      | 2 ++
+ tasmota/language/ru_RU.h      | 2 ++
+ tasmota/language/sk_SK.h      | 2 ++
+ tasmota/language/sv_SE.h      | 2 ++
+ tasmota/language/tr_TR.h      | 2 ++
+ tasmota/language/uk_UA.h      | 2 ++
+ tasmota/language/vi_VN.h      | 2 ++
+ tasmota/language/zh_CN.h      | 2 ++
+ tasmota/language/zh_TW.h      | 4 +++-
+ tasmota/support_command.ino   | 5 +++--
+ tasmota/xdrv_01_webserver.ino | 6 ++++++
+ 28 files changed, 62 insertions(+), 3 deletions(-)
