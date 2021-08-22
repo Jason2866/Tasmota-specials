@@ -1,4 +1,1 @@
-Merge made by the 'recursive' strategy.
- tasmota/my_user_config.h             | 2 ++
- tasmota/xdrv_23_zigbee_8_parsers.ino | 2 +-
- 2 files changed, 3 insertions(+), 1 deletion(-)
+Already up to date.
