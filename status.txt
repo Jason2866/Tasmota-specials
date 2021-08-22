@@ -1,3 +1,4 @@
 Merge made by the 'recursive' strategy.
- tasmota/xdrv_27_shutter.ino | 1 +
- 1 file changed, 1 insertion(+)
+ CHANGELOG.md    | 3 +++
+ RELEASENOTES.md | 1 +
+ 2 files changed, 4 insertions(+)
