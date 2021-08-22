@@ -1,4 +1,1 @@
-Merge made by the 'recursive' strategy.
- CHANGELOG.md    | 3 +++
- RELEASENOTES.md | 1 +
- 2 files changed, 4 insertions(+)
+Already up to date.
