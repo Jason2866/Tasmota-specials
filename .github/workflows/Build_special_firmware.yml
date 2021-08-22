@@ -567,8 +567,8 @@ jobs:
         mkdir -p ./firmware/tasmota/other
         mkdir -p ./firmware/map
         cp -rf  ./mv_firmware/map/* ./firmware/map/
+        cp -rf ./mv_firmware/firmware/tasmota-* ./firmware/tasmota/other/
         cp -rf ./mv_firmware/firmware/tasmota32* ./firmware/tasmota32/other/
-        cp -rf ./mv_firmware/firmware/* ./firmware/tasmota/other/
         rm -rf ./mv_firmware
     - name: Transfer the new binaries into the repository
       run: |
