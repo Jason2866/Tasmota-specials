@@ -4,7 +4,7 @@ import {
   CHIP_FAMILY_ESP32C3,
   CHIP_FAMILY_ESP8266,
   ESPLoader,
-} from "esp-web-flasher";
+} from "espc3-web-flasher";
 
 export const getChipFamilyName = (esploader: ESPLoader) => {
   switch (esploader.chipFamily) {

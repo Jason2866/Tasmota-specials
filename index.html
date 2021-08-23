@@ -27,10 +27,14 @@
       .r{border-radius:0.3em;padding:2px;margin:6px 2px;}
       .pick-variant{margin-bottom:16px;}
     </style>
-    <script
-      type="module"
-      src="https://unpkg.com/esp-web-tools@3.4.2/dist/web/install-button.js?module"
-    ></script>
+    <script module>
+      import(
+        // In development we import locally.
+        window.location.hostname === "localhost"
+          ? "/dist/web/install-button.js"
+          : src="https://jason2866.github.io/Tasmota-specials/dist/web/install-button.js?module"
+      );
+    </script>
   </head>
   <body>
     <div style='display:inline-block;color:#eaeaea;min-width:340px;'>
@@ -58,8 +62,8 @@
           <option value="manifest/development.tasmota-minicustom.manifest.json">Tasmota Minicustom</option>
           <option value="manifest/development.tasmota32-udisplay.manifest.json">Tasmota32 Udisplay</option>
           <option value="manifest/development.tasmota32-zigbee.manifest.json">Tasmota32 Zigbee</option>
-<!--          <option value="manifest/development.tasmota32c3.manifest.json">Tasmota32-C3 4M Flash</option>
-          <option value="manifest/development.tasmota32c3_2M.manifest.json">Tasmota32-C3 2M Flash</option>    -->
+          <option value="manifest/development.tasmota32c3.manifest.json">Tasmota32-C3 4M Flash</option>
+          <option value="manifest/development.tasmota32c3_2M.manifest.json">Tasmota32-C3 2M Flash</option>
         </optgroup>
       </select>
       </br></br>

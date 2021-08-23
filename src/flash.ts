@@ -1,4 +1,4 @@
-import { connect, ESPLoader, Logger } from "esp-web-flasher";
+import { connect, ESPLoader, Logger } from "espc3-web-flasher";
 import { Build, FlashError, FlashState, Manifest, State } from "./const";
 import { fireEvent, getChipFamilyName, sleep } from "./util";
 
@@ -10,7 +10,12 @@ export const flash = async (
 ) => {
   let manifest: Manifest;
   let build: Build | undefined;
-  let chipFamily: "ESP32" | "ESP8266" | "ESP32-S2" | "ESP32-C3" | "Unknown Chip";
+  let chipFamily:
+    | "ESP32"
+    | "ESP8266"
+    | "ESP32-S2"
+    | "ESP32-C3"
+    | "Unknown Chip";
 
   const fireStateEvent = (stateUpdate: FlashState) => {
     fireEvent(eventTarget, "state-changed", {
