@@ -63,10 +63,10 @@ export const getFlashSizes = (chipFamily: ChipFamily) => {
       return ESP32_FLASH_SIZES;
     case CHIP_FAMILY_ESP32S2:
       return ESP32_FLASH_SIZES;
-    case CHIP_FAMILY_ESP8266:
-      return FLASH_SIZES;
     case CHIP_FAMILY_ESP32C3:
       return ESP32_FLASH_SIZES;
+    case CHIP_FAMILY_ESP8266:
+      return FLASH_SIZES;
     default:
       return FLASH_SIZES;
   }
@@ -87,14 +87,16 @@ export const ESP32_SPI_USR2_OFFS = 0x24;
 export const ESP32_SPI_MOSI_DLEN_OFFS = 0x28;
 export const ESP32_SPI_MISO_DLEN_OFFS = 0x2c;
 export const ESP32_SPI_W0_OFFS = 0x80;
+export const ESP32_UART_DATE_REG_ADDR = 0x60000078;
 
-export const ESP8266_SPI_REG_BASE = 0x60000200;
-export const ESP8266_SPI_USR_OFFS = 0x1c;
-export const ESP8266_SPI_USR1_OFFS = 0x20;
-export const ESP8266_SPI_USR2_OFFS = 0x24;
-export const ESP8266_SPI_MOSI_DLEN_OFFS = -1;
-export const ESP8266_SPI_MISO_DLEN_OFFS = -1;
-export const ESP8266_SPI_W0_OFFS = 0x40;
+export const ESP32S2_SPI_REG_BASE = 0x3f402000;
+export const ESP32S2_SPI_USR_OFFS = 0x18;
+export const ESP32S2_SPI_USR1_OFFS = 0x1c;
+export const ESP32S2_SPI_USR2_OFFS = 0x20;
+export const ESP32S2_SPI_MOSI_DLEN_OFFS = 0x24;
+export const ESP32S2_SPI_MISO_DLEN_OFFS = 0x28;
+export const ESP32S2_SPI_W0_OFFS = 0x58;
+export const ESP32S2_UART_DATE_REG_ADDR = 0x60000078;
 
 export const ESP32C3_SPI_REG_BASE = 0x60002000;
 export const ESP32C3_SPI_USR_OFFS = 0x18;
@@ -103,8 +105,16 @@ export const ESP32C3_SPI_USR2_OFFS = 0x20;
 export const ESP32C3_SPI_MOSI_DLEN_OFFS = 0x24;
 export const ESP32C3_SPI_MISO_DLEN_OFFS = 0x28;
 export const ESP32C3_SPI_W0_OFFS = 0x58;
+export const ESP32C3_UART_DATE_REG_ADDR = 0x6000007c;
 
-const UART_DATE_REG_ADDR = 0x60000078;
+export const ESP8266_SPI_REG_BASE = 0x60000200;
+export const ESP8266_SPI_USR_OFFS = 0x1c;
+export const ESP8266_SPI_USR1_OFFS = 0x20;
+export const ESP8266_SPI_USR2_OFFS = 0x24;
+export const ESP8266_SPI_MOSI_DLEN_OFFS = -1;
+export const ESP8266_SPI_MISO_DLEN_OFFS = -1;
+export const ESP8266_SPI_W0_OFFS = 0x40;
+export const ESP8266_UART_DATE_REG_ADDR = 0x60000078;
 
 export interface SpiFlashAddresses {
   regBase: number;
@@ -225,16 +235,6 @@ export const getSpiFlashAddresses = (
         misoDlenOffs: ESP32_SPI_MISO_DLEN_OFFS,
         w0Offs: ESP32_SPI_W0_OFFS,
       };
-    case CHIP_FAMILY_ESP8266:
-      return {
-        regBase: ESP8266_SPI_REG_BASE,
-        usrOffs: ESP8266_SPI_USR_OFFS,
-        usr1Offs: ESP8266_SPI_USR1_OFFS,
-        usr2Offs: ESP8266_SPI_USR2_OFFS,
-        mosiDlenOffs: ESP8266_SPI_MOSI_DLEN_OFFS,
-        misoDlenOffs: ESP8266_SPI_MISO_DLEN_OFFS,
-        w0Offs: ESP8266_SPI_W0_OFFS,
-      };
     case CHIP_FAMILY_ESP32C3:
       return {
         regBase: ESP32C3_SPI_REG_BASE,
@@ -244,6 +244,16 @@ export const getSpiFlashAddresses = (
         mosiDlenOffs: ESP32C3_SPI_MOSI_DLEN_OFFS,
         misoDlenOffs: ESP32C3_SPI_MISO_DLEN_OFFS,
         w0Offs: ESP32C3_SPI_W0_OFFS,
+      };
+    case CHIP_FAMILY_ESP8266:
+      return {
+        regBase: ESP8266_SPI_REG_BASE,
+        usrOffs: ESP8266_SPI_USR_OFFS,
+        usr1Offs: ESP8266_SPI_USR1_OFFS,
+        usr2Offs: ESP8266_SPI_USR2_OFFS,
+        mosiDlenOffs: ESP8266_SPI_MOSI_DLEN_OFFS,
+        misoDlenOffs: ESP8266_SPI_MISO_DLEN_OFFS,
+        w0Offs: ESP8266_SPI_W0_OFFS,
       };
     default:
       return {
@@ -259,16 +269,16 @@ export const getSpiFlashAddresses = (
 };
 
 export const getUartDateRegAddress = (chipFamily: ChipFamily): number => {
-  // Additional chips like S3 or C6 have different addresses
+  // Additional chips like S3, C3, C6 have different addresses
   switch (chipFamily) {
     case CHIP_FAMILY_ESP32:
-      return UART_DATE_REG_ADDR;
+      return ESP32_UART_DATE_REG_ADDR;
     case CHIP_FAMILY_ESP32S2:
-      return UART_DATE_REG_ADDR;
-    case CHIP_FAMILY_ESP8266:
-      return UART_DATE_REG_ADDR;
+      return ESP32S2_UART_DATE_REG_ADDR;
     case CHIP_FAMILY_ESP32C3:
-      return UART_DATE_REG_ADDR;
+      return ESP32C3_UART_DATE_REG_ADDR;
+    case CHIP_FAMILY_ESP8266:
+      return ESP8266_UART_DATE_REG_ADDR;
     default:
       return -1;
   }

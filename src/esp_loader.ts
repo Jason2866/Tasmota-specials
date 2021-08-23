@@ -1,8 +1,8 @@
 import {
   CHIP_FAMILY_ESP32,
   CHIP_FAMILY_ESP32S2,
-  CHIP_FAMILY_ESP8266,
   CHIP_FAMILY_ESP32C3,
+  CHIP_FAMILY_ESP8266,
   MAX_TIMEOUT,
   Logger,
   DEFAULT_TIMEOUT,
@@ -112,11 +112,11 @@ export class ESPLoader extends EventTarget {
     if (this.chipFamily == CHIP_FAMILY_ESP8266) {
       baseAddr = 0x3ff00050;
     } else if (this.chipFamily == CHIP_FAMILY_ESP32) {
-      baseAddr = 0x6001a000;
+      baseAddr = 0x3ff5a000;
     } else if (this.chipFamily == CHIP_FAMILY_ESP32S2) {
-      baseAddr = 0x6001a000;
+      baseAddr = 0x3f41a000;
     } else if (this.chipFamily == CHIP_FAMILY_ESP32C3) {
-      baseAddr = 0x6001a000;
+      baseAddr = 0x60008800;
     }
     for (let i = 0; i < 4; i++) {
       this._efuses[i] = await this.readRegister(baseAddr! + 4 * i);
@@ -268,7 +268,9 @@ export class ESPLoader extends EventTarget {
     if (this.IS_STUB || this.chipFamily == CHIP_FAMILY_ESP8266) {
       statusLen = 2;
     } else if (
-      [CHIP_FAMILY_ESP32, CHIP_FAMILY_ESP32S2, CHIP_FAMILY_ESP32C3].includes(this.chipFamily)
+      [CHIP_FAMILY_ESP32, CHIP_FAMILY_ESP32S2, CHIP_FAMILY_ESP32C3].includes(
+        this.chipFamily
+      )
     ) {
       statusLen = 4;
     } else {
@@ -666,7 +668,7 @@ export class ESPLoader extends EventTarget {
    * @name flashBlock
    * Send one block of data to program into SPI Flash memory
    */
-  async flashBlock(data: number[], seq: number, timeout = 100) {
+  async flashBlock(data: number[], seq: number, timeout = SYNC_TIMEOUT) {
     await this.checkCommand(
       ESP_FLASH_DATA,
       pack("<IIII", data.length, seq, 0, 0).concat(data),
@@ -674,7 +676,7 @@ export class ESPLoader extends EventTarget {
       timeout
     );
   }
-  async flashDeflBlock(data: number[], seq: number, timeout = 100) {
+  async flashDeflBlock(data: number[], seq: number, timeout = SYNC_TIMEOUT) {
     await this.checkCommand(
       ESP_FLASH_DEFL_DATA,
       pack("<IIII", data.length, seq, 0, 0).concat(data),
@@ -691,7 +693,11 @@ export class ESPLoader extends EventTarget {
     let eraseSize;
     let buffer;
     let flashWriteSize = this.getFlashWriteSize();
-    if ([CHIP_FAMILY_ESP32, CHIP_FAMILY_ESP32S2, CHIP_FAMILY_ESP32C3].includes(this.chipFamily)) {
+    if (
+      [CHIP_FAMILY_ESP32, CHIP_FAMILY_ESP32S2, CHIP_FAMILY_ESP32C3].includes(
+        this.chipFamily
+      )
+    ) {
       await this.checkCommand(ESP_SPI_ATTACH, new Array(8).fill(0));
     }
     if (this.chipFamily == CHIP_FAMILY_ESP32) {

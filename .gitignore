@@ -37,4 +37,4 @@ platformio_tasmota_cenv.ini
 .vscode/launch.json
 *.bak
 *.code-workspace
-© 2021 GitHub, Inc.
+node_modules
