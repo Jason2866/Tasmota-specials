@@ -1,1 +1,8 @@
-Already up to date.
+Merge made by the 'recursive' strategy.
+ CHANGELOG.md                       |  1 +
+ lib/libesp32/Berry/src/be_parser.c | 34 ++++++++++++++++++++++++++++------
+ lib/libesp32/Berry/src/be_vm.c     | 15 +++++++++++++++
+ lib/libesp32/Berry/tests/vararg.be | 14 ++++++++++++++
+ tasmota/xdrv_52_9_berry.ino        |  2 +-
+ 5 files changed, 59 insertions(+), 7 deletions(-)
+ create mode 100644 lib/libesp32/Berry/tests/vararg.be
