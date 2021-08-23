@@ -1,13 +1,13 @@
-# These special Tasmota binaries are not official stable releases, around 20 minutes behind of development branch!
+## These special Tasmota binaries are not official stable releases, around 20 minutes behind of development branch!
 
 ## :warning: No support/warranty with these binaries! :warning:
 
 ## The special firmware files are [here](https://github.com/Jason2866/Tasmota-specials/tree/firmware/firmware).<br>
 Official ✨ Tasmota ✨ firmware files are [here](https://github.com/arendst/Tasmota/tree/firmware/firmware)
 
-## For easy flashing Tasmota (ESP32-C3 not yet supported) use:
-- [ESP_Flasher](https://github.com/Jason2866/ESP_Flasher/releases) (Windows and Mac executables)
+## For easy flashing Tasmota use:
 - [Tasmota WebFlasher](https://jason2866.github.io/Tasmota-specials/) Only Chrome or Edge Browser needed!
+- [ESP_Flasher](https://github.com/Jason2866/ESP_Flasher/releases) (Windows and Mac executables, no ESP32-C3 support)
 
 ## Build variants:
 
