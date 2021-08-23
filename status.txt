@@ -1,0 +1,3 @@
+Merge made by the 'recursive' strategy.
+ tasmota/xnrg_07_ade7953.ino | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
