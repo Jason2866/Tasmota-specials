@@ -17,7 +17,7 @@ interface BaseFlashState {
   message: string;
   manifest?: Manifest;
   build?: Build;
-  chipFamily?: "ESP32" | "ESP8266" | "ESP32-S2" | "Unknown Chip";
+  chipFamily?: "ESP32" | "ESP8266" | "ESP32-S2" | "ESP32-C3" | "Unknown Chip";
 }
 
 export interface InitializingState extends BaseFlashState {
