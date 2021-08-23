@@ -7,8 +7,8 @@ export declare class FlashProgress extends LitElement {
     private _progress;
     processState(state: FlashState): void;
     clear(): void;
-    protected render(): any;
-    static styles: any;
+    protected render(): import("lit").TemplateResult<1> | undefined;
+    static styles: import("lit").CSSResultGroup;
 }
 declare global {
     interface HTMLElementTagNameMap {

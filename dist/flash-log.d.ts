@@ -8,7 +8,7 @@ interface Row {
 }
 export declare class FlashLog extends LitElement {
     private _rows;
-    protected render(): any;
+    protected render(): import("lit").TemplateResult<1>;
     willUpdate(): void;
     clear(): void;
     processState(state: FlashState): void;
@@ -28,7 +28,7 @@ export declare class FlashLog extends LitElement {
      * Remove last row if state matches
      */
     removeRow(state: string): void;
-    static styles: any;
+    static styles: import("lit").CSSResultGroup;
 }
 declare global {
     interface HTMLElementTagNameMap {
