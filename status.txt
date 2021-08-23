@@ -1,11 +1,1 @@
-Merge made by the 'recursive' strategy.
- lib/libesp32/Berry/default/be_modtab.c             |    4 +
- lib/libesp32/Berry/default/be_onewire_lib.c        |   57 +
- lib/libesp32/Berry/generate/be_const_strtab.h      | 1226 ++++++-------
- lib/libesp32/Berry/generate/be_const_strtab_def.h  | 1812 ++++++++++----------
- .../generate/be_fixed_be_class_tasmota_onewire.h   |   28 +
- tasmota/xdrv_52_3_berry_onewire.ino                |  232 +++
- 6 files changed, 1850 insertions(+), 1509 deletions(-)
- create mode 100644 lib/libesp32/Berry/default/be_onewire_lib.c
- create mode 100644 lib/libesp32/Berry/generate/be_fixed_be_class_tasmota_onewire.h
- create mode 100644 tasmota/xdrv_52_3_berry_onewire.ino
+Already up to date.
