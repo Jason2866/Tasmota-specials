@@ -1,1 +1,5 @@
-Already up to date.
+Merge made by the 'recursive' strategy.
+ CHANGELOG.md                |  1 +
+ tasmota/tasmota_template.h  |  2 +-
+ tasmota/xnrg_07_ade7953.ino | 24 ++++++++++++++++--------
+ 3 files changed, 18 insertions(+), 9 deletions(-)
