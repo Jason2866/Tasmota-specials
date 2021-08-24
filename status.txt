@@ -1,3 +1,5 @@
 Merge made by the 'recursive' strategy.
- tasmota/xsns_33_ds3231.ino | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ CHANGELOG.md                | 4 ++++
+ RELEASENOTES.md             | 3 +++
+ tasmota/xsns_82_wiegand.ino | 2 +-
+ 3 files changed, 8 insertions(+), 1 deletion(-)
