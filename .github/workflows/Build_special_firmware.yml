@@ -536,7 +536,7 @@ jobs:
         path: ./mv_firmware
     - name: Display structure of downloaded files
       run: |
-        cp -rf ./mv_firmware/firmware/tasmota32c3.bin ./mv_firmware/firmware/tasmota32c3_2M.bin
+        cp -rf ./firmware/tasmota32c3.bin ./firmware/tasmota32c3_2M.bin
         ls -R
       working-directory: ./mv_firmware
     - name: Move firmware files in sub-folders
