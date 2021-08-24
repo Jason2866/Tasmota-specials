@@ -1,15 +1,1 @@
-Merge made by the 'recursive' strategy.
- lib/libesp32/Berry/src/be_api.c                 |  28 ++---
- lib/libesp32/Berry/src/be_bytecode.c            |  82 +++++++++------
- lib/libesp32/Berry/src/be_class.c               |  26 ++++-
- lib/libesp32/Berry/src/be_code.c                |  15 ++-
- lib/libesp32/Berry/src/be_debug.c               |   4 +-
- lib/libesp32/Berry/src/be_module.c              |  46 +++++++-
- lib/libesp32/Berry/src/be_module.h              |   4 +-
- lib/libesp32/Berry/src/be_parser.c              |   8 ++
- lib/libesp32/Berry/src/be_string.c              |   1 -
- lib/libesp32/Berry/src/be_vm.c                  | 133 ++++++------------------
- lib/libesp32/Berry/tools/grammar/berry.bytecode |  28 +++--
- tasmota/xdrv_52_3_berry_lvgl.ino                |   4 +-
- tasmota/xdrv_52_3_berry_webserver.ino           |   5 +-
- 13 files changed, 197 insertions(+), 187 deletions(-)
+Already up to date.
