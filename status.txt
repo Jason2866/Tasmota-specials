@@ -1,3 +1,1 @@
-Merge made by the 'recursive' strategy.
- platformio_tasmota_cenv_sample.ini | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Already up to date.
