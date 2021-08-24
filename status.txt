@@ -1,5 +1,1 @@
-Merge made by the 'recursive' strategy.
- CHANGELOG.md                | 4 ++++
- RELEASENOTES.md             | 3 +++
- tasmota/xsns_82_wiegand.ino | 2 +-
- 3 files changed, 8 insertions(+), 1 deletion(-)
+Already up to date.
