@@ -1,1 +1,6 @@
-Already up to date.
+Merge made by the 'recursive' strategy.
+ CHANGELOG.md               |  3 ++-
+ RELEASENOTES.md            |  1 +
+ tasmota/support_switch.ino | 38 ++++++++++++++++++++++++++++----------
+ tasmota/tasmota.h          |  3 ++-
+ 4 files changed, 33 insertions(+), 12 deletions(-)
