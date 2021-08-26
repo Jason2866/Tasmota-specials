@@ -1,1 +1,7 @@
-Already up to date.
+Merge made by the 'recursive' strategy.
+ lib/libesp32/Berry/src/be_baselib.c       | 108 ++++++++++++++++++++----
+ lib/libesp32/Berry/src/be_class.c         |  44 ++++++----
+ lib/libesp32/Berry/tests/super_auto.be    | 132 ++++++++++++++++++++++++++++++
+ lib/libesp32/Berry/tests/super_leveled.be |   7 +-
+ 4 files changed, 253 insertions(+), 38 deletions(-)
+ create mode 100644 lib/libesp32/Berry/tests/super_auto.be
