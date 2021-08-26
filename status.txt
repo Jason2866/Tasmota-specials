@@ -1,1 +1,36 @@
-Already up to date.
+Merge made by the 'recursive' strategy.
+ CHANGELOG.md                     |   1 +
+ RELEASENOTES.md                  |   1 +
+ tasmota/language/af_AF.h         |   1 +
+ tasmota/language/bg_BG.h         |   1 +
+ tasmota/language/cs_CZ.h         |   1 +
+ tasmota/language/de_DE.h         |   1 +
+ tasmota/language/el_GR.h         |   1 +
+ tasmota/language/en_GB.h         |   1 +
+ tasmota/language/es_ES.h         |   1 +
+ tasmota/language/fr_FR.h         |   1 +
+ tasmota/language/fy_NL.h         |   1 +
+ tasmota/language/he_HE.h         |   1 +
+ tasmota/language/hu_HU.h         |   1 +
+ tasmota/language/it_IT.h         |   1 +
+ tasmota/language/ko_KO.h         |   1 +
+ tasmota/language/nl_NL.h         |   1 +
+ tasmota/language/pl_PL.h         |   1 +
+ tasmota/language/pt_BR.h         |   1 +
+ tasmota/language/pt_PT.h         |   1 +
+ tasmota/language/ro_RO.h         |   1 +
+ tasmota/language/ru_RU.h         |   1 +
+ tasmota/language/sk_SK.h         |   1 +
+ tasmota/language/sv_SE.h         |   1 +
+ tasmota/language/tr_TR.h         |   1 +
+ tasmota/language/uk_UA.h         |   1 +
+ tasmota/language/vi_VN.h         |   1 +
+ tasmota/language/zh_CN.h         |   1 +
+ tasmota/language/zh_TW.h         |   1 +
+ tasmota/my_user_config.h         |   1 +
+ tasmota/support_features.ino     |   4 +-
+ tasmota/tasmota_template.h       |   7 +-
+ tasmota/xsns_91_vindriktning.ino | 170 +++++++++++++++++++++++++++++++++++++++
+ tools/decode-status.py           |   4 +-
+ 33 files changed, 210 insertions(+), 4 deletions(-)
+ create mode 100644 tasmota/xsns_91_vindriktning.ino
