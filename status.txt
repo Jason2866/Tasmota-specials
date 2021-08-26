@@ -1,5 +1,1 @@
-Merge made by the 'recursive' strategy.
- boards/esp32_16M.json | 2 +-
- boards/esp32_4M.json  | 2 +-
- boards/esp32_8M.json  | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+Already up to date.
