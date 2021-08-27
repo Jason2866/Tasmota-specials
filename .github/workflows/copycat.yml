@@ -29,7 +29,7 @@ jobs:
       - name: copycat tasmota
         uses: andstor/copycat-action@v3
         with:
-          personal_token: ${{ secrets.PERSONAL_TOKEN }}
+          personal_token: ${{ secrets.GITHUB_TOKEN }}
           src_path: firmware/tasmota/other/.
           src_branch: firmware
           dst_path: firmware/unofficial
@@ -48,7 +48,7 @@ jobs:
       - name: copycat tasmota32
         uses: andstor/copycat-action@v3
         with:
-          personal_token: ${{ secrets.PERSONAL_TOKEN }}
+          personal_token: ${{ secrets.GITHUB_TOKEN }}
           src_path: firmware/tasmota32/other/.
           src_branch: firmware
           dst_path: firmware/unofficial
