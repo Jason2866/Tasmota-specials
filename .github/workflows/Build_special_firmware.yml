@@ -578,15 +578,31 @@ jobs:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         branch: 'firmware'
         force: true
-    - name: Move firmware32 files for repo tasmota-install
-      run: |
-        cp -rf ./firmware/tasmota32/other/* ./firmware/tasmota/other/
-        ls -R
+
+    - uses: actions/checkout@v2
+      with:
+        ref: firmware
     - name: copycat tasmota
       uses: andstor/copycat-action@v3
       with:
         personal_token: ${{ secrets.PERSONAL_TOKEN }}
         src_path: firmware/tasmota/other/.
+        src_branch: firmware
+        dst_path: firmware/unofficial
+        dst_owner: tasmota
+        dst_branch: main
+        dst_repo_name: install
+        username: workflow
+        commit_message: "Update from unofficial builder"
+
+    - uses: actions/checkout@v2
+      with:
+        ref: firmware
+    - name: copycat tasmota32
+      uses: andstor/copycat-action@v3
+      with:
+        personal_token: ${{ secrets.PERSONAL_TOKEN }}
+        src_path: firmware/tasmota32/other/.
         src_branch: firmware
         dst_path: firmware/unofficial
         dst_owner: tasmota
