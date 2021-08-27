@@ -594,7 +594,10 @@ jobs:
         dst_repo_name: install
         username: workflow
         commit_message: "Update from unofficial builder"
-
+  copycat32:
+    needs: Upload
+    runs-on: ubuntu-latest
+    steps:
     - uses: actions/checkout@v2
       with:
         ref: firmware
