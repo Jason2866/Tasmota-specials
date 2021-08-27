@@ -1,3 +1,2 @@
+Already up to date.
 Merge made by the 'recursive' strategy.
- tasmota/xlgt_05_sonoff_l1.ino | 5 +++++
- 1 file changed, 5 insertions(+)
