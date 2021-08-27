@@ -581,6 +581,7 @@ jobs:
     - name: Move firmware32 files for repo tasmota-install
       run: |
         cp -rf ./firmware/tasmota32/other/* ./firmware/tasmota/other/
+        ls -R
     - name: copycat tasmota
       uses: andstor/copycat-action@v3
       with:
