@@ -25,8 +25,8 @@ jobs:
         git switch -c work
         git merge Tasmota/development --allow-unrelated-histories &> status.txt
         echo "$(<status.txt)"
-        git add status.txt
-        git commit -m "status flag"
+        #git add status.txt
+        #git commit -m "status flag"
         #git status
     - name: Push updates of latest Tasmota development to repo
       uses: ad-m/github-push-action@master
