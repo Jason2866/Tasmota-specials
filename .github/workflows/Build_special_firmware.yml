@@ -15,6 +15,7 @@ jobs:
     - uses: actions/checkout@v1
       with:
         ref: special_builder
+        fetch-depth: 2
     - name: Use latest Tasmota development
       run: |
         git config --local user.name "Platformio BUILD"
