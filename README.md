@@ -1,4 +1,4 @@
-## These special Tasmota binaries are not official stable releases, around 20 minutes behind of development branch!
+## These special Tasmota binaries are not official stable releases
 
 ## :warning: No support/warranty with these binaries! :warning:
 
