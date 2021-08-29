@@ -31,7 +31,7 @@ jobs:
     - name: Push updates of latest Tasmota development to repo
       uses: ad-m/github-push-action@master
       with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
+        github_token: ${{ secrets.MASTER_ACCESS_TOKEN }}
         branch: 'special_builder'
 
   tasmota-tls:
