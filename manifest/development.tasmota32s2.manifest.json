@@ -2,7 +2,7 @@
   "name": "Tasmota32-S2 (english)",
   "builds": [
     {
-      "chipFamily": "ESP32",
+      "chipFamily": "ESP32-S2",
       "improv": false,
       "parts": [
         { "path": "../static/esp32-s2/bootloader_dout_40m.bin", "offset": 4096 },
