@@ -622,7 +622,7 @@ jobs:
         dst_branch: main
         dst_repo_name: install
         username: workflow
-        commit_message: ${GITHUB_SERVER_URL}
+        commit_message: ${{ env.tas_com }}
 
   copycat32:
     needs: Upload
