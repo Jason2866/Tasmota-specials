@@ -561,7 +561,7 @@ jobs:
   Upload:
     needs: [tasmota-tls, tasmota-fullrules, tasmota-platinum, tasmota-rangeextender, tasmota-minicustom, tasmota32-scripting, tasmota32-tls, tasmota32-mega, tasmota-allsensors, tasmota32-fullrules, tasmota32-platinum, tasmota32-minicustom, tasmota32-ethernet, tasmota32-gps, tasmota32-udisplay, tasmota32-rangeextender, tasmota32c3, tasmota32s2, tasmota32-battery]
     runs-on: ubuntu-latest
-    continue-on-error: true
+    continue-on-error: false
     steps:
     - uses: actions/checkout@v2
       with:
@@ -591,11 +591,7 @@ jobs:
       run: |
         tas_com_tmp1=$(curl https://raw.githubusercontent.com/arendst/Tasmota-firmware/action-development/trigger.txt)
         tas_com_tmp="Based on https://github.com/arendst/Tasmota/commit/${tas_com_tmp1}"
-        echo "tas_com=$tas_com_tmp" >> $GITHUB_ENV
-    - name: Show env content
-      id: step_two
-      run: |
-        echo "${{ env.tas_com }}"        
+        echo "tas_com=$tas_com_tmp" >> $GITHUB_ENV        
     - name: Transfer the new binaries into the repository
       run: |
         git config --local user.name "Platformio BUILD"
