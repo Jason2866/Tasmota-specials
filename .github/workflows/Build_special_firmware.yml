@@ -586,12 +586,21 @@ jobs:
         cp -rf ./mv_firmware/firmware/tasmota-* ./firmware/tasmota/other/
         cp -rf ./mv_firmware/firmware/tasmota32* ./firmware/tasmota32/other/
         rm -rf ./mv_firmware
+    - name: Build commit message
+      id: step_one
+      run: |
+        tas_com_tmp=$(curl https://raw.githubusercontent.com/arendst/Tasmota-firmware/action-development/trigger.txt)
+        echo "tas_com=$tas_com_tmp" >> $GITHUB_ENV
+    - name: Show env content
+      id: step_two
+      run: |
+        echo "${{ env.tas_com }}"        
     - name: Transfer the new binaries into the repository
       run: |
         git config --local user.name "Platformio BUILD"
         git config user.email github-actions@github.com
         git add -f ./*
-        git commit -m "http://tasmota.com"
+        git commit -m "https://github.com/arendst/Tasmota/commit/"$tas_com_tmp
     - name: Push the firmware files to branch firmware
       uses: ad-m/github-push-action@master
       with:
@@ -602,15 +611,6 @@ jobs:
     - uses: actions/checkout@v2
       with:
         ref: firmware
-    - name: Build commit message
-      id: step_one
-      run: |
-        tas_com_tmp=$(curl https://raw.githubusercontent.com/arendst/Tasmota-firmware/action-development/trigger.txt)
-        echo "tas_com=$tas_com_tmp" >> $GITHUB_ENV
-    - name: Show env content
-      id: step_two
-      run: |
-        echo "${{ env.tas_com }}"
     - name: copycat tasmota
       uses: andstor/copycat-action@v3
       with:
