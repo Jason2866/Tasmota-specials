@@ -602,6 +602,10 @@ jobs:
     - uses: actions/checkout@v2
       with:
         ref: firmware
+    - name: Build commit message
+      run: |
+        tas_com=$(curl https://raw.githubusercontent.com/arendst/Tasmota-firmware/action-development/trigger.txt)
+        echo ${tas_com}
     - name: copycat tasmota
       uses: andstor/copycat-action@v3
       with:
@@ -613,7 +617,7 @@ jobs:
         dst_branch: main
         dst_repo_name: install
         username: workflow
-        commit_message: "Update from unofficial builder"
+        commit_message: https://github.com/arendst/Tasmota${tas_com}
 
   copycat32:
     needs: Upload
