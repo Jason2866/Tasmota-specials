@@ -589,7 +589,8 @@ jobs:
     - name: Build commit message
       id: step_one
       run: |
-        tas_com_tmp=$(curl https://raw.githubusercontent.com/arendst/Tasmota-firmware/action-development/trigger.txt)
+        tas_com_tmp1=$(curl https://raw.githubusercontent.com/arendst/Tasmota-firmware/action-development/trigger.txt)
+        tas_com_tmp="https://github.com/arendst/Tasmota/commit/${tas_com_tmp1}"
         echo "tas_com=$tas_com_tmp" >> $GITHUB_ENV
     - name: Show env content
       id: step_two
@@ -600,7 +601,7 @@ jobs:
         git config --local user.name "Platformio BUILD"
         git config user.email github-actions@github.com
         git add -f ./*
-        git commit -m "https://github.com/arendst/Tasmota/commit/"$tas_com_tmp
+        git commit -m ${{ env.tas_com }}
     - name: Push the firmware files to branch firmware
       uses: ad-m/github-push-action@master
       with:
@@ -642,4 +643,4 @@ jobs:
         dst_branch: main
         dst_repo_name: install
         username: workflow
-        commit_message: "Update from unofficial builder"
+        commit_message: ${{ env.tas_com }}
