@@ -601,7 +601,7 @@ jobs:
         git config --local user.name "Platformio BUILD"
         git config user.email github-actions@github.com
         git add -f ./*
-        git commit -m ${{ env.tas_com }}
+        git commit -m "${{ env.tas_com }}"
     - name: Push the firmware files to branch firmware
       uses: ad-m/github-push-action@master
       with:
@@ -632,6 +632,12 @@ jobs:
     - uses: actions/checkout@v2
       with:
         ref: firmware
+    - name: Build commit message
+      id: step_one
+      run: |
+        tas_com_tmp1=$(curl https://raw.githubusercontent.com/arendst/Tasmota-firmware/action-development/trigger.txt)
+        tas_com_tmp="Based on https://github.com/arendst/Tasmota/commit/${tas_com_tmp1}"
+        echo "tas_com=$tas_com_tmp" >> $GITHUB_ENV     
     - name: copycat tasmota32
       uses: andstor/copycat-action@v3
       with:
