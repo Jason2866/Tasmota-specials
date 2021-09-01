@@ -11,8 +11,8 @@ All notable changes to this project will be documented in this file.
 - Command ``Subscribe2 ...`` to subscribe to a MQTT topic without appended "/#" (#12858)
 - Support for Hydreon RG-15 Solid State Rain sensor (#12974)
 - Support for IKEA VINDRIKTNING particle concentration sensor (#12976)
-- Commands ``SwitchMode 17`` PushHoldMultiDelay and ``SwitchMode 18`` PushHoldMultiDelayInverted adding delayed single press event (#12973)
 - Berry support for Curve 25519 EC crypto
+- Command ``SetOption2 1`` to enable display of global temperature/humidity/pressure info to JSON sensor message
 
 ### Changed
 - Shelly EM template needs to use GPIO ADE7953_IRQ_2
