@@ -4,7 +4,11 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased] - Development
 
 ## [9.5.0.8]
+### Added
+- Command ``WebGetConfig <url>`` if ``#define USE_WEBGETCONFIG`` is enabled to restore/init configuration from external webserver (#13034)
+
 ### Fixed
+- OpenTherm invalid JSON (#13028)
 - ESP32 crash when PSRAM is absent and ``BOARD_HAS_PSRAM`` set (#13037)
 - MQTT TLS related connection timing errors (#13033)
 
