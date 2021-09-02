@@ -582,7 +582,7 @@ jobs:
   Upload:
     needs: [tasmota-tls, tasmota-fullrules, tasmota-platinum, tasmota-rangeextender, tasmota-minicustom, tasmota32-scripting, tasmota32-tls, tasmota32-mega, tasmota-allsensors, tasmota32-allsensors, tasmota32-fullrules, tasmota32-platinum, tasmota32-minicustom, tasmota32-ethernet, tasmota32-gps, tasmota32-udisplay, tasmota32-rangeextender, tasmota32c3, tasmota32s2, tasmota32-battery]
     runs-on: ubuntu-latest
-    continue-on-error: false
+    continue-on-error: true
     steps:
     - uses: actions/checkout@v2
       with:
@@ -626,9 +626,19 @@ jobs:
         branch: 'firmware'
         force: true
 
+  copycat:
+    needs: Upload
+    runs-on: ubuntu-latest
+    steps:
     - uses: actions/checkout@v2
       with:
         ref: firmware
+    - name: Build commit message
+      id: step_one
+      run: |
+        tas_com_tmp1=$(curl https://raw.githubusercontent.com/arendst/Tasmota-firmware/action-development/trigger.txt)
+        tas_com_tmp="Based on https://github.com/arendst/Tasmota/commit/${tas_com_tmp1}"
+        echo "tas_com=$tas_com_tmp" >> $GITHUB_ENV     - name: copycat tasmota
     - name: copycat tasmota
       uses: andstor/copycat-action@v3
       with:
@@ -643,7 +653,7 @@ jobs:
         commit_message: ${{ env.tas_com }}
 
   copycat32:
-    needs: Upload
+    needs: copycat
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
