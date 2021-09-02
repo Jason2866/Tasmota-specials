@@ -12,17 +12,17 @@ Official ✨ Tasmota ✨ firmware files are [here](https://github.com/arendst/Ta
 - [ESP_Flasher](https://github.com/Jason2866/ESP_Flasher/releases) (Windows and Mac executables, no ESP32-C3 support)
 
 ## Build variants:
-
-- Tasmota TLS (TLS for mqtt enabled)
-- Tasmota Rules with all the extras enabled
-- Tasmota Thermostat (Thermostat, PID driver and Temp sensors enabled)
-- Tasmota GPS (GPS driver enabled)
-- Tasmota Scripting instead of rules (Smart Meter Interface enabled)
-- Tasmota Ethernet ESP32 for wired LAN (needs Ethernet hardware module)
-- Tasmota U-Display ESP32 (uses Universal Display Driver)
-- Experimental Tasmota32 for the ESP32-C3 (tasmota32c3) and 2M no OTA variant (tasmota32c3_2M)
-- Tasmota Battery build for battery powered tuya sensors
-- Experimental Tasmota RangeExtender (Tasmota acts as AP)
-- Tasmota minicustom minimal even smaller (NO Webserver, you have to use mqtt!!)
-- Tasmota Mega at the bleeding edge - Almost every sensor included
-- Tasmota Platinum nearly ALL enabled IT.IS.HUGE! (only for devices with >=4Mb flash)<br>
+ - tasmota32c3 - Experimental support for ESP32-C3 chip and 2M no OTA variant (tasmota32c3_2M)
+ - tasmota32s2 - Experimental support for ESP32-S2 chip
+ - tasmota-battery - extremely cut down build for battery powered Tuya sensors
+ - tasmota32-ethernet - (ESP32 only) for wired LAN, works only on devices with Ethernet hardware!
+ - tasmota-fullrules - Rules with all the features (expressions, If statements, MQTT subscription)
+ - tasmota-mega - big binary, almost every sensor included, OTA possible only with minimal
+ - tasmota-minicustom - even smaller minimal build (warning: it has **NO** Webserver, you have to use MQTT for control)
+ - tasmota-gps - GPS driver enabled
+ - tasmota-platinum - IT...IS...HUGE!!! nearly everzthing is enabled (only for devices with >=4Mb flash)
+ - tasmota-rangeextender - Experimental build where Tasmota acts as AP range extender
+ - tasmota-scripting - all scripting features instead of rules + Smart Meter Interface enabled
+ - tasmota-thermostat - Thermostat, PID driver and temperature sensors
+ - tasmota-tls - MQTT TLS enabled
+ - tasmota32-udisplay - ESP32 only, uses Universal Display Driver
