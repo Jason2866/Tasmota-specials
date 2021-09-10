@@ -13,7 +13,7 @@ Official ✨ Tasmota ✨ firmware files are [here](https://github.com/arendst/Ta
 
 ## Build variants:
  - tasmota32c3 - Experimental support for ESP32-C3 chip and 2M no OTA variant (tasmota32c3_2M)
- - tasmota32c3 Bluetooth - as before with BLE
+ - tasmota32c3-bluetooth - as before with BLE
  - tasmota32s2 - Experimental support for ESP32-S2 chip
  - tasmota-battery - extremely cut down build for battery powered Tuya sensors
  - tasmota32-ethernet - (ESP32 only) for wired LAN, works only on devices with Ethernet hardware!
