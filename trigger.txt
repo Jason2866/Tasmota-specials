@@ -1,1 +1,1 @@
-91f1378aba18609348a3fd0badb119c3c17a7f90
+framework-arduinoespressif32 @ https://github.com/Jason2866/arduino-esp32/releases/download/v.2.0-post/framework-arduinoespressif32_i2c.zip
