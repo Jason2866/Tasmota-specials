@@ -417,7 +417,7 @@ d'""""""d888' `888'  d8P'  `Y8b   `888'   `Y8b `888'     `8 `888'     `8
    .888P       888  888     ooooo  888    `88b  888    "     888    "    
   d888'    .P  888  `88.    .88'   888    .88P  888       o  888       o 
 .8888888888P  o888o  `Y8bood8P'   o888bood8P'  o888ooooood8 o888ooooood8 */
-                                                      
+
 #ifdef CUSTOM_CONFIG_ZIGBEE  // *******************************************************************
 
 #undef CODE_IMAGE_STR
@@ -667,7 +667,7 @@ d'""""""d888' `888'  d8P'  `Y8b   `888'   `Y8b `888'     `8 `888'     `8
 88  ooo 88~~~     `Y8b. 
 88. ~8~ 88      db   8D 
  Y888P  88      `8888Y'    */
-                                                      
+
 #ifdef CUSTOM_CONFIG_GPS  // *******************************************************************
 
 #undef CODE_IMAGE_STR
@@ -938,15 +938,15 @@ o888bood8P'  o88o     o8888o     o888o         o888o     o888ooooood8 o888o  o88
 #undef MQTT_CLEAN_SESSION
 #define MQTT_CLEAN_SESSION 0
 
-#undef WIFI_SCAN_AT_RESTART                
+#undef WIFI_SCAN_AT_RESTART
 #define WIFI_SCAN_AT_RESTART   false             // [SetOption56] Scan wifi network at restart for configured AP's
-#undef WIFI_SCAN_REGULARLY    
+#undef WIFI_SCAN_REGULARLY
 #define WIFI_SCAN_REGULARLY    false             // [SetOption57] Scan wifi network every 44 minutes for configured AP's
 #undef APP_DISABLE_POWERCYCLE
 #define APP_DISABLE_POWERCYCLE true             // [SetOption65] Disable fast power cycle detection for device reset
 #undef MQTT_TUYA_RECEIVED
 #define MQTT_TUYA_RECEIVED     true             // [SetOption66] Enable TuyaMcuReceived messages over Mqtt
-#undef KEY_DISABLE_MULTIPRESS 
+#undef KEY_DISABLE_MULTIPRESS
 #define KEY_DISABLE_MULTIPRESS true             // [SetOption1]  Disable button multipress
 
 #undef OTA_URL
@@ -976,7 +976,7 @@ Y88bo.      888           888   .d88'  888   888   .d88'      888       888   8 
      `"Y88b 888           888`88b.     888   888              888       888   8     `88b.8  888     ooooo 
 oo     .d8P `88b    ooo   888  `88b.   888   888              888       888   8       `888  `88.    .88'  
 8""88888P'   `Y8bood8P'  o888o  o888o o888o o888o            o888o     o888o o8o        `8   `Y8bood8P'   
-*/                                                     
+*/
 #ifdef CUSTOM_CONFIG_SCRIPTING  // *******************************************************************
 
 #undef CODE_IMAGE_STR
@@ -989,7 +989,7 @@ oo     .d8P `88b    ooo   888  `88b.   888   888              888       888   8 
 #define GUI_TRASH_FILE
 
 #define USE_DOMOTICZ                             // Enable Domoticz (+6k code, +0.3k mem)
-#define USE_HOME_ASSISTANT                       // Enable Home Assistant Discovery Support (+4.1k code, +6 bytes mem)
+#define USE_TASMOTA_DISCOVERY
 #define USE_WEBSERVER                            // Enable web server and Wifi Manager (+66k code, +8k mem)
   #define USE_JAVASCRIPT_ES6                     // Enable ECMAScript6 syntax using less JavaScript code bytes (fails on IE11)
   #define USE_LIGHT
@@ -1021,7 +1021,7 @@ oo     .d8P `88b    ooo   888  `88b.   888   888              888       888   8 
 #define SCRIPT_POWER_SECTION
 #define USE_SCRIPT_TIMER
 
-#ifdef ESP8266 
+#ifdef ESP8266
   #define USE_SENDMAIL
 #endif // ESP8266
 
@@ -1308,7 +1308,7 @@ Thermostat
 #define OTA_URL                " "  // [OtaUrl]
 
 #define USE_DOMOTICZ                             // Enable Domoticz (+6k code, +0.3k mem)
-#define USE_HOME_ASSISTANT                       // Enable Home Assistant Discovery Support (+4.1k code, +6 bytes mem)
+#define USE_TASMOTA_DISCOVERY
 #define USE_WEBSERVER                            // Enable web server and Wifi Manager (+66k code, +8k mem)
   #define USE_JAVASCRIPT_ES6                     // Enable ECMAScript6 syntax using less JavaScript code bytes (fails on IE11)
   #define USE_EMULATION_HUE                      // Enable Hue Bridge emulation for Alexa (+14k code, +2k mem common)
@@ -1692,7 +1692,7 @@ o888o           `YbodP'    o888ooooood8 o888ooooood8 o888o  o888o    `YbodP'    
 #define OTA_URL                " "  // [OtaUrl]
 
 #define USE_DOMOTICZ                             // Enable Domoticz (+6k code, +0.3k mem)
-#define USE_HOME_ASSISTANT                       // Enable Home Assistant Discovery Support (+4.1k code, +6 bytes mem)
+#define USE_TASMOTA_DISCOVERY
 #define USE_WEBSERVER                            // Enable web server and Wifi Manager (+66k code, +8k mem)
   #define USE_JAVASCRIPT_ES6                     // Enable ECMAScript6 syntax using less JavaScript code bytes (fails on IE11)
   #define USE_EMULATION_HUE                      // Enable Hue Bridge emulation for Alexa (+14k code, +2k mem common)
@@ -2186,7 +2186,7 @@ o888ooooood8   "888" o888o o888o `Y8bod8P' d888b    o888o o888o `Y8bod8P'   "888
 #define GUI_TRASH_FILE
 
 #define USE_DOMOTICZ                             // Enable Domoticz (+6k code, +0.3k mem)
-#define USE_HOME_ASSISTANT                       // Enable Home Assistant Discovery Support (+4.1k code, +6 bytes mem)
+#define USE_TASMOTA_DISCOVERY
 #define USE_WEBSERVER                            // Enable web server and Wifi Manager (+66k code, +8k mem)
   #define USE_JAVASCRIPT_ES6                     // Enable ECMAScript6 syntax using less JavaScript code bytes (fails on IE11)
   #define USE_EMULATION_HUE                      // Enable Hue Bridge emulation for Alexa (+14k code, +2k mem common)
@@ -2435,12 +2435,12 @@ ooo        ooooo oooooooooooo   .oooooo.          .o.
 o8o        o888o o888ooooood8  `Y8bood8P'   o88o     o8888o 
 */
 #ifdef CUSTOM_CONFIG_MEGA // ************************************************************************
-                                    
+
 #undef CODE_IMAGE_STR
 #define CODE_IMAGE_STR "mega"
 
 #define USE_DOMOTICZ                             // Enable Domoticz (+6k code, +0.3k mem)
-#define USE_HOME_ASSISTANT                       // Enable Home Assistant Discovery Support (+7k code)
+#define USE_TASMOTA_DISCOVERY
 
 // #define MQTT_TELE_RETAIN     0                   // Tele messages may send retain flag (0 = off, 1 = on)
 // #define MQTT_CLEAN_SESSION   1                   // Mqtt clean session connection (0 = No clean session, 1 = Clean session (default))
@@ -2554,7 +2554,7 @@ o8o        o888o o888ooooood8  `Y8bood8P'   o88o     o8888o
  //#define USE_MGC3130                            // Enable MGC3130 Electric Field Effect Sensor (I2C address 0x42) (+2k7 code, 0k3 mem)
  #define USE_MAX44009                           // Enable MAX44009 Ambient Light sensor (I2C addresses 0x4A and 0x4B) (+0k8 code)
  #define USE_SCD30                              // Enable Sensiron SCd30 CO2 sensor (I2C address 0x61) (+3k3 code)
- 
+
  #ifdef  ESP8266
  #define USE_SPS30                              // Enable Sensiron SPS30 particle sensor (I2C address 0x69) (+1.7 code)
  #endif
@@ -2702,10 +2702,10 @@ o8o        o888o o888ooooood8  `Y8bood8P'   o88o     o8888o
   )    (     | |   __    | |   __       ) ) ( (       ( ( ( ( ( (        ) ) ( ()  () )  ) \ \  _       ) ) 
  /  /\  \  __| |___) ) __| |___) )  ___/ /   \ \___   / /  \ \/ /    ___/ /   \ \__/ /  ( ( \ \_))  ___/ /  
 /__(  )__\ \________/  \________/  /____/     \____\ (_/    \__/    /____/     \____/    )_) \__/  /____/ 
-                                                                                                                
+
 */
 #ifdef CUSTOM_CONFIG_ALLSENSORS // ************************************************************************
-                                    
+
 #undef CODE_IMAGE_STR
 #define CODE_IMAGE_STR "allsensors"
 
@@ -2826,7 +2826,7 @@ o8o        o888o o888ooooood8  `Y8bood8P'   o88o     o8888o
  //#define USE_MGC3130                            // Enable MGC3130 Electric Field Effect Sensor (I2C address 0x42) (+2k7 code, 0k3 mem)
  #define USE_MAX44009                           // Enable MAX44009 Ambient Light sensor (I2C addresses 0x4A and 0x4B) (+0k8 code)
  #define USE_SCD30                              // Enable Sensiron SCd30 CO2 sensor (I2C address 0x61) (+3k3 code)
- 
+
  #ifdef  ESP8266
  #define USE_SPS30                              // Enable Sensiron SPS30 particle sensor (I2C address 0x69) (+1.7 code)
  #endif
@@ -3007,7 +3007,7 @@ ooooooooo.   ooooo              .o.       ooooooooooooo ooooo ooooo      ooo ooo
  888          888       o  .8'     `888.       888       888   8       `888   `88.    .8'   8    Y     888  
 o888o        o888ooooood8 o88o     o8888o     o888o     o888o o8o        `8     `YbodP'    o8o        o888o 
 ###########################################################################################################*/
-                                    
+
 #undef CODE_IMAGE_STR
 #define CODE_IMAGE_STR "platinum"
 
@@ -3283,7 +3283,7 @@ o888o        o888ooooood8 o88o     o8888o     o888o     o888o o8o        `8     
 #define USE_ENHANCED_GUI_WIFI_SCAN
 
 #define USE_BERRY                                // Enable Berry scripting language
-//#define USE_BERRY_PSRAM                        // Allocate Berry memory in PSRAM if PSRAM is connected - this might be slightly slower but leaves main memory intact
+#define USE_BERRY_PSRAM                        // Allocate Berry memory in PSRAM if PSRAM is connected - this might be slightly slower but leaves main memory intact
 
 #define USE_UFILESYS
 #define USE_SDCARD
