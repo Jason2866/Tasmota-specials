@@ -1,1 +1,2 @@
 7c667042b4c93e73323662cbb396700a2d5224bf
+tasmota32-zigbeebridge
