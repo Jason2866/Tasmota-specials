@@ -759,12 +759,12 @@ dBBBBBP     dBP     dBBBBb    dBBBBb     dBBBP      dBBBP     dBBBBb   dBBBBBb  
 //  #define W1_PARASITE_POWER                      // Optimize for parasite powered sensors
 
 // -- I2C sensors ---------------------------------
-// #define USE_I2C                                  // I2C using library wire (+10k code, 0k2 mem, 124 iram)
+#define USE_I2C                                  // I2C using library wire (+10k code, 0k2 mem, 124 iram)
 #ifdef USE_I2C
 //  #define USE_SHT                                // Enable SHT1X sensor (+1k4 code)
 //  #define USE_HTU                                // Enable HTU21/SI7013/SI7020/SI7021 sensor (I2C address 0x40) (+1k5 code)
 //  #define USE_BMP                                // Enable BMP085/BMP180/BMP280/BME280 sensor (I2C address 0x76 or 0x77) (+4k code)
-    #define USE_BME680                             // Enable support for BME680 sensor using Bosch BME680 library (+4k code)
+//  #define USE_BME680                             // Enable support for BME680 sensor using Bosch BME680 library (+4k code)
 //  #define USE_BH1750                             // Enable BH1750 sensor (I2C address 0x23 or 0x5C) (+0k5 code)
 //  #define USE_VEML6070                           // Enable VEML6070 sensor (I2C addresses 0x38 and 0x39) (+0k5 code)
 //  #define USE_ADS1115                            // Enable ADS1115 16 bit A/D converter (I2C address 0x48, 0x49, 0x4A or 0x4B) based on Adafruit ADS1x15 library (no library needed) (+0k7 code)
@@ -867,7 +867,7 @@ dBBBBBP     dBP     dBBBBb    dBBBBb     dBBBP      dBBBP     dBBBBb   dBBBBBb  
 // //  #define USE_ENERGY_POWER_LIMIT                 // Add additional support for Energy Power Limit detection (+1k2 code)
 // #define USE_PZEM004T                             // Add support for PZEM004T Energy monitor (+2k code)
 // #define USE_PZEM_AC                              // Add support for PZEM014,016 Modbus Energy monitor (+1k1 code)
-// //#define USE_PZEM_DC                              // Add support for PZEM003,017 Modbus Energy monitor (+1k1 code)
+// #define USE_PZEM_DC                              // Add support for PZEM003,017 Modbus Energy monitor (+1k1 code)
 // #define USE_MCP39F501                            // Add support for MCP39F501 Energy monitor as used in Shelly 2 (+3k1 code)
 //#define USE_SDM120                             // Add support for Eastron SDM120-Modbus energy monitor (+1k1 code)
 //#define USE_SDM630                             // Add support for Eastron SDM630-Modbus energy monitor (+0k6 code)
