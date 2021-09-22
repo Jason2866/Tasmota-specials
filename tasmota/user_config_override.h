@@ -660,12 +660,23 @@ d'""""""d888' `888'  d8P'  `Y8b   `888'   `Y8b `888'     `8 `888'     `8
 #endif  // CUSTOM_CONFIG_ZIGBEE ******************************************************************
 
 
-
+/*
+dBBBBBP     dBP     dBBBBb    dBBBBb     dBBBP      dBBBP     dBBBBb   dBBBBBb     dBP     dBBBBb     dBBBBb     dBBBP            dBBBBb  dBBBBb
+                                  dBP                             dBP       dBP                dBP
+   dBP     dBP     dBBBB      dBBBK'    dBBP       dBBP       dBBBK'    dBBBBK    dBP     dBP dBP    dBBBB      dBBP                dBBBP   dBBP
+  dBP     dBP     dB' BB     dB' db    dBP        dBP        dB' db    dBP  BB   dBP     dBP dBP    dB' BB     dBP                   dBP   dBP__
+ dBBBBP  dBP     dBBBBBB    dBBBBP'   dBBBBP     dBBBBP     dBBBBP'   dBP  dB'  dBP     dBBBBBP    dBBBBBB    dBBBBP             dBBBBP   dBBBBP
+ */
 
 #ifdef CUSTOM_CONFIG_ZIGBEE_BRIDGE32  // *******************************************************************
 
 #undef CODE_IMAGE_STR
 #define CODE_IMAGE_STR "zig_bridge32"
+
+#define FALLBACK_MODULE WEMOS
+#define USER_TEMPLATE "{\"NAME\":\"Zig_Bridge32\",\"GPIO\":[1,1,3552,1,3584,1,1,1,5793,5792,320,544,5536,1,5600,1,0,1,1,5568,0,1,1,1,0,0,0,0,608,640,32,1,1,0,0,1],\"FLAG\":0,\"BASE\":1}"
+
+// {"NAME":"ZB-GW03-V1.2","GPIO":[1,1,3552,1,3584,1,1,1,5793,5792,320,544,5536,1,5600,1,0,1,1,5568,0,1,1,1,0,0,0,0,608,640,32,1,1,0,0,1],"FLAG":0,"BASE":1}
 
 #undef OTA_URL
 #define OTA_URL                " "  // [OtaUrl]
