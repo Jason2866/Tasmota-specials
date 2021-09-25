@@ -1689,9 +1689,9 @@ Thermostat
                                                  // this is not required.  The rate that the sensor is read is defined by TELE_PERIOD
                                                  // If not using the sensor then you can supply process values via MQTT using
                                                  // cmnd PidPv
-   #define PID_SHUTTER                   1     // if using the PID to control a 3-way valve, create Tasmota Shutter and define the
+   #define PID_SHUTTER                   1       // if using the PID to control a 3-way valve, create Tasmota Shutter and define the
                                                  // number of the shutter here. Otherwise leave this commented out
-   #define PID_REPORT_MORE_SETTINGS                   // If defined, the SENSOR output will provide more extensive json
+   #define PID_REPORT_MORE_SETTINGS      true    // If defined, the SENSOR output will provide more extensive json
                                                  // output in the PID section
 
 // -- Optional modules ----------------------------
