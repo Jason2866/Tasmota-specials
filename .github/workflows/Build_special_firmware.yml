@@ -663,7 +663,7 @@ jobs:
         path: ./build_output
 
   Upload:
-    needs: [tasmota-thermostat, tasmota-tls, tasmota-fullrules, tasmota-allsensors, tasmota-platinum, tasmota-rangeextender, tasmota-minicustom, tasmota32-scripting, tasmota32-thermostat, tasmota32-tls, tasmota32-mega, tasmota32-allsensors, tasmota32-zigbee, tasmota32-zigbeebridge, tasmota32-fullrules, tasmota32-platinum, tasmota32-minicustom, tasmota32-ethernet, tasmota32-gps, tasmota32-udisplay, tasmota32-rangeextender, tasmota32solo1-bluetooth,tasmota32c3, tasmota32c3-bluetooth, tasmota32s2, tasmota32-battery]
+    needs: [tasmota-thermostat, tasmota-tls, tasmota-fullrules, tasmota-allsensors, tasmota-platinum, tasmota-rangeextender, tasmota-minicustom, tasmota32-scripting, tasmota32-thermostat, tasmota32-tls, tasmota32-mega, tasmota32-allsensors, tasmota32-zigbee, tasmota32-zigbeebridge, tasmota32-fullrules, tasmota32-platinum, tasmota32-minicustom, tasmota32-ethernet, tasmota32-gps, tasmota32-udisplay, tasmota32-rangeextender, tasmota32solo1-bluetooth, tasmota32c3, tasmota32c3-bluetooth, tasmota32s2, tasmota32-battery]
     runs-on: ubuntu-latest
     continue-on-error: true
     steps:
@@ -678,7 +678,7 @@ jobs:
         path: ./mv_firmware
     - name: Display structure of downloaded files
       run: |
-        cp -rf ./firmware/tasmota32c3.bin ./firmware/tasmota32c3_2M.bin 2>/dev/null || :
+        mv -rf ./firmware/tasmota32c3.bin ./firmware/tasmota32c3_2M.bin 2>/dev/null || :
         cp -rf ./firmware/tasmota32c3-bluetooth.bin ./firmware/tasmota32c3-bluetooth_2M.bin 2>/dev/null || :
         ls -R
       working-directory: ./mv_firmware
