@@ -678,7 +678,8 @@ jobs:
         path: ./mv_firmware
     - name: Display structure of downloaded files
       run: |
-        mv -rf ./firmware/tasmota32c3.bin ./firmware/tasmota32c3_2M.bin 2>/dev/null || :
+        cp -rf ./firmware/tasmota32c3.bin ./firmware/tasmota32c3_2M.bin 2>/dev/null || :
+        rm -rf ./firmware/tasmota32c3.bin
         cp -rf ./firmware/tasmota32c3-bluetooth.bin ./firmware/tasmota32c3-bluetooth_2M.bin 2>/dev/null || :
         ls -R
       working-directory: ./mv_firmware
