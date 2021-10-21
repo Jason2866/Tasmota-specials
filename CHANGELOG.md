@@ -5,7 +5,14 @@ All notable changes to this project will be documented in this file.
 
 ## [10.0.0.1]
 ### Added
-- Berry add module ``python_compat`` to be closer to Python syntax
+- Berry add module ``python_compat`` to be closer to Python syntax (#13428)
+
+### Changed
+- File editor no-wrap (#13427)
+- ESP32 core library from v1.0.7.4 to v1.0.7.5
+
+### Fixed
+- Initial reset RTC memory based variables like EnergyToday and EnergyTotal
 
 ## [Released]
 
