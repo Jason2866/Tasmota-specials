@@ -258,6 +258,12 @@ ooooo     ooo ooooo      ooo oooooooooo.   oooooooooooo oooooooooooo ooooo ooooo
 
 #undef USE_PROMETHEUS                           // Disable support for https://prometheus.io/ metrics exporting over HTTP /metrics endpoint
 
+#ifdef ESP32
+#undef  APP_SLEEP
+#define APP_SLEEP              0                // Sleep does not work good with ESP32. Laggy!!
+#endif  // ESP32
+
+
 //#undef DEBUG_TASMOTA_CORE                       // Disable core debug messages
 //#undef DEBUG_TASMOTA_DRIVER                     // Disable driver debug messages
 //#undef DEBUG_TASMOTA_SENSOR                     // DIsable sensor debug messages
