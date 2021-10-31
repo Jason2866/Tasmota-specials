@@ -1760,7 +1760,7 @@ bool Xdrv85(uint8_t function)
     }
   return result;
 }
-#endif  // 
+#endif  //
 #endif  // ESP32
 
 #endif
