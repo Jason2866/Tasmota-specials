@@ -662,7 +662,7 @@ jobs:
         name: firmware
         path: ./build_output
 
-  tasmota32dev:
+  tasmota32-dev:
     needs: tasmota_pull
     runs-on: ubuntu-latest
     continue-on-error: true
@@ -677,14 +677,14 @@ jobs:
         pip install -U https://github.com/platformio/platformio-core/archive/develop.zip
     - name: Run PlatformIO
       run: |
-        platformio run -e tasmota32dev
+        platformio run -e tasmota32-dev
     - uses: actions/upload-artifact@v2
       with:
         name: firmware
         path: ./build_output
 
   Upload:
-    needs: [tasmota-thermostat, tasmota-tls, tasmota-fullrules, tasmota-allsensors, tasmota-platinum, tasmota-rangeextender, tasmota-minicustom, tasmota32-scripting, tasmota32-thermostat, tasmota32-tls, tasmota32-mega, tasmota32-allsensors, tasmota32-zigbee, tasmota32-zigbeebridge, tasmota32-fullrules, tasmota32-platinum, tasmota32-minicustom, tasmota32-ethernet, tasmota32-gps, tasmota32-udisplay, tasmota32-rangeextender, tasmota32solo1-bluetooth, tasmota32c3, tasmota32c3-bluetooth, tasmota32s2, tasmota32dev, tasmota32-battery]
+    needs: [tasmota-thermostat, tasmota-tls, tasmota-fullrules, tasmota-allsensors, tasmota-platinum, tasmota-rangeextender, tasmota-minicustom, tasmota32-scripting, tasmota32-thermostat, tasmota32-tls, tasmota32-mega, tasmota32-allsensors, tasmota32-zigbee, tasmota32-zigbeebridge, tasmota32-fullrules, tasmota32-platinum, tasmota32-minicustom, tasmota32-ethernet, tasmota32-gps, tasmota32-udisplay, tasmota32-rangeextender, tasmota32solo1-bluetooth, tasmota32c3, tasmota32c3-bluetooth, tasmota32s2, tasmota32-dev, tasmota32-battery]
     runs-on: ubuntu-latest
     continue-on-error: true
     steps:
