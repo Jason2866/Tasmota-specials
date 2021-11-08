@@ -14,6 +14,8 @@ ooooo     ooo ooooo      ooo oooooooooo.   oooooooooooo oooooooooooo ooooo ooooo
 #ifdef CUSTOM_CONFIG_REMOVALS  // ******************************************************************
 
 #undef USER_TEMPLATE
+#undef CODE_IMAGE_STR
+#undef OTA_URL
 
 #undef USE_ARDUINO_OTA                          // Disable support for Arduino OTA (+13k code)
 #undef USE_DOMOTICZ                             // Disable Domoticz (+6k code, +0.3k mem)
