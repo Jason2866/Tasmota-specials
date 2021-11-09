@@ -15,7 +15,9 @@ ooooo     ooo ooooo      ooo oooooooooo.   oooooooooooo oooooooooooo ooooo ooooo
 
 #undef USER_TEMPLATE
 #undef CODE_IMAGE_STR
+#define CODE_IMAGE_STR " "
 #undef OTA_URL
+#define OTA_URL " "
 
 #undef USE_ARDUINO_OTA                          // Disable support for Arduino OTA (+13k code)
 #undef USE_DOMOTICZ                             // Disable Domoticz (+6k code, +0.3k mem)
@@ -430,9 +432,6 @@ d'""""""d888' `888'  d8P'  `Y8b   `888'   `Y8b `888'     `8 `888'     `8
 
 #undef CODE_IMAGE_STR
 #define CODE_IMAGE_STR "zigbee"
-
-#undef OTA_URL
-#define OTA_URL                " "  // [OtaUrl]
 
 //#define USE_ARDUINO_OTA                          // Add optional support for Arduino OTA (+13k code)
 //#define USE_DOMOTICZ                             // Enable Domoticz (+6k code, +0.3k mem)
@@ -953,9 +952,6 @@ dBBBBBP     dBP     dBBBBb    dBBBBb     dBBBP      dBBBP     dBBBBb   dBBBBBb  
 #undef CODE_IMAGE_STR
 #define CODE_IMAGE_STR "gps"
 
-#undef OTA_URL
-#define OTA_URL                " "  // [OtaUrl]
-
 //#define USE_ARDUINO_OTA                          // Add optional support for Arduino OTA (+13k code)
 //#define USE_DOMOTICZ                             // Enable Domoticz (+6k code, +0.3k mem)
 //#define USE_HOME_ASSISTANT                       // Enable Home Assistant Discovery Support (+7k code)
@@ -1261,9 +1257,6 @@ oo     .d8P `88b    ooo   888  `88b.   888   888              888       888   8 
 
 #undef CODE_IMAGE_STR
 #define CODE_IMAGE_STR "scripting"
-
-#undef OTA_URL
-#define OTA_URL                " "  // [OtaUrl]
 
 #define USE_UFILESYS
 #define GUI_TRASH_FILE
@@ -1968,9 +1961,6 @@ o888o           `YbodP'    o888ooooood8 o888ooooood8 o888o  o888o    `YbodP'    
 #undef CODE_IMAGE_STR
 #define CODE_IMAGE_STR "fullrules"
 
-#undef OTA_URL
-#define OTA_URL                " "  // [OtaUrl]
-
 #define USE_DOMOTICZ                             // Enable Domoticz (+6k code, +0.3k mem)
 #define USE_TASMOTA_DISCOVERY
 #define USE_WEBSERVER                            // Enable web server and Wifi Manager (+66k code, +8k mem)
@@ -2259,9 +2249,6 @@ o888o           `YbodP'    o888ooooood8 o888ooooood8 o888o  o888o    `YbodP'    
 #undef CODE_IMAGE_STR
 #define CODE_IMAGE_STR "odroid"
 
-#undef OTA_URL
-#define OTA_URL                " "  // [OtaUrl]
-
 #define USE_UFILESYS
 #define GUI_TRASH_FILE
 
@@ -2458,9 +2445,6 @@ o888ooooood8   "888" o888o o888o `Y8bod8P' d888b    o888o o888o `Y8bod8P'   "888
 
 #undef CODE_IMAGE_STR
 #define CODE_IMAGE_STR "ethernet"
-
-#undef OTA_URL
-#define OTA_URL                " "  // [OtaUrl]
 
 #define USE_UFILESYS
 #define GUI_TRASH_FILE
