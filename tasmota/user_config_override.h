@@ -466,6 +466,13 @@ d'""""""d888' `888'  d8P'  `Y8b   `888'   `Y8b `888'     `8 `888'     `8
 //#define USE_SCRIPT                               // Add support for script
   #define USE_SCRIPT_FATFS 4                     // Add support for script storage on SD card (+12k code, +4k mem)
 
+#ifdef ESP32
+  #define USE_BERRY
+  #define USE_BERRY_PSRAM
+  #define USE_WEBCLIENT
+//  #define USE_WEBCLIENT_HTTPS
+#endif  // ESP32
+
 #define USE_UFILESYS
 #define GUI_TRASH_FILE
 
@@ -732,6 +739,13 @@ dBBBBBP     dBP     dBBBBb    dBBBBb     dBBBP      dBBBP     dBBBBb   dBBBBBb  
 
 //#define USE_SCRIPT                               // Add support for script
   #define USE_SCRIPT_FATFS 4                     // Add support for script storage on SD card (+12k code, +4k mem)
+
+#ifdef ESP32
+  #define USE_BERRY
+  #define USE_BERRY_PSRAM
+  #define USE_WEBCLIENT
+//  #define USE_WEBCLIENT_HTTPS
+#endif  // ESP32
 
 #define USE_UFILESYS
 #define GUI_TRASH_FILE
@@ -1566,6 +1580,13 @@ oo     .d8P `88b    ooo   888  `88b.   888   888              888       888   8 
   #define USE_TASMOTA_CLIENT_FLASH_SPEED 57600     // Usually 57600 for 3.3V variants and 115200 for 5V variants
   #define USE_TASMOTA_CLIENT_SERIAL_SPEED 57600    // Depends on the sketch that is running on the Uno/Pro Mini
 
+#ifdef ESP32
+  #define USE_BERRY
+  #define USE_BERRY_PSRAM
+  #define USE_WEBCLIENT
+//  #define USE_WEBCLIENT_HTTPS
+#endif  // ESP32
+
 #endif  // CUSTOM_CONFIG_SCRIPTING ******************************************************************
 
 
@@ -1591,6 +1612,13 @@ Thermostat
   #define USE_TIMERS_WEB                         // Add timer webpage support (+4k5 code)
   #define USE_SUNRISE                            // Add support for Sunrise and sunset tools (+16k)
     #define SUNRISE_DAWN_ANGLE DAWN_NORMAL       // Select desired Dawn Angle from (DAWN_NORMAL, DAWN_CIVIL, DAWN_NAUTIC, DAWN_ASTRONOMIC)
+
+#ifdef ESP32
+  #define USE_BERRY
+  #define USE_BERRY_PSRAM
+  #define USE_WEBCLIENT
+//  #define USE_WEBCLIENT_HTTPS
+#endif  // ESP32
 
 // -- Compression ---------------------------------
 #define USE_UNISHOX_COMPRESSION                  // Add support for string compression in Rules or Scripts
@@ -1976,6 +2004,13 @@ o888o           `YbodP'    o888ooooood8 o888ooooood8 o888o  o888o    `YbodP'    
 // -- Compression ---------------------------------
 #define USE_UNISHOX_COMPRESSION                  // Add support for string compression in Rules or Scripts
 
+#ifdef ESP32
+  #define USE_BERRY
+  #define USE_BERRY_PSRAM
+  #define USE_WEBCLIENT
+//  #define USE_WEBCLIENT_HTTPS
+#endif  // ESP32
+
 // -- Rules ----------------------------
 #define USE_RULES                                // Add support for rules (+8k code)
  #define USE_EXPRESSION                         // Add support for expression evaluation in rules (+3k2 code, +64 bytes mem)
@@ -2252,6 +2287,13 @@ o888o           `YbodP'    o888ooooood8 o888ooooood8 o888o  o888o    `YbodP'    
 #define USE_UFILESYS
 #define GUI_TRASH_FILE
 
+#ifdef ESP32
+  #define USE_BERRY
+  #define USE_BERRY_PSRAM
+  #define USE_WEBCLIENT
+//  #define USE_WEBCLIENT_HTTPS
+#endif  // ESP32
+
 #define USE_WEBSERVER                            // Enable web server and Wifi Manager (+66k code, +8k mem)
   #define USE_JAVASCRIPT_ES6                     // Enable ECMAScript6 syntax using less JavaScript code bytes (fails on IE11)
 
@@ -2448,6 +2490,13 @@ o888ooooood8   "888" o888o o888o `Y8bod8P' d888b    o888o o888o `Y8bod8P'   "888
 
 #define USE_UFILESYS
 #define GUI_TRASH_FILE
+
+#ifdef ESP32
+  #define USE_BERRY
+  #define USE_BERRY_PSRAM
+  #define USE_WEBCLIENT
+//  #define USE_WEBCLIENT_HTTPS
+#endif  // ESP32
 
 #define USE_DOMOTICZ                             // Enable Domoticz (+6k code, +0.3k mem)
 #define USE_TASMOTA_DISCOVERY
@@ -2735,6 +2784,13 @@ o8o        o888o o888ooooood8  `Y8bood8P'   o88o     o8888o
 #define USE_UFILESYS
 #define GUI_TRASH_FILE
 
+#ifdef ESP32
+  #define USE_BERRY
+  #define USE_BERRY_PSRAM
+  #define USE_WEBCLIENT
+//  #define USE_WEBCLIENT_HTTPS
+#endif  // ESP32
+
 //#define USE_SCRIPT                               // Add support for script
   #define USE_SCRIPT_FATFS 4                     // Add support for script storage on SD card (+12k code, +4k mem)
 
@@ -3006,6 +3062,13 @@ o8o        o888o o888ooooood8  `Y8bood8P'   o88o     o8888o
 
 #define USE_UFILESYS
 #define GUI_TRASH_FILE
+
+#ifdef ESP32
+  #define USE_BERRY
+  #define USE_BERRY_PSRAM
+  #define USE_WEBCLIENT
+//  #define USE_WEBCLIENT_HTTPS
+#endif  // ESP32
 
 //#define USE_SCRIPT                               // Add support for script
   #define USE_SCRIPT_FATFS 4                     // Add support for script storage on SD card (+12k code, +4k mem)
@@ -3303,6 +3366,13 @@ o888o        o888ooooood8 o88o     o8888o     o888o     o888o o8o        `8     
    #define SUPPORT_IF_STATEMENT                 // Add support for IF statement in rules (+4k2 code, -332 bytes mem)
  #define SUPPORT_MQTT_EVENT                     // Support trigger event with MQTT subscriptions (+3k5 code)
 
+#ifdef ESP32
+  #define USE_BERRY
+  #define USE_BERRY_PSRAM
+  #define USE_WEBCLIENT
+//  #define USE_WEBCLIENT_HTTPS
+#endif  // ESP32
+
 //#ifdef  ESP8266
 #define ROTARY_V1                                // Add support for Rotary Encoder as used in MI Desk Lamp (+0k8 code)
   #define ROTARY_MAX_STEPS     10                // Rotary step boundary
@@ -3557,6 +3627,13 @@ o888o        o888ooooood8 o88o     o8888o     o888o     o888o o8o        `8     
 #define USE_SDCARD
   #define GUI_TRASH_FILE
   #define GUI_EDIT_FILE
+
+#ifdef ESP32
+  #define USE_BERRY
+  #define USE_BERRY_PSRAM
+  #define USE_WEBCLIENT
+//  #define USE_WEBCLIENT_HTTPS
+#endif  // ESP32
 
 #define ROTARY_V1                                // Add support for Rotary Encoder as used in MI Desk Lamp
 
