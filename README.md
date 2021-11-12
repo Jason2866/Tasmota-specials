@@ -17,6 +17,7 @@ Official ✨ Tasmota ✨ firmware files are [here](https://github.com/arendst/Ta
  - tasmota32s2 - Beta support for ESP32-S2 chip
  - tasmota-battery - extremely cut down build for battery powered Tuya sensors
  - tasmota32-ethernet - (ESP32 only) for wired LAN, works only on devices with Ethernet hardware!
+ - tasmota32-zigbeebridge - ESP32 based [ZigbeeBridge](https://templates.blakadder.com/ewelink_ZB-GW03.html)
  - tasmota-fullrules - Rules with all the features (expressions, If statements, MQTT subscription)
  - tasmota-minicustom - even smaller minimal build (warning: it has **NO** Webserver, you have to use MQTT for control)
  - tasmota-gps - GPS driver enabled
