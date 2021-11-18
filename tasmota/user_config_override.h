@@ -3590,7 +3590,6 @@ o888o        o888ooooood8 o88o     o8888o     o888o     o888o o8o        `8     
 #endif  // CUSTOM_CONFIG_PLATINUM *******************************************************************
 
 #ifdef CUSTOM_CONFIG_UDISPLAY  // *******************************************************************
-#ifdef  ESP32
 
 #undef CODE_IMAGE_STR
 #define CODE_IMAGE_STR "udisplay"
@@ -3602,6 +3601,7 @@ o888o        o888ooooood8 o88o     o8888o     o888o     o888o o8o        `8     
 #define USE_SPI
 #define USE_LVGL
 #define USE_DISPLAY
+#define SHOW_SPLASH
 #define USE_XPT2046
 #define USE_FT5206
 #define USE_MPU_ACCEL
@@ -3609,19 +3609,15 @@ o888o        o888ooooood8 o88o     o8888o     o888o     o888o o8o        `8     
 #define USE_MLX90614
 #define USE_LVGL_PNG_DECODER
 #define USE_UNIVERSAL_DISPLAY
-#define USE_DISPLAY_LVGL_ONLY
+//#define USE_DISPLAY_LVGL_ONLY
 
 #undef USE_DISPLAY_MODES1TO5
-#undef SHOW_SPLASH
 #undef USE_DISPLAY_LCD
 #undef USE_DISPLAY_SSD1306
 #undef USE_DISPLAY_MATRIX
 #undef USE_DISPLAY_SEVENSEG
 
 #define USE_ENHANCED_GUI_WIFI_SCAN
-
-#define USE_BERRY                                // Enable Berry scripting language
-#define USE_BERRY_PSRAM                        // Allocate Berry memory in PSRAM if PSRAM is connected - this might be slightly slower but leaves main memory intact
 
 #define USE_UFILESYS
 #define USE_SDCARD
@@ -3632,7 +3628,7 @@ o888o        o888ooooood8 o88o     o8888o     o888o     o888o o8o        `8     
   #define USE_BERRY
   #define USE_BERRY_PSRAM
   #define USE_WEBCLIENT
-//  #define USE_WEBCLIENT_HTTPS
+  #define USE_WEBCLIENT_HTTPS
 #endif  // ESP32
 
 #define ROTARY_V1                                // Add support for Rotary Encoder as used in MI Desk Lamp
@@ -3756,7 +3752,6 @@ o888o        o888ooooood8 o88o     o8888o     o888o     o888o o8o        `8     
 //#define USE_BLE_ESP32                            // (ESP32 only) Add support for native BLE on ESP32 - use new driver
 //#define USE_MI_ESP32                             // (ESP32 only) Add support for ESP32 as a BLE-bridge (+9k2 mem, +292k flash)
 
-#endif  // ESP32
 #endif  // CUSTOM_CONFIG_UDISPLAY *******************************************************************
 
 
