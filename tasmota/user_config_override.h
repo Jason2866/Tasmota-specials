@@ -470,7 +470,7 @@ d'""""""d888' `888'  d8P'  `Y8b   `888'   `Y8b `888'     `8 `888'     `8
   #define USE_BERRY
   #define USE_BERRY_PSRAM
   #define USE_WEBCLIENT
-//  #define USE_WEBCLIENT_HTTPS
+  #define USE_WEBCLIENT_HTTPS
 #endif  // ESP32
 
 #define USE_UFILESYS
@@ -744,7 +744,7 @@ dBBBBBP     dBP     dBBBBb    dBBBBb     dBBBP      dBBBP     dBBBBb   dBBBBBb  
   #define USE_BERRY
   #define USE_BERRY_PSRAM
   #define USE_WEBCLIENT
-//  #define USE_WEBCLIENT_HTTPS
+  #define USE_WEBCLIENT_HTTPS
 #endif  // ESP32
 
 #define USE_UFILESYS
@@ -1203,6 +1203,13 @@ dBBBBBP     dBP     dBBBBb    dBBBBb     dBBBP      dBBBP     dBBBBb   dBBBBBb  
 
 //#define USE_TASMOTA_CLIENT                       // Add support for Arduino Uno/Pro Mini via serial interface including flashing (+2k3 code, 44 mem)
 
+#ifdef ESP32
+  #define USE_BERRY
+  #define USE_BERRY_PSRAM
+  #define USE_WEBCLIENT
+  #define USE_WEBCLIENT_HTTPS
+#endif  // ESP32
+
 #endif  // CUSTOM_CONFIG_GPS ******************************************************************
 
 
@@ -1329,6 +1336,12 @@ oo     .d8P `88b    ooo   888  `88b.   888   888              888       888   8 
   #define USE_ANGLE_FUNC
 #endif // ESP32
 
+#ifdef ESP32
+  #define USE_BERRY
+  #define USE_BERRY_PSRAM
+  #define USE_WEBCLIENT
+  #define USE_WEBCLIENT_HTTPS
+#endif  // ESP32
 
 // -- Optional modules ----------------------------
 #define ROTARY_V1                                // Add support for Rotary Encoder as used in MI Desk Lamp (+0k8 code)
@@ -1579,13 +1592,6 @@ oo     .d8P `88b    ooo   888  `88b.   888   888              888       888   8 
 //#define USE_TASMOTA_CLIENT                       // Add support for Arduino Uno/Pro Mini via serial interface including flashing (+2k6 code, 64 mem)
   #define USE_TASMOTA_CLIENT_FLASH_SPEED 57600     // Usually 57600 for 3.3V variants and 115200 for 5V variants
   #define USE_TASMOTA_CLIENT_SERIAL_SPEED 57600    // Depends on the sketch that is running on the Uno/Pro Mini
-
-#ifdef ESP32
-  #define USE_BERRY
-  #define USE_BERRY_PSRAM
-  #define USE_WEBCLIENT
-//  #define USE_WEBCLIENT_HTTPS
-#endif  // ESP32
 
 #endif  // CUSTOM_CONFIG_SCRIPTING ******************************************************************
 
@@ -1972,6 +1978,14 @@ Thermostat
 //#define USE_TASMOTA_CLIENT                       // Add support for Arduino Uno/Pro Mini via serial interface including flashing (+2k6 code, 64 mem)
   #define USE_TASMOTA_CLIENT_FLASH_SPEED 57600      // Usually 57600 for 3.3V variants and 115200 for 5V variants
   #define USE_TASMOTA_CLIENT_SERIAL_SPEED 57600     // Depends on the sketch that is running on the Uno/Pro Mini
+
+#ifdef ESP32
+  #define USE_BERRY
+  #define USE_BERRY_PSRAM
+  #define USE_WEBCLIENT
+  #define USE_WEBCLIENT_HTTPS
+#endif  // ESP32
+
 #endif  // CUSTOM_CONFIG_THERMOSTAT *******************************************************************
 
 
@@ -2003,13 +2017,6 @@ o888o           `YbodP'    o888ooooood8 o888ooooood8 o888o  o888o    `YbodP'    
 
 // -- Compression ---------------------------------
 #define USE_UNISHOX_COMPRESSION                  // Add support for string compression in Rules or Scripts
-
-#ifdef ESP32
-  #define USE_BERRY
-  #define USE_BERRY_PSRAM
-  #define USE_WEBCLIENT
-//  #define USE_WEBCLIENT_HTTPS
-#endif  // ESP32
 
 // -- Rules ----------------------------
 #define USE_RULES                                // Add support for rules (+8k code)
@@ -2265,7 +2272,16 @@ o888o           `YbodP'    o888ooooood8 o888ooooood8 o888o  o888o    `YbodP'    
 //#define USE_TASMOTA_CLIENT                       // Add support for Arduino Uno/Pro Mini via serial interface including flashing (+2k6 code, 64 mem)
   #define USE_TASMOTA_CLIENT_FLASH_SPEED 57600      // Usually 57600 for 3.3V variants and 115200 for 5V variants
   #define USE_TASMOTA_CLIENT_SERIAL_SPEED 57600     // Depends on the sketch that is running on the Uno/Pro Mini
-#endif  // CUSTOM_CONFIG_FULLRULES *******************************************************************
+#endif  
+
+#ifdef ESP32
+  #define USE_BERRY
+  #define USE_BERRY_PSRAM
+  #define USE_WEBCLIENT
+  #define USE_WEBCLIENT_HTTPS
+#endif  // ESP32
+
+// CUSTOM_CONFIG_FULLRULES *******************************************************************
 
 /*
   .oooooo.   oooooooooo.   ooooooooo.     .oooooo.   ooooo oooooooooo.   
@@ -2291,7 +2307,7 @@ o888o           `YbodP'    o888ooooood8 o888ooooood8 o888o  o888o    `YbodP'    
   #define USE_BERRY
   #define USE_BERRY_PSRAM
   #define USE_WEBCLIENT
-//  #define USE_WEBCLIENT_HTTPS
+  #define USE_WEBCLIENT_HTTPS
 #endif  // ESP32
 
 #define USE_WEBSERVER                            // Enable web server and Wifi Manager (+66k code, +8k mem)
@@ -2495,7 +2511,7 @@ o888ooooood8   "888" o888o o888o `Y8bod8P' d888b    o888o o888o `Y8bod8P'   "888
   #define USE_BERRY
   #define USE_BERRY_PSRAM
   #define USE_WEBCLIENT
-//  #define USE_WEBCLIENT_HTTPS
+  #define USE_WEBCLIENT_HTTPS
 #endif  // ESP32
 
 #define USE_DOMOTICZ                             // Enable Domoticz (+6k code, +0.3k mem)
@@ -2788,7 +2804,7 @@ o8o        o888o o888ooooood8  `Y8bood8P'   o88o     o8888o
   #define USE_BERRY
   #define USE_BERRY_PSRAM
   #define USE_WEBCLIENT
-//  #define USE_WEBCLIENT_HTTPS
+  #define USE_WEBCLIENT_HTTPS
 #endif  // ESP32
 
 //#define USE_SCRIPT                               // Add support for script
@@ -3067,7 +3083,7 @@ o8o        o888o o888ooooood8  `Y8bood8P'   o88o     o8888o
   #define USE_BERRY
   #define USE_BERRY_PSRAM
   #define USE_WEBCLIENT
-//  #define USE_WEBCLIENT_HTTPS
+  #define USE_WEBCLIENT_HTTPS
 #endif  // ESP32
 
 //#define USE_SCRIPT                               // Add support for script
@@ -3370,7 +3386,7 @@ o888o        o888ooooood8 o88o     o8888o     o888o     o888o o8o        `8     
   #define USE_BERRY
   #define USE_BERRY_PSRAM
   #define USE_WEBCLIENT
-//  #define USE_WEBCLIENT_HTTPS
+  #define USE_WEBCLIENT_HTTPS
 #endif  // ESP32
 
 //#ifdef  ESP8266
