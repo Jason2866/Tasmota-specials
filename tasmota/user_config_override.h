@@ -467,6 +467,8 @@ d'""""""d888' `888'  d8P'  `Y8b   `888'   `Y8b `888'     `8 `888'     `8
   #define USE_SCRIPT_FATFS 4                     // Add support for script storage on SD card (+12k code, +4k mem)
 
 #ifdef ESP32
+  #undef OTA_URL
+  #define OTA_URL "https://github.com/tasmota/install/raw/main/firmware/unofficial/tasmota32-zigbee.bin"
   #define USE_BERRY
   #define USE_BERRY_PSRAM
   #define USE_WEBCLIENT
@@ -741,6 +743,8 @@ dBBBBBP     dBP     dBBBBb    dBBBBb     dBBBP      dBBBP     dBBBBb   dBBBBBb  
   #define USE_SCRIPT_FATFS 4                     // Add support for script storage on SD card (+12k code, +4k mem)
 
 #ifdef ESP32
+  #undef OTA_URL
+  #define OTA_URL "https://github.com/tasmota/install/raw/main/firmware/unofficial/tasmota32-zigbeebridge.bin"
   #define USE_BERRY
   #define USE_BERRY_PSRAM
   #define USE_WEBCLIENT
@@ -1204,6 +1208,8 @@ dBBBBBP     dBP     dBBBBb    dBBBBb     dBBBP      dBBBP     dBBBBb   dBBBBBb  
 //#define USE_TASMOTA_CLIENT                       // Add support for Arduino Uno/Pro Mini via serial interface including flashing (+2k3 code, 44 mem)
 
 #ifdef ESP32
+  #undef OTA_URL
+  #define OTA_URL "https://github.com/tasmota/install/raw/main/firmware/unofficial/tasmota32-gps.bin"
   #define USE_BERRY
   #define USE_BERRY_PSRAM
   #define USE_WEBCLIENT
@@ -1337,6 +1343,8 @@ oo     .d8P `88b    ooo   888  `88b.   888   888              888       888   8 
 #endif // ESP32
 
 #ifdef ESP32
+  #undef OTA_URL
+  #define OTA_URL "https://github.com/tasmota/install/raw/main/firmware/unofficial/tasmota32-scripting.bin"
   #define USE_BERRY
   #define USE_BERRY_PSRAM
   #define USE_WEBCLIENT
@@ -1980,6 +1988,8 @@ Thermostat
   #define USE_TASMOTA_CLIENT_SERIAL_SPEED 57600     // Depends on the sketch that is running on the Uno/Pro Mini
 
 #ifdef ESP32
+  #undef OTA_URL
+  #define OTA_URL "https://github.com/tasmota/install/raw/main/firmware/unofficial/tasmota32-thermostat.bin"
   #define USE_BERRY
   #define USE_BERRY_PSRAM
   #define USE_WEBCLIENT
@@ -2275,6 +2285,8 @@ o888o           `YbodP'    o888ooooood8 o888ooooood8 o888o  o888o    `YbodP'    
 #endif  
 
 #ifdef ESP32
+  #undef OTA_URL
+  #define OTA_URL "https://github.com/tasmota/install/raw/main/firmware/unofficial/tasmota32-fullrules.bin"
   #define USE_BERRY
   #define USE_BERRY_PSRAM
   #define USE_WEBCLIENT
@@ -2508,6 +2520,8 @@ o888ooooood8   "888" o888o o888o `Y8bod8P' d888b    o888o o888o `Y8bod8P'   "888
 #define GUI_TRASH_FILE
 
 #ifdef ESP32
+  #undef OTA_URL
+  #define OTA_URL "https://github.com/tasmota/install/raw/main/firmware/unofficial/tasmota32-ethernet.bin"
   #define USE_BERRY
   #define USE_BERRY_PSRAM
   #define USE_WEBCLIENT
@@ -2801,6 +2815,8 @@ o8o        o888o o888ooooood8  `Y8bood8P'   o88o     o8888o
 #define GUI_TRASH_FILE
 
 #ifdef ESP32
+  #undef OTA_URL
+  #define OTA_URL "https://github.com/tasmota/install/raw/main/firmware/unofficial/tasmota32-mega.bin"
   #define USE_BERRY
   #define USE_BERRY_PSRAM
   #define USE_WEBCLIENT
@@ -3080,6 +3096,8 @@ o8o        o888o o888ooooood8  `Y8bood8P'   o88o     o8888o
 #define GUI_TRASH_FILE
 
 #ifdef ESP32
+  #undef OTA_URL
+  #define OTA_URL "https://github.com/tasmota/install/raw/main/firmware/unofficial/tasmota32-allsensors.bin"
   #define USE_BERRY
   #define USE_BERRY_PSRAM
   #define USE_WEBCLIENT
@@ -3383,6 +3401,8 @@ o888o        o888ooooood8 o88o     o8888o     o888o     o888o o8o        `8     
  #define SUPPORT_MQTT_EVENT                     // Support trigger event with MQTT subscriptions (+3k5 code)
 
 #ifdef ESP32
+  #undef OTA_URL
+  #define OTA_URL "https://github.com/tasmota/install/raw/main/firmware/unofficial/tasmota32-platinum.bin"
   #define USE_BERRY
   #define USE_BERRY_PSRAM
   #define USE_WEBCLIENT
@@ -3641,6 +3661,8 @@ o888o        o888ooooood8 o88o     o8888o     o888o     o888o o8o        `8     
   #define GUI_EDIT_FILE
 
 #ifdef ESP32
+  #undef OTA_URL
+  #define OTA_URL "https://github.com/tasmota/install/raw/main/firmware/unofficial/tasmota32-udisplay.bin"
   #define USE_BERRY
   #define USE_BERRY_PSRAM
   #define USE_WEBCLIENT
