@@ -17,6 +17,7 @@ Official ✨ Tasmota ✨ firmware files are [here](https://github.com/arendst/Ta
  - tasmota32s2 - Beta support for ESP32-S2 chip
  - tasmota-battery - extremely cut down build for battery powered Tuya sensors
  - tasmota32-ethernet - (ESP32 only) for wired LAN, works only on devices with Ethernet hardware!
+ - tasmota32-teleinfo - (ESP32 only) for Teleinfo French metering system, MQTT and TLS included 
  - tasmota32-zigbeebridge - ESP32 based [ZigbeeBridge](https://templates.blakadder.com/ewelink_ZB-GW03.html)
  - tasmota-zigbee - Zigbee for TI based chips (Esp8266 and ESP32)
  - tasmota-fullrules - Rules with all the features (expressions, If statements, MQTT subscription)
@@ -29,5 +30,6 @@ Official ✨ Tasmota ✨ firmware files are [here](https://github.com/arendst/Ta
  - tasmota-scripting - all scripting features instead of rules + Smart Meter Interface enabled
  - tasmota-thermostat - Thermostat, PID driver and temperature sensors
  - tasmota32solo1-thermostat - ESP32 Single Core Thermostat, PID driver and temperature sensors (such as Shelly Plus 1PM)
+ - tasmota-teleinfo - For Teleinfo French metering system, MQTT enabled but No TLS due to lack of ressources
  - tasmota-tls - MQTT TLS enabled
  - tasmota32-udisplay - ESP32 only, uses Universal Display Driver
