@@ -2022,13 +2022,6 @@ Teleinfo
   #define USE_SUNRISE                            // Add support for Sunrise and sunset tools (+16k)
     #define SUNRISE_DAWN_ANGLE DAWN_NORMAL       // Select desired Dawn Angle from (DAWN_NORMAL, DAWN_CIVIL, DAWN_NAUTIC, DAWN_ASTRONOMIC)
 
-#ifdef ESP32
-  #define USE_BERRY
-  #define USE_BERRY_PSRAM
-  #define USE_WEBCLIENT
-  #define USE_WEBCLIENT_HTTPS
-#endif  // ESP32
-
 // -- Compression ---------------------------------
 #define USE_UNISHOX_COMPRESSION                  // Add support for string compression in Rules or Scripts
 
