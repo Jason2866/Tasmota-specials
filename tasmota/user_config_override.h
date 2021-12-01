@@ -1902,10 +1902,10 @@ Thermostat
 // -- Power monitoring sensors --------------------
 //#define USE_ENERGY_MARGIN_DETECTION              // Add support for Energy Margin detection (+1k6 code)
   #define USE_ENERGY_POWER_LIMIT                 // Add additional support for Energy Power Limit detection (+1k2 code)
-//#define USE_PZEM004T                             // Add support for PZEM004T Energy monitor (+2k code)
-//#define USE_PZEM_AC                              // Add support for PZEM014,016 Energy monitor (+1k1 code)
-//#define USE_PZEM_DC                              // Add support for PZEM003,017 Energy monitor (+1k1 code)
-//#define USE_MCP39F501                            // Add support for MCP39F501 Energy monitor as used in Shelly 2 (+3k1 code)
+  #define USE_PZEM004T                             // Add support for PZEM004T Energy monitor (+2k code)
+  #define USE_PZEM_AC                              // Add support for PZEM014,016 Energy monitor (+1k1 code)
+  #define USE_PZEM_DC                              // Add support for PZEM003,017 Energy monitor (+1k1 code)
+  #define USE_MCP39F501                            // Add support for MCP39F501 Energy monitor as used in Shelly 2 (+3k1 code)
 //#define USE_SDM120                               // Add support for Eastron SDM120-Modbus energy monitor (+1k1 code)
   #define SDM120_SPEED         2400              // SDM120-Modbus RS485 serial speed (default: 2400 baud)
 //#define USE_SDM630                               // Add support for Eastron SDM630-Modbus energy monitor (+0k6 code)
@@ -1920,6 +1920,7 @@ Thermostat
 //#define USE_LE01MR                               // Add support for F&F LE-01MR Modbus energy monitor (+1k code)
   #define LE01MR_SPEED         9600              // LE-01MR modbus baudrate (default: 9600)
   #define LE01MR_ADDR          1                 // LE-01MR modbus address (default: 0x01)
+  #define USE_BL0940                              // Add support for BL0940 Energy monitor as used in Blitzwolf SHP-10 (+1k6 code)
 
 // -- Low level interface devices -----------------
 #define USE_DHT                                  // Add support for DHT11, AM2301 (DHT21, DHT22, AM2302, AM2321) and SI7021 Temperature and Humidity sensor (1k6 code)
