@@ -29,7 +29,8 @@ Official ✨ Tasmota ✨ firmware files are [here](https://github.com/arendst/Ta
  - tasmota-rangeextender - Experimental build where Tasmota acts as AP range extender
  - tasmota-scripting - all scripting features instead of rules + Smart Meter Interface enabled
  - tasmota-thermostat - Thermostat, PID driver and temperature sensors
- - tasmota32solo1-thermostat - ESP32 Single Core Thermostat, PID driver and temperature sensors (such as Shelly Plus 1PM)
+ - tasmota32solo1-thermostat - ESP32 Single Core Thermostat, PID driver and temperature sensors (used on Shelly Plus 1PM for example)
+ - tasmota32solo1-thermostat-bluetooth - ESP32 Single Core Thermostat, PID driver and Bluetooth temperature sensors (used on Shelly Plus 1PM for example)
  - tasmota-teleinfo - For Teleinfo French metering system, MQTT enabled but No TLS due to lack of ressources
  - tasmota-tls - MQTT TLS enabled
  - tasmota32-udisplay - ESP32 only, uses Universal Display Driver
