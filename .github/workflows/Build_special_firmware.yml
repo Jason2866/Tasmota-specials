@@ -789,7 +789,7 @@ jobs:
         path: ./build_output
 
   Upload:
-    needs: [tasmota-thermostat, tasmota-teleinfo, tasmota-tls, tasmota-fullrules, tasmota-allsensors, tasmota-platinum, tasmota-rangeextender, tasmota-minicustom, tasmota32-scripting, tasmota32-thermostat, tasmota32-teleinfo, tasmota32-tls, tasmota32-mega, tasmota32-allsensors, tasmota32-zigbee, tasmota32-zigbeebridge, tasmota32-fullrules, tasmota32-platinum, tasmota32-minicustom, tasmota32-ethernet, tasmota32-gps, tasmota32-udisplay, tasmota32-rangeextender, tasmota32solo1-bluetooth, tasmota32solo1-thermostat, tasmota32c3, tasmota32c3-bluetooth, tasmota32s2, tasmota32-battery]
+    needs: [tasmota-thermostat, tasmota-teleinfo, tasmota-tls, tasmota-fullrules, tasmota-allsensors, tasmota-platinum, tasmota-rangeextender, tasmota-minicustom, tasmota32-scripting, tasmota32-thermostat, tasmota32-teleinfo, tasmota32-tls, tasmota32-mega, tasmota32-allsensors, tasmota32-zigbee, tasmota32-zigbeebridge, tasmota32-fullrules, tasmota32-platinum, tasmota32-minicustom, tasmota32-ethernet, tasmota32-gps, tasmota32-udisplay, tasmota32-rangeextender, tasmota32solo1-bluetooth, tasmota32solo1-thermostat, tasmota32solo1-thermostat-bluetooth, tasmota32c3, tasmota32c3-bluetooth, tasmota32s2, tasmota32-battery]
     runs-on: ubuntu-latest
     continue-on-error: true
     steps:
