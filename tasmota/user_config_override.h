@@ -2011,6 +2011,8 @@ Teleinfo
 #undef OTA_URL
 #define OTA_URL                " "  // [OtaUrl]
 
+#define DISABLE_ESP32_BROWNOUT                   // Lot of Old MH & Live clone have poor regulators/caps that fire brownout reset on WiFi connection
+
 #define USE_MQTT_TLS                             // Use TLS for MQTT connection (+34.5k code, +7.0k mem and +4.8k additional during connection handshake)
   #define USE_MQTT_TLS_CA_CERT  
 
