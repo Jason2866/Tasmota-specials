@@ -2011,6 +2011,9 @@ Teleinfo
 #undef OTA_URL
 #define OTA_URL                " "  // [OtaUrl]
 
+#define USE_MQTT_TLS                             // Use TLS for MQTT connection (+34.5k code, +7.0k mem and +4.8k additional during connection handshake)
+  #define USE_MQTT_TLS_CA_CERT  
+
 #define USE_DOMOTICZ                             // Enable Domoticz (+6k code, +0.3k mem)
 #define USE_TASMOTA_DISCOVERY
 #define USE_WEBSERVER                            // Enable web server and Wifi Manager (+66k code, +8k mem)
