@@ -1,6 +1,7 @@
 name: Build_special_firmware
 
 on:
+  workflow_dispatch:
   push:
     branches: start_build
     paths-ignore:
