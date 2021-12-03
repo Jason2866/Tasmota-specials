@@ -13,8 +13,9 @@ jobs:
     runs-on: ubuntu-latest
     continue-on-error: false
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
       with:
+        fetch-depth: 0
         ref: special_builder
     - name: Use latest Tasmota development
       run: |
