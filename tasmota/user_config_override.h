@@ -1646,7 +1646,7 @@ Thermostat
 // -- Thermostat control ----------------------------
 #define USE_THERMOSTAT                           // Add support for Thermostat
 
-#define USE_TIMEPROP    //  include the timeprop feature (+1.2k)
+//#define USE_TIMEPROP    //  include the timeprop feature (+1.2k)
    // for single output
    #define TIMEPROP_NUM_OUTPUTS          1       // how many outputs to control (with separate alogorithm for each)
    #define TIMEPROP_CYCLETIMES           60      // cycle time seconds
@@ -1656,7 +1656,7 @@ Thermostat
    #define TIMEPROP_MAX_UPDATE_INTERVALS 120     // max no secs that are allowed between power updates (0 to disable)
    #define TIMEPROP_RELAYS               1       // which relay to control 1:8
 
-#define USE_PID                                  // include the pid feature (+4.3k)
+//#define USE_PID                                  // include the pid feature (+4.3k)
                                                  // All following are default driver, just uncomment them if you need
                                                  // to change default values
    //#define PID_SETPOINT                  19.5    // Setpoint value. This is the process value that the process is
@@ -2212,7 +2212,8 @@ Teleinfo
 #define USE_PZEM_AC                              // Add support for PZEM014,016 Energy monitor (+1k1 code)
 #define USE_PZEM_DC                              // Add support for PZEM003,017 Energy monitor (+1k1 code)
 #define USE_MCP39F501                            // Add support for MCP39F501 Energy monitor as used in Shelly 2 (+3k1 code)
-  #define SDM120_SPEED         9600              // SDM120-Modbus RS485 serial speed (default: 9600 baud)
+#define USE_SDM120                               // Add support for Eastron SDM630-Modbus energy monitor (+0k6 code)
+  #define SDM120_SPEED         9600              // SDM120-Modbus RS485 serial speed (latest devices default: 9600 baud)
 #define USE_SDM630                               // Add support for Eastron SDM630-Modbus energy monitor (+0k6 code)
   #define SDM630_SPEED         9600              // SDM630-Modbus RS485 serial speed (default: 9600 baud)
 #define USE_DDS2382                              // Add support for Hiking DDS2382 Modbus energy monitor (+0k6 code)
