@@ -216,6 +216,17 @@ ooooo     ooo ooooo      ooo oooooooooo.   oooooooooooo oooooooooooo ooooo ooooo
 #undef USE_TELEINFO                             // Disable support for Teleinfo via serial RX interface (+5k2 code, +168 RAM + SmartMeter LinkedList Values RAM)
 #undef USE_IEM3000                              // Disable support for Schneider Electric iEM3000-Modbus series energy monitor (+0k8 code)
 #undef USE_IEM3000                              // Disable support for Schneider Electric iEM3000-Modbus series energy monitor (+0k8 code)
+#undef SDM72_SPEED
+#undef SDM120_SPEED
+#undef SDM630_SPEED
+#undef DDS2382_SPEED
+#undef DDSU666_SPEED
+#undef SOLAXX1_SPEED
+#undef SOLAXX1_PV2
+#undef LE01MR_SPEED
+#undef LE01MR_ADDR
+#undef IEM3000_SPEED
+#undef IEM3000_ADDR
 
 // -- Low level interface devices -----------------
 #undef USE_DHT                                  // Disable support for DHT11, AM2301 (DHT21, DHT22, AM2302, AM2321) and SI7021 Temperature and Humidity sensor
