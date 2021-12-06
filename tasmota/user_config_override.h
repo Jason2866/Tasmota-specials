@@ -215,7 +215,6 @@ ooooo     ooo ooooo      ooo oooooooooo.   oooooooooooo oooooooooooo ooooo ooooo
 #undef USE_BL0940                               // Disable support for BL0940 Energy monitor as used in Blitzwolf SHP-10 (+1k6 code)
 #undef USE_TELEINFO                             // Disable support for Teleinfo via serial RX interface (+5k2 code, +168 RAM + SmartMeter LinkedList Values RAM)
 #undef USE_IEM3000                              // Disable support for Schneider Electric iEM3000-Modbus series energy monitor (+0k8 code)
-#undef USE_IEM3000                              // Disable support for Schneider Electric iEM3000-Modbus series energy monitor (+0k8 code)
 #undef SDM72_SPEED
 #undef SDM120_SPEED
 #undef SDM630_SPEED
