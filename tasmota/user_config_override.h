@@ -2010,11 +2010,16 @@ Thermostat
 
 #ifdef ESP32
   #undef OTA_URL
-  #define OTA_URL "https://github.com/tasmota/install/raw/main/firmware/unofficial/tasmota32-thermostat.bin"
+  #define OTA_URL "https://github.com/tasmota/install/raw/main/firmware/unofficial/tasmota32-thermostat-bluetooth.bin"
   #define USE_BERRY
   #define USE_BERRY_PSRAM
   #define USE_WEBCLIENT
   #define USE_WEBCLIENT_HTTPS
+
+  #define USE_BLE_ESP32                            // Enable new BLE driver
+  #define USE_EQ3_ESP32
+  #define USE_MI_ESP32                             // (ESP32 only) Add support for ESP32 as a BLE-bridge (+9k2 mem, +292k flash)
+
 #endif  // ESP32
 
 #endif  // CUSTOM_CONFIG_THERMOSTAT *******************************************************************
