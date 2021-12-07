@@ -343,27 +343,6 @@ jobs:
         pip install -U https://github.com/platformio/platformio-core/archive/develop.zip
     - name: Run PlatformIO
       run: |
-        platformio run -e tasmota32solo1-thermostat
-    - uses: actions/upload-artifact@v2
-      with:
-        name: firmware
-        path: ./build_output
-
-  tasmota32solo1-thermostat-bluetooth:
-    needs: tasmota_pull
-    runs-on: ubuntu-latest
-    continue-on-error: true
-    steps:
-    - uses: actions/checkout@v2
-      with:
-        ref: special_builder
-    - name: Set up Python
-      uses: actions/setup-python@v1
-    - name: Install dependencies
-      run: |
-        pip install -U https://github.com/platformio/platformio-core/archive/develop.zip
-    - name: Run PlatformIO
-      run: |
         platformio run -e tasmota32solo1-thermostat-bluetooth
     - uses: actions/upload-artifact@v2
       with:
