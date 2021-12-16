@@ -2,9 +2,9 @@
 
 ## :warning: No support/warranty with these binaries! :warning:
 
-[![Build_special_firmware](https://github.com/Jason2866/Tasmota-specials/actions/workflows/Build_special_firmware.yml/badge.svg)](https://github.com/Jason2866/Tasmota-specials/actions/workflows/Build_special_firmware.yml)
+[![Build_special_firmware](https://github.com/Jason2866/Tasmota-build/actions/workflows/Build_special_firmware.yml/badge.svg)](https://github.com/Jason2866/Tasmota-build/actions/workflows/Build_special_firmware.yml)
 
-## The special firmware files are [here](https://github.com/Jason2866/Tasmota-specials/tree/firmware/firmware).<br>
+## The special firmware files are [here](https://github.com/Jason2866/Tasmota-specials/).<br>
 Official ✨ Tasmota ✨ firmware files are [here](https://github.com/arendst/Tasmota-firmware)
 
 ## For easy flashing Tasmota use:
