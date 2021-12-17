@@ -26,7 +26,7 @@ Official ✨ Tasmota ✨ firmware files are [here](https://github.com/arendst/Ta
  - tasmota-mega - big binary, almost every sensor included, OTA possible only with minimal
  - tasmota-allsensors - guess whats in ;-)
  - tasmota-platinum - IT...IS...HUGE!!! nearly everything is enabled (only for devices with >=4Mb flash)
- - tasmota-titanium - as platinum with scripting and MFRC522 RFID reader enabled
+ - tasmota-titanium - as platinum with scripting enabled
  - tasmota-rangeextender - Experimental build where Tasmota acts as AP range extender
  - tasmota-scripting - all scripting features instead of rules + Smart Meter Interface enabled
  - tasmota-thermostat - Thermostat driver and temperature sensors (ESP32 has Bluetooth included)
