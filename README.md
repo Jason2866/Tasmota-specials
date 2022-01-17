@@ -22,7 +22,7 @@ Official ✨ Tasmota ✨ firmware files are [here](https://github.com/arendst/Ta
  - tasmota-zigbee - Zigbee for TI based chips (Esp8266 and ESP32)
  - tasmota-fullrules - Rules with all the features (expressions, If statements, MQTT subscription)
  - tasmota-minicustom - even smaller minimal build, **only for Updates (warning MQTT only! No Webserver)**
- - tasmota32-minicustom - TLS/MQTT_TLS enabled, for resizing Partitions. **only for Updates** [More Info](https://github.com/arendst/Tasmota/pull/14401) 
+ - tasmota32-minicustom - TLS/MQTT_TLS and HTTPS enabled, for resizing Partitions. **only for Updates** [More Info](https://github.com/arendst/Tasmota/pull/14401) 
  - tasmota-gps - GPS driver enabled
  - tasmota-mega - big binary, almost every sensor included, OTA possible only with minimal
  - tasmota-allsensors - guess whats in ;-)
