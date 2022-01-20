@@ -36,3 +36,4 @@ Official ✨ Tasmota ✨ firmware files are [here](https://github.com/arendst/Ta
  - tasmota-tls - MQTT TLS enabled
  - tasmota32-udisplay - ESP32 only, uses Universal Display Driver
  - tasmota32-nspanel - Tasmota for Sonoff NSPanel
+ - tasmota32(c3)-mi-homebridge - Homebridge for BLE devices (Apple Homekit support)
