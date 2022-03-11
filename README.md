@@ -33,6 +33,5 @@ Official ✨ Tasmota ✨ firmware files are [here](https://github.com/arendst/Ta
  - tasmota32solo1-thermostat - ESP32 Single Core Thermostat driver and Bluetooth temperature sensors (used on Shelly Plus 1PM for example)
  - tasmota-teleinfo - For Teleinfo French metering system, MQTT enabled but No TLS due to lack of ressources
  - tasmota-tls - MQTT TLS enabled
- - tasmota32-udisplay - ESP32 only, uses Universal Display Driver
  - tasmota32-nspanel - Tasmota for Sonoff NSPanel
  - tasmota32(c3)-mi-homebridge - Homebridge for MI BLE devices (Apple Homekit support)
