@@ -1,6 +1,5 @@
-.. image:: https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/banner-direct.svg
-    :target: https://github.com/vshymanskyy/StandWithUkraine/blob/main/docs/README.md
-    :alt:  SWUbanner
+[![Build_special_firmware](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/banner-direct.svg)](https://github.com/vshymanskyy/StandWithUkraine/blob/main/docs/README.md)
+
 
 ## These special Tasmota binaries are not official stable releases
 
