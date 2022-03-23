@@ -1,0 +1,14 @@
+{
+  "name": "Tasmota32-S3 (english)",
+  "home_assistant_domain": "tasmota",
+  "new_install_prompt_erase": true,
+  "builds": [
+    {
+      "chipFamily": "ESP32-S3",
+      "improv": false,
+      "parts": [
+        { "path": "../firmware/tasmota32/other/tasmota32s3.factory.bin", "offset": 0 }
+      ]
+    }
+  ]
+}
