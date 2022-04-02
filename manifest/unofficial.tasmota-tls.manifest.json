@@ -5,6 +5,7 @@
   "builds": [
     {
       "chipFamily": "ESP8266",
+      "improv": true,
       "parts": [{ "path": "../firmware/tasmota/other/tasmota-tls.bin", "offset": 0 }]
     }
   ]

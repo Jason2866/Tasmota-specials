@@ -6,14 +6,14 @@
   "builds": [
     {
       "chipFamily": "ESP32-C3",
-      "improv": false,
+      "improv": true,
       "parts": [
         { "path": "../firmware/tasmota32/other/tasmota32c3-bluetooth.factory.bin", "offset": 0 }
       ]
     },
     {
       "chipFamily": "ESP32-S3",
-      "improv": false,
+      "improv": true,
       "parts": [
         { "path": "../firmware/tasmota32/other/tasmota32s3-bluetooth.factory.bin", "offset": 0 }
       ]
