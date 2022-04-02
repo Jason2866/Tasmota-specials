@@ -1,6 +1,6 @@
 {
-    "name": "Tasmota32 ZigbeeBridge (english)",
-    "home_assistant_domain": "tasmota",
+  "name": "Tasmota32 ZigbeeBridge (english)",
+  "home_assistant_domain": "tasmota",
   "new_install_prompt_erase": true,
   "builds": [
       {
