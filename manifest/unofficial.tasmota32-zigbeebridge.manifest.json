@@ -2,6 +2,7 @@
   "name": "Tasmota32 ZigbeeBridge (english)",
   "home_assistant_domain": "tasmota",
   "new_install_prompt_erase": true,
+  "funding_url": "https://paypal.me/tasmota",
   "builds": [
       {
         "chipFamily": "ESP32",
