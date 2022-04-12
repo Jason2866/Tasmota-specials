@@ -1,7 +1,7 @@
 {
   "name": "Tasmota32-S2 S3 (english)",
   "new_install_prompt_erase": true,
-  "funding_url": "https://paypal.me/tasmota",
+  "funding_url": "https://github.com/tasmota/docs/blob/gh-pages/About/index.html",
   "builds": [
     {
       "chipFamily": "ESP32-S2",
