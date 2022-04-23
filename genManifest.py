@@ -98,8 +98,8 @@ def main(args):
         merged = sorted(output[section][0],key=lambda d: d['name']) + sorted(output[section][1],key=lambda d: d['name']) + sorted(output[section][2],key=lambda d: d['name']) + sorted(output[section][3],key=lambda d: d['name']) + sorted(output[section][4],key=lambda d: d['name']) + sorted(output[section][5],key=lambda d: d['name'])
         output[section] = merged
 
-    release = output.pop("release")
-    development  = output.pop("development")
+    #release = output.pop("release")
+    #development  = output.pop("development")
     unofficial = output.pop("unofficial")
 
 
