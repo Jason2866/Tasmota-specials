@@ -16,15 +16,13 @@ Official ✨ Tasmota ✨ firmware files are [here](https://github.com/arendst/Ta
 
 ## Build variants:
  - tasmota32c3 - Support for ESP32-C3 2M no OTA variant (tasmota32c3_2M)
- - tasmota32c3-bluetooth - Support for BLE
- - tasmota32s2 - Beta support for ESP32-S2 chip
+ - tasmota32(c3/s3)-bluetooth - Support for BLE
  - tasmota-battery - extremely cut down build for battery powered Tuya sensors
  - tasmota32-teleinfo - (ESP32 only) for Teleinfo French metering system, MQTT and TLS included 
  - tasmota32-zigbeebridge - ESP32 based [ZigbeeBridge](https://templates.blakadder.com/ewelink_ZB-GW03.html)
  - tasmota-zigbee - Zigbee for TI based chips (Esp8266 and ESP32)
  - tasmota-fullrules - Rules with all the features (expressions, If statements, MQTT subscription)
  - tasmota-minicustom - even smaller minimal build, **only for Updates (warning MQTT only! No Webserver)**
- - tasmota32-minicustom - TLS/MQTT_TLS and HTTPS enabled, for resizing Partitions. **only for Updates** [More Info](https://github.com/arendst/Tasmota/pull/14401) 
  - tasmota-gps - GPS driver enabled
  - tasmota-mega - big binary, almost every sensor included, OTA possible only with minimal
  - tasmota-allsensors - guess whats in ;-)
@@ -36,5 +34,5 @@ Official ✨ Tasmota ✨ firmware files are [here](https://github.com/arendst/Ta
  - tasmota32solo1-thermostat - ESP32 Single Core Thermostat driver and Bluetooth temperature sensors (used on Shelly Plus 1PM for example)
  - tasmota-teleinfo - For Teleinfo French metering system, MQTT enabled but No TLS due to lack of ressources
  - tasmota-tls - MQTT TLS enabled
- - tasmota32-nspanel - Tasmota for Sonoff NSPanel
- - tasmota32(c3)-mi-homebridge - Homebridge for MI BLE devices (Apple Homekit support)
+ - tasmota32-nspanel - Tasmota for Sonoff NSPanel and Sonoff ZigbeeBridge Pro
+ - tasmota32(c3/s3)-mi-homebridge - Homebridge for MI BLE devices (Apple Homekit support)
