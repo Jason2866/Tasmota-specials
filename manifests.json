@@ -143,6 +143,13 @@
             ]
         },
         {
+            "path": "https://Jason2866.github.io/Tasmota-specials/manifest_ext/unofficial.tasmota32-zbbrdgpro.manifest.json",
+            "name": "Tasmota32 Sonoff-ZigbeeBridgePro",
+            "chipFamilies": [
+                "ESP32"
+            ]
+        },
+        {
             "path": "https://Jason2866.github.io/Tasmota-specials/manifest_ext/unofficial.tasmota32-zigbeebridge.manifest.json",
             "name": "Tasmota32 ZigbeeBridge (english)",
             "chipFamilies": [
