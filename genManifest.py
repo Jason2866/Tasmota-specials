@@ -100,13 +100,13 @@ def main(args):
 
     #release = output.pop("release")
     #development  = output.pop("development")
-    unofficial = output.pop("UNOFFICIAL")
+    unofficial = output.pop("unofficial")
 
 
     final_json = {}
     #final_json["release"] = release
     #final_json["development"] = development
-    final_json["UNOFFICIAL"] = unofficial
+    final_json["unofficial"] = unofficial
     for key in output:
         final_json[key] = output[key] # just in case we have another section in the future
 
