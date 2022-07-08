@@ -150,7 +150,7 @@
             ]
         },
         {
-            "path": "https://Jason2866.github.io/Tasmota-specials/manifest_ext/unofficial.tasmota32s3-BOX.manifest.json",
+            "path": "https://Jason2866.github.io/Tasmota-specials/manifest_ext/unofficial.tasmota32s3cdc-box.manifest.json",
             "name": "Tasmota32-S3 BOX (english)",
             "chipFamilies": [
                 "ESP32-S3"
