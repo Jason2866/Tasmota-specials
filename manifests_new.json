@@ -151,7 +151,7 @@
         },
         {
             "path": "https://Jason2866.github.io/Tasmota-specials/manifest_ext/unofficial.tasmota32s3cdc-qio_opi.manifest.json",
-            "name": "Tasmota32-S3 (16MB QIO Flash/8MB OPI PSRAM)",
+            "name": "Tasmota32-S3 (8MB QIO Flash/OPI PSRAM)",
             "chipFamilies": [
                 "ESP32-S3"
             ]
