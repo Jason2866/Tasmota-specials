@@ -1,5 +1,5 @@
 {
-  "name": "Tasmota32-S3 (16MB QIO Flash/8MB OPI PSRAM)",
+  "name": "Tasmota32-S3 (8MB QIO Flash/OPI PSRAM)",
   "new_install_prompt_erase": true,
   "funding_url": "https://paypal.me/tasmota",
   "builds": [
