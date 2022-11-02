@@ -38,7 +38,7 @@
             "improv": true,
             "parts": [
                 {
-                    "path": "https://Jason2866.github.io/Tasmota-specials/firmware/tasmota/other/tasmotas2-teleinfo.bin",
+                    "path": "https://Jason2866.github.io/Tasmota-specials/firmware/tasmota/other/tasmota32s2-teleinfo.bin",
                     "offset": 0
                 }
             ]
