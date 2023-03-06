@@ -14,18 +14,12 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Set up Python
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.8
     - name: Run genManifest.py
       run: |
         python genManifest.py
-    - name: Transfer the changed Manifest into the repository
-      run: |
-        git config --local user.name "GITHUB BUILD"
-        git config user.email github-actions@github.com
-        git add -f ./*
-        git commit -m ${GITHUB_SHA}
-    - name: Push the manifest files
-      uses: ad-m/github-push-action@master
+    - uses: stefanzweifel/git-auto-commit-action@v4
       with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        branch: 'firmware'
+        commit_message: Manifest(s) update
