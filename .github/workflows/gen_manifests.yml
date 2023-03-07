@@ -1,0 +1,25 @@
+name: Build absolute path manifest
+
+on:
+  workflow_dispatch:  # Manually start a workflow
+  push:
+    paths:
+      - 'manifest/**'
+
+jobs:
+
+  genManifestpy:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.8
+    - name: Run genManifest.py
+      run: |
+        python genManifest.py
+    - uses: stefanzweifel/git-auto-commit-action@v4
+      with:
+        commit_message: Manifest(s) update
