@@ -1,1 +1,1 @@
-Github Workflow to build the unofficial firmwares
+Github Workflow to deploy the unofficial fimrwares
