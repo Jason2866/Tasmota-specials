@@ -124,6 +124,7 @@ jobs:
         tas_com_tmp1=$(curl https://raw.githubusercontent.com/arendst/tmp_copy/action-development/trigger.txt)
         tas_com_tmp="Based on https://github.com/arendst/Tasmota/commit/${tas_com_tmp1}"
         tag_name_tmp="$(date -I).d.$tas_com_tmp1"
+        rm release-info.txt 2> /dev/null || echo > /dev/null
         echo "$tas_com_tmp" >> release-info.txt
         echo "$tag_name_tmp" >> tag_latest.txt
         echo "$tag_name_tmp" >> tag.txt
