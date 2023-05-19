@@ -76,7 +76,7 @@ jobs:
     - name: Upload repo as artifact
       uses: actions/upload-artifact@v3
       with:
-        name: firmware
+        name: artifact
         path: artifact
 
   empty_branch:
@@ -109,7 +109,7 @@ jobs:
     - name: Download repo artifact
       uses: actions/download-artifact@v3
       with:
-        name: firmware
+        name: artifact
         path: artifact
     - name: Display structure of downloaded files
       run: |
@@ -178,8 +178,6 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v2
-        with:
-          artifact_name: "firmware"
 
   start_workflow:
     needs: deploy
