@@ -88,8 +88,8 @@ jobs:
         ref: firmware
     - name: Create new empty firmware branch
       run: |
-        git config --global user.email github-actions@github.com
-        git config --global user.name github-actions
+        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git config user.name "github-actions[bot]"
         git switch --orphan new_branch                                 # create empty branch
         git commit --allow-empty -m "Initial commit"
         git push -u origin new_branch                                  # push empty branch in repo
@@ -158,8 +158,8 @@ jobs:
         rm -rf manifest_release
     - name: Push artifact content in branch firmware
       run: |
-        git config user.email github-actions@github.com
-        git config user.name "github-actions"
+        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git config user.name "github-actions[bot]"
         git add -A
         git commit --allow-empty -m "${{ env.tas_com }}"
         git push origin firmware -f
