@@ -114,13 +114,17 @@ jobs:
       run: |
         rm manifests_release.json
         rm -rf manifest_release
-    - name: Push artifact content in branch firmware
+    - name: Commit everything
       run: |
         git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
         git config user.name "github-actions[bot]"
         git add -A
         git commit --allow-empty -m "${{ env.tas_com }}"
-        git push origin firmware -f
+    - name: Push new content in branch firmware
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{secrets.GITHUB_TOKEN}}
+        branch: 'firmware'
     - uses: actions/checkout@v3
       with:
         ref: firmware
