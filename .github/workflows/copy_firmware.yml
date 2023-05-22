@@ -1,6 +1,7 @@
 name: copy_firmware
 
 on:
+  repository_dispatch:
   workflow_dispatch:
   push:
     branches: copy_firmware
@@ -13,74 +14,7 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  copycat32:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
-      with:
-        ref: firmware
-    - name: Build commit message copycat32
-      run: |
-        tas_com_tmp1=$(curl https://raw.githubusercontent.com/arendst/tmp_copy/action-development/trigger.txt)
-        tas_com_tmp="Based on https://github.com/arendst/Tasmota/commit/${tas_com_tmp1}"
-        echo "tas_com=$tas_com_tmp" >> $GITHUB_ENV
-    - name: copycat tasmota32
-      uses: andstor/copycat-action@v3
-      with:
-        personal_token: ${{ secrets.PERSONAL_TOKEN }}
-        src_path: firmware/tasmota32/other/.
-        src_branch: firmware
-        dst_path: firmware/unofficial
-        dst_owner: tasmota
-        dst_branch: firmware
-        dst_repo_name: install
-        username: workflow
-        commit_message: ${{ env.tas_com }}
-
-  copycat:
-    needs: copycat32
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
-      with:
-        ref: firmware
-    - name: Build commit message copycat
-      run: |
-        tas_com_tmp1=$(curl https://raw.githubusercontent.com/arendst/tmp_copy/action-development/trigger.txt)
-        tas_com_tmp="Based on https://github.com/arendst/Tasmota/commit/${tas_com_tmp1}"
-        echo "tas_com=$tas_com_tmp" >> $GITHUB_ENV
-    - name: copycat tasmota
-      uses: andstor/copycat-action@v3
-      with:
-        personal_token: ${{ secrets.PERSONAL_TOKEN }}
-        src_path: firmware/tasmota/other/.
-        src_branch: firmware
-        dst_path: firmware/unofficial
-        dst_owner: tasmota
-        dst_branch: firmware
-        dst_repo_name: install
-        username: workflow
-        commit_message: ${{ env.tas_com }}
-
-  save_repo:
-    needs: copycat
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
-      with:
-        ref: firmware
-    - name: Save repo as artifact
-      run: |
-        rsync -avR ./ artifact
-        rm -rf artifact/.git
-    - name: Upload repo as artifact
-      uses: actions/upload-artifact@v3
-      with:
-        name: firmware
-        path: artifact
-
   empty_branch:
-    needs: save_repo
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -106,22 +40,38 @@ jobs:
       with:
         token: ${{ secrets.MASTER_ACCESS_TOKEN }}
         ref: firmware
-    - name: Download repo artifact
-      uses: actions/download-artifact@v3
+    - name: Merge branch main into branch firmware
+      run: |
+        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git config user.name "github-actions[bot]"
+        git remote add -f mrg_main "https://github.com/Jason2866/Tasmota-specials.git" --track main
+        git switch -c work
+        git merge mrg_main/main --allow-unrelated-histories &> status.txt
+        echo "$(<status.txt)"
+      - name: Push into branch firmware
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{secrets.GITHUB_TOKEN}}
+          branch: 'firmware'
+    - name: Download artifact "special_firmwares"
+      uses: dawidd6/action-download-artifact@v2
       with:
-        name: firmware
-        path: artifact
+        github_token: ${{secrets.GITHUB_TOKEN}}
+        workflow: Build_special_firmware.yml
+        repo: Jason2866/Tasmota-build
+        name: special*
+        name_is_regexp: true
     - name: Display structure of downloaded files
       run: |
         ls -R
     - name: Move files back
       run: |
-        rsync -avR artifact/./ ./
-        rm -rf artifact
+        rsync -avR special_firmware/./ ./
+        rm -rf special_firmware
         rm tag_latest.txt 2> /dev/null || echo > /dev/null
     - name: Build Tag and commit message
       run: |
-        tas_com_tmp1=$(curl https://raw.githubusercontent.com/arendst/tmp_copy/action-development/trigger.txt)
+        tas_com_tmp1=$(curl -s "https://api.github.com/repos/arendst/tasmota/commits/development" | jq -r '.sha')
         tas_com_tmp="Based on https://github.com/arendst/Tasmota/commit/${tas_com_tmp1}"
         tag_name_tmp="$(date -I).d.$tas_com_tmp1"
         rm release-info.txt 2> /dev/null || echo > /dev/null
@@ -163,6 +113,15 @@ jobs:
         git add -A
         git commit --allow-empty -m "${{ env.tas_com }}"
         git push origin firmware -f
+    - uses: actions/checkout@v3
+      with:
+        ref: firmware
+    - name: Setup Pages
+      uses: actions/configure-pages@v2
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v1
+      with:
+        path: '.'
 
   deploy:
     needs: release_restore
@@ -175,37 +134,18 @@ jobs:
       pages: write
       id-token: write
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          ref: firmware
-      - name: Setup Pages
-        uses: actions/configure-pages@v2
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v1
-        with:
-          # Upload entire repository
-          path: '.'
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v1
+        uses: actions/deploy-pages@v2
 
   start_workflow:
     needs: deploy
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
-    - name: Creat trigger_devel.txt
+    - name: Dispatch workflow in repo Tasmota/install
       run: |
-         echo ${{ github.run_number }}  &> trigger_devel.txt
-         echo "$(<trigger_devel.txt)"
-    - name: Push trigger_devel.txt in repo tasmota/install to start workflow
-      uses: Jason2866/copy_file_to_another_repo_action@main
-      env:
-        API_TOKEN_GITHUB: ${{ secrets.MASTER_ACCESS_TOKEN }}
-      with:
-        source_file: 'trigger_devel.txt'
-        destination_repo: 'tasmota/install'
-        destination_branch: 'gh_actions'
-        user_email: 'github-actions@github.com'
-        user_name: 'github-actions'
+        curl -X POST https://api.github.com/repos/Tasmota/install/actions/workflows/devel_release_firmware.yml/dispatches \
+        -H 'Accept: application/vnd.github.everest-preview+json' \
+        -u ${{ secrets.MASTER_ACCESS_TOKEN }} \
+        --data '{"ref": "gh_actions"}'
