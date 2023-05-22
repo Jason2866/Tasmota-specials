@@ -70,8 +70,8 @@ jobs:
         mkdir -p ./firmware/tasmota/other/
         mkdir -p ./firmware/tasmota32/other/
         cp ./special_firmware/map/* ./firmware/map
-        cp ./special_firmware/firmware/tasmota32* ./firmware/tasmota32/other/
-        cp ./special_firmware/firmware/tasmota* ./firmware/tasmota/other/
+        mv ./special_firmware/firmware/tasmota32* ./firmware/tasmota32/other/
+        mv ./special_firmware/firmware/tasmota* ./firmware/tasmota/other/
         rm -rf ./special_firmware
         rm tag_latest.txt 2> /dev/null || echo > /dev/null
     - name: Build Tag and commit message
