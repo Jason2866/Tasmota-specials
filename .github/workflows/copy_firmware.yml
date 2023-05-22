@@ -48,11 +48,11 @@ jobs:
         git switch -c work
         git merge mrg_main/main --allow-unrelated-histories &> status.txt
         echo "$(<status.txt)"
-      - name: Push into branch firmware
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{secrets.GITHUB_TOKEN}}
-          branch: 'firmware'
+    - name: Push into branch firmware
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{secrets.GITHUB_TOKEN}}
+        branch: 'firmware'
     - name: Download artifact "special_firmwares"
       uses: dawidd6/action-download-artifact@v2
       with:
