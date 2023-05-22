@@ -61,9 +61,9 @@ jobs:
         repo: Jason2866/Tasmota-build
         name: special*
         name_is_regexp: true
-    - name: Display structure of downloaded files
+    - name: Display downloaded artifact files
       run: |
-        ls -R
+        ls -R ./special_firmware
     - name: Move files back
       run: |
         mkdir -p ./firmware/map
@@ -85,6 +85,9 @@ jobs:
         echo "$tag_name_tmp" >> tag.txt
         echo "tas_com=$tas_com_tmp" >> $GITHUB_ENV
         echo "tag_name=$tag_name_tmp" >> $GITHUB_ENV
+    - name: Display structure of updated content
+      run: |
+        ls -R
     - name: Update Manifest files
       run: |
         mkdir manifest_release
