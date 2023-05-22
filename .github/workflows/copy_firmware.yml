@@ -46,8 +46,7 @@ jobs:
         git config user.name "github-actions[bot]"
         git remote add -f mrg_main "https://github.com/Jason2866/Tasmota-specials.git" --track main
         git switch -c work
-        git merge mrg_main/main --allow-unrelated-histories &> status.txt
-        echo "$(<status.txt)"
+        git merge mrg_main/main --allow-unrelated-histories
     - name: Push into branch firmware
       uses: ad-m/github-push-action@master
       with:
