@@ -124,7 +124,19 @@ jobs:
       with:
         github_token: ${{secrets.GITHUB_TOKEN}}
         branch: 'firmware'
-    - uses: actions/checkout@v3
+    - name: Push changed tag files in branch main
+      uses: Jason2866/copy_file_to_another_repo_action@multi_files
+      env:
+        API_TOKEN_GITHUB: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        source_file: "tag.txt,tag_latest.txt"
+        destination_repo: 'Jason2866/Tasmota-specials'
+        destination_branch: 'main'
+        commit_message: "tag updated"
+        user_email: '41898282+github-actions[bot]@users.noreply.github.com'
+        user_name: 'github-actions[bot]'
+    - name: Checkout branch firmware for prepare deploy
+      uses: actions/checkout@v3
       with:
         ref: firmware
     - name: Setup Pages
