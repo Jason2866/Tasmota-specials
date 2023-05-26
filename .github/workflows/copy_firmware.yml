@@ -165,7 +165,6 @@ jobs:
     needs: release_restore
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
     - name: Dispatch workflow in repo Tasmota/install
       run: |
         curl -X POST https://api.github.com/repos/Tasmota/install/actions/workflows/devel_release_firmware.yml/dispatches \
