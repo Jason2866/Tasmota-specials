@@ -1,0 +1,23 @@
+{
+    "name": "Tasmota32-S3 BOX (english)",
+    "new_install_prompt_erase": true,
+    "funding_url": "https://paypal.me/tasmota",
+    "builds": [
+        {
+            "chipFamily": "ESP32-S3",
+            "improv": true,
+            "parts": [
+                {
+                    "path": "https://Jason2866.github.io/Tasmota-specials/firmware/tasmota32/other/tasmota32s3cdc-box.factory.bin",
+                    "offset": 0
+                }
+            ]
+        }
+    ],
+    "features": {
+        "Xdrv": [],
+        "Xlgt": [],
+        "Xnrg": [],
+        "Xsns": []
+    }
+}
