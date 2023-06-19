@@ -93,6 +93,7 @@ jobs:
         python genManifest.py
         python genManifestWithFeatureas.py
         python genManifestRelease.py
+        python genManifestsForAllReleases.py
     - name: Release special firmwares
       uses: jason2866/action-gh-release@v1.2
       with:
@@ -103,6 +104,7 @@ jobs:
           tag_latest.txt
           tag.txt
           manifests_release.json
+          all_manifests_in_releases.json.gz
           manifest_release/*
           firmware/map/*
           firmware/tasmota/other/*
