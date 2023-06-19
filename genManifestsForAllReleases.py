@@ -16,8 +16,11 @@ def getManifestsForTag(tag):
     url = "https://github.com/Jason2866/Tasmota-specials/releases/download/" + tag + "/manifests_release.json"
     response = requests.get(url)
     print(url)
-    manifests = json.loads(response.content)
-    return manifests
+    try:
+        manifests = json.loads(response.content)
+        return manifests
+    except:
+        return {"Failed":tag}
 
 def getTags():
         tags = []
