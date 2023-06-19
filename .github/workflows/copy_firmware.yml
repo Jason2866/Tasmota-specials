@@ -93,7 +93,7 @@ jobs:
         python genManifest.py
         python genManifestWithFeatureas.py
         python genManifestRelease.py
-        #python genManifestsForAllReleases.py
+        python genManifestsForAllReleases.py
     - name: Release special firmwares
       uses: jason2866/action-gh-release@v1.2
       with:
