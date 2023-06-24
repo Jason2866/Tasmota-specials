@@ -105,16 +105,6 @@
             ]
         },
         {
-            "path": "https://Jason2866.github.io/Tasmota-specials/manifest_ext/unofficial.tasmota32-matter.manifest.json",
-            "name": "Tasmota32 MATTER (english)",
-            "chipFamilies": [
-                "ESP32",
-                "ESP32-C3",
-                "ESP32-S2",
-                "ESP32-S3"
-            ]
-        },
-        {
             "path": "https://Jason2866.github.io/Tasmota-specials/manifest_ext/unofficial.tasmota32-mi32-homebridge.manifest.json",
             "name": "Tasmota32 MI Homebridge (english)",
             "chipFamilies": [
