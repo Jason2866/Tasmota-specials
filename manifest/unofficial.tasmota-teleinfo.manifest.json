@@ -1,0 +1,29 @@
+{
+  "name": "Tasmota Teleinfo (english)",
+  "new_install_prompt_erase": true,
+  "funding_url": "https://paypal.me/tasmota",
+  "builds": [
+    {
+      "chipFamily": "ESP32",
+      "improv": true,
+      "parts": [
+        { "path": "../firmware/tasmota32/other/tasmota32-teleinfo.factory.bin", "offset": 0}
+      ]
+    },
+    {
+      "chipFamily": "ESP8266",
+      "improv": true,
+      "parts": [{ "path": "../firmware/tasmota/other/tasmota-teleinfo.bin", "offset": 0 }]
+    },
+    {
+      "chipFamily": "ESP32-C3",
+      "improv": true,
+      "parts": [{ "path": "../firmware/tasmota/other/tasmotac3-teleinfo.bin", "offset": 0 }]
+    },
+    {
+      "chipFamily": "ESP32-S2",
+      "improv": true,
+      "parts": [{ "path": "../firmware/tasmota/other/tasmotas2-teleinfo.bin", "offset": 0 }]
+    }
+  ]
+}
