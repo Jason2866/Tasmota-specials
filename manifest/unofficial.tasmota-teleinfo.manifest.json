@@ -24,6 +24,11 @@
       "chipFamily": "ESP32-S2",
       "improv": true,
       "parts": [{ "path": "../firmware/tasmota/other/tasmotas2-teleinfo.bin", "offset": 0 }]
+    },
+    {
+      "chipFamily": "ESP32-S3",
+      "improv": true,
+      "parts": [{ "path": "../firmware/tasmota/other/tasmotas3-teleinfo.bin", "offset": 0 }]
     }
   ]
 }
