@@ -20,7 +20,7 @@ Official ✨ Tasmota ✨ firmware files are [here](https://github.com/arendst/Ta
  - tasmota32c3 - Support for ESP32-C3 2M no OTA variant (tasmota32c3_2M)
  - tasmota32(c3/s3)-bluetooth - Support for BLE
  - tasmota-battery - extremely cut down build for battery powered Tuya sensors
- - tasmota32-teleinfo - (ESP32 only) for Teleinfo French metering system, MQTT and TLS included 
+ - tasmota32(c3/s2/s3)-teleinfo - (ESP32 only) for Teleinfo French metering system, MQTT and TLS included 
  - tasmota32-zigbeebridge - ESP32 based [ZigbeeBridge](https://templates.blakadder.com/ewelink_ZB-GW03.html)
  - tasmota-zigbee - Zigbee for TI based chips (Esp8266 and ESP32)
  - tasmota-fullrules - Rules with all the features (expressions, If statements, MQTT subscription)
