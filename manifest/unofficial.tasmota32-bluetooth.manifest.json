@@ -1,5 +1,5 @@
 {
-  "name": "Tasmota32-C3 S3 Bluetooth (english)",
+  "name": "Tasmota32 BT for C3 and S3",
   "new_install_prompt_erase": true,
   "funding_url": "https://paypal.me/tasmota",
   "builds": [
