@@ -1,5 +1,5 @@
 {
-  "name": "Tasmota32 MI (english)",
+  "name": "Tasmota32 MI BLE (english)",
   "new_install_prompt_erase": true,
   "funding_url": "https://paypal.me/tasmota",
   "builds": [
