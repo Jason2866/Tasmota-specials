@@ -1,0 +1,14 @@
+{
+  "name": "Tasmota32-S3 CDC (OPI Flash/OPI PSRAM)",
+  "new_install_prompt_erase": true,
+  "funding_url": "https://paypal.me/tasmota",
+  "builds": [
+    {
+      "chipFamily": "ESP32-S3",
+      "improv": true,
+      "parts": [
+        { "path": "../firmware/tasmota32/other/tasmota32s3cdc-opi_opi.factory.bin", "offset": 0}
+      ]
+    }
+  ]
+}
