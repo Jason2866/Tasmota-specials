@@ -17,6 +17,7 @@ Official ✨ Tasmota ✨ firmware files are [here](https://github.com/arendst/Ta
 - [ESP_Flasher](https://github.com/Jason2866/ESP_Flasher/releases)
 
 ## Build variants:
+-  tasmota32c2 - Support for ESP32-C2 2M/4M
  - tasmota32c3 - Support for ESP32-C3 2M no OTA variant (tasmota32c3_2M)
  - tasmota32(c3/s3)-bluetooth - Support for BLE
  - tasmota-battery - extremely cut down build for battery powered Tuya sensors
@@ -36,4 +37,4 @@ Official ✨ Tasmota ✨ firmware files are [here](https://github.com/arendst/Ta
  - tasmota32solo1-thermostat - ESP32 Single Core Thermostat driver and Bluetooth temperature sensors (used on Shelly Plus 1PM for example)
  - tasmota-teleinfo - For Teleinfo French metering system, MQTT enabled but No TLS due to lack of ressources
  - tasmota-tls - MQTT TLS enabled
- - tasmota32(c3/s3)-mi-homebridge - Homebridge for MI BLE devices (Apple Homekit support)
+ - tasmota32(c3/s3)-mi - Support for MI BLE devices
