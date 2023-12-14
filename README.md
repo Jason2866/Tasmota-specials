@@ -5,7 +5,7 @@
 
 ## These special Tasmota binaries are not official stable releases
 
-## :warning: No support/warranty with these binaries! :warning:
+## ⚠️ No support/warranty with these binaries! ⚠️
 
 [![Build_special_firmware](https://github.com/Jason2866/Tasmota-build/actions/workflows/Build_special_firmware.yml/badge.svg)](https://github.com/Jason2866/Tasmota-build/actions/workflows/Build_special_firmware.yml)
 
