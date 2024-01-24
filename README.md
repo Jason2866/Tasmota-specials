@@ -24,7 +24,6 @@ Official ✨ Tasmota ✨ firmware files are [here](https://github.com/arendst/Ta
  - tasmota32(c3/s2/s3/c6)-teleinfo - (ESP32 only) for Teleinfo French metering system, MQTT and TLS included 
  - tasmota32-zigbeebridge - ESP32 based [ZigbeeBridge](https://templates.blakadder.com/ewelink_ZB-GW03.html)
  - tasmota-zigbee - Zigbee for TI based chips (Esp8266 and ESP32)
- - tasmota-fullrules - Rules with all the features (expressions, If statements, MQTT subscription)
  - tasmota-minicustom - even smaller minimal build, **only for Updates (warning MQTT only! No Webserver)**
  - tasmota-gps - GPS driver enabled
  - tasmota-mega - big binary, almost every sensor included, OTA possible only with minimal
