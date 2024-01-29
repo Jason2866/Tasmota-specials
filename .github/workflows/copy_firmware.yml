@@ -17,7 +17,7 @@ jobs:
   empty_branch:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         ref: firmware
     - name: Create new empty firmware branch
@@ -36,7 +36,7 @@ jobs:
     needs: empty_branch
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         token: ${{ secrets.MASTER_ACCESS_TOKEN }}
         ref: firmware
@@ -53,7 +53,7 @@ jobs:
         github_token: ${{secrets.GITHUB_TOKEN}}
         branch: 'firmware'
     - name: Download artifact "special_firmwares"
-      uses: dawidd6/action-download-artifact@v2
+      uses: dawidd6/action-download-artifact@v3
       with:
         github_token: ${{secrets.GITHUB_TOKEN}}
         workflow: Build_special_firmware.yml
@@ -95,7 +95,7 @@ jobs:
         python genManifestRelease.py
         #python genManifestsForAllReleases.py
     - name: Release special firmwares
-      uses: jason2866/action-gh-release@v1.2
+      uses: jason2866/action-gh-release@v1.3
       with:
         tag_name: ${{ env.tag_name }}
         body_path: release-info.txt
@@ -138,13 +138,13 @@ jobs:
         user_email: '41898282+github-actions[bot]@users.noreply.github.com'
         user_name: 'github-actions[bot]'
     - name: Checkout branch firmware for prepare deploy
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         ref: firmware
     - name: Setup Pages
-      uses: actions/configure-pages@v2
+      uses: actions/configure-pages@v4
     - name: Upload artifact
-      uses: actions/upload-pages-artifact@v1
+      uses: actions/upload-pages-artifact@v3
       with:
         path: '.'
 
@@ -161,7 +161,7 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v2
+        uses: actions/deploy-pages@v4
 
   start_workflow:
     needs: release_restore
