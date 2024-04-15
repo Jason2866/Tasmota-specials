@@ -1,5 +1,5 @@
 {
-  "name": "Tasmota32 C3 CDC lvgl (english)",
+  "name": "Tasmota32 C3 lvgl (english)",
   "new_install_prompt_erase": true,
   "funding_url": "https://paypal.me/tasmota",
   "builds": [
