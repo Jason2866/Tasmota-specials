@@ -7,21 +7,21 @@
       "chipFamily": "ESP32-C3",
       "improv": true,
       "parts": [
-        { "path": "../firmware/tasmota32/other/tasmota32c3cdc-bluetooth.factory.bin", "offset": 0 }
+        { "path": "../firmware/tasmota32/other/tasmota32c3-bluetooth.factory.bin", "offset": 0 }
       ]
     },
     {
       "chipFamily": "ESP32-C6",
       "improv": true,
       "parts": [
-        { "path": "../firmware/tasmota32/other/tasmota32c6cdc-bluetooth.factory.bin", "offset": 0 }
+        { "path": "../firmware/tasmota32/other/tasmota32c6-bluetooth.factory.bin", "offset": 0 }
       ]
     },
     {
       "chipFamily": "ESP32-S3",
       "improv": true,
       "parts": [
-        { "path": "../firmware/tasmota32/other/tasmota32s3cdc-bluetooth.factory.bin", "offset": 0 }
+        { "path": "../firmware/tasmota32/other/tasmota32s3-bluetooth.factory.bin", "offset": 0 }
       ]
     }
   ]
