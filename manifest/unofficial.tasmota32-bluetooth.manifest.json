@@ -4,6 +4,13 @@
   "funding_url": "https://paypal.me/tasmota",
   "builds": [
     {
+      "chipFamily": "ESP32-C2",
+      "improv": true,
+      "parts": [
+        { "path": "../firmware/tasmota32/other/tasmota32c2-bluetooth.factory.bin", "offset": 0 }
+      ]
+    },
+    {
       "chipFamily": "ESP32-C3",
       "improv": true,
       "parts": [
