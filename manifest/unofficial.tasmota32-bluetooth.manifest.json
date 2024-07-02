@@ -1,0 +1,35 @@
+{
+  "name": "Tasmota32 BT for C3,C6 and S3",
+  "new_install_prompt_erase": true,
+  "funding_url": "https://paypal.me/tasmota",
+  "builds": [
+    {
+      "chipFamily": "ESP32-C2",
+      "improv": true,
+      "parts": [
+        { "path": "../firmware/tasmota32/other/tasmota32c2-bluetooth.factory.bin", "offset": 0 }
+      ]
+    },
+    {
+      "chipFamily": "ESP32-C3",
+      "improv": true,
+      "parts": [
+        { "path": "../firmware/tasmota32/other/tasmota32c3-bluetooth.factory.bin", "offset": 0 }
+      ]
+    },
+    {
+      "chipFamily": "ESP32-C6",
+      "improv": true,
+      "parts": [
+        { "path": "../firmware/tasmota32/other/tasmota32c6-bluetooth.factory.bin", "offset": 0 }
+      ]
+    },
+    {
+      "chipFamily": "ESP32-S3",
+      "improv": true,
+      "parts": [
+        { "path": "../firmware/tasmota32/other/tasmota32s3-bluetooth.factory.bin", "offset": 0 }
+      ]
+    }
+  ]
+}
