@@ -1,0 +1,32 @@
+{
+    "name": "Tasmota Rangeextender (english)",
+    "new_install_prompt_erase": true,
+    "funding_url": "https://paypal.me/tasmota",
+    "builds": [
+        {
+            "chipFamily": "ESP32",
+            "improv": true,
+            "parts": [
+                {
+                    "path": "https://Jason2866.github.io/Tasmota-specials/firmware/tasmota32/other/tasmota32-rangeextender.factory.bin",
+                    "offset": 0
+                }
+            ]
+        },
+        {
+            "chipFamily": "ESP8266",
+            "parts": [
+                {
+                    "path": "https://Jason2866.github.io/Tasmota-specials/firmware/tasmota/other/tasmota-rangeextender.bin",
+                    "offset": 0
+                }
+            ]
+        }
+    ],
+    "features": {
+        "Xdrv": [],
+        "Xlgt": [],
+        "Xnrg": [],
+        "Xsns": []
+    }
+}

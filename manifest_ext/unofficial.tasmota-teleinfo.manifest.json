@@ -1,0 +1,73 @@
+{
+    "name": "Tasmota Teleinfo (english)",
+    "new_install_prompt_erase": true,
+    "funding_url": "https://paypal.me/tasmota",
+    "builds": [
+        {
+            "chipFamily": "ESP32",
+            "improv": true,
+            "parts": [
+                {
+                    "path": "https://Jason2866.github.io/Tasmota-specials/firmware/tasmota32/other/tasmota32-teleinfo.factory.bin",
+                    "offset": 0
+                }
+            ]
+        },
+        {
+            "chipFamily": "ESP8266",
+            "improv": true,
+            "parts": [
+                {
+                    "path": "https://Jason2866.github.io/Tasmota-specials/firmware/tasmota/other/tasmota-teleinfo.bin",
+                    "offset": 0
+                }
+            ]
+        },
+        {
+            "chipFamily": "ESP32-C3",
+            "improv": true,
+            "parts": [
+                {
+                    "path": "https://Jason2866.github.io/Tasmota-specials/firmware/tasmota32/other/tasmota32c3-teleinfo.bin",
+                    "offset": 0
+                }
+            ]
+        },
+        {
+            "chipFamily": "ESP32-S2",
+            "improv": true,
+            "parts": [
+                {
+                    "path": "https://Jason2866.github.io/Tasmota-specials/firmware/tasmota32/other/tasmota32s2-teleinfo.bin",
+                    "offset": 0
+                }
+            ]
+        },
+        {
+            "chipFamily": "ESP32-S3",
+            "improv": true,
+            "parts": [
+                {
+                    "path": "https://Jason2866.github.io/Tasmota-specials/firmware/tasmota32/other/tasmota32s3-teleinfo.bin",
+                    "offset": 0
+                }
+            ]
+        },
+        {
+            "chipFamily": "ESP32-C6",
+            "improv": true,
+            "parts": [
+                {
+                    "path": "https://Jason2866.github.io/Tasmota-specials/firmware/tasmota32/other/tasmota32c6-teleinfo.bin",
+                    "offset": 0
+                }
+            ]
+        }
+    ],
+    "features": {
+        "Xdrv": [],
+        "Xlgt": [],
+        "Xnrg": [],
+        "Xsns": []
+    }
+}
