@@ -1,5 +1,5 @@
 {
-  "name": "Tasmota32 BT for C3,C6 and S3",
+  "name": "Tasmota32 BT for C3, C6 and S3",
   "new_install_prompt_erase": true,
   "funding_url": "https://paypal.me/tasmota",
   "builds": [
