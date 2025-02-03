@@ -67,10 +67,10 @@ jobs:
           rm -rf ./temp
     - name: Move files back
       run: |
-        mkdir -p ./firmware/map
+        #mkdir -p ./firmware/map
         mkdir -p ./firmware/tasmota/other/
         mkdir -p ./firmware/tasmota32/other/
-        cp ./special_firmware/*.map ./firmware/map
+        #cp ./special_firmware/*.map ./firmware/map
         mv ./special_firmware/tasmota32* ./firmware/tasmota32/other/
         mv ./special_firmware/tasmota* ./firmware/tasmota/other/
         rm -rf ./special_firmware
