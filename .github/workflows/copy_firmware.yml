@@ -65,6 +65,7 @@ jobs:
           mkdir -p ./special_firmware
           find ./temp -type f -exec cp -t ./special_firmware {} +
           rm -rf ./temp
+          ls -R ./special_firmware
     - name: Move files back
       run: |
         #mkdir -p ./firmware/map
