@@ -60,15 +60,14 @@ jobs:
         repo: Jason2866/Tasmota-build
         name: tasmota*
         name_is_regexp: true
-        path: ./temp
-        run: |
-          mkdir -p ./special_firmware
-          find ./temp -type f -exec cp -t ./special_firmware {} +
-          rm -rf ./temp
-          ls -R ./special_firmware
+        path: ./temp  
     - name: Move files back
       run: |
-        #mkdir -p ./firmware/map
+        mkdir -p ./special_firmware
+        find ./temp -type f -exec cp -t ./special_firmware {} +
+        rm -rf ./temp
+        ls -R ./special_firmware
+        mkdir -p ./firmware/map
         mkdir -p ./firmware/tasmota/other/
         mkdir -p ./firmware/tasmota32/other/
         #cp ./special_firmware/*.map ./firmware/map
