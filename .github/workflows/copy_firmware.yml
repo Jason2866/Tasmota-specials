@@ -58,19 +58,21 @@ jobs:
         github_token: ${{secrets.GITHUB_TOKEN}}
         workflow: Build_special_firmware.yml
         repo: Jason2866/Tasmota-build
-        name: special*
+        name: tasmota*
         name_is_regexp: true
-    - name: Display downloaded artifact files
-      run: |
-        ls -R ./special_firmware
+        path: ./temp
+        run: |
+          mkdir -p ./special_firmware
+          find ./temp -type f -exec cp -t ./special_firmware {} +
+          rm -rf ./temp
     - name: Move files back
       run: |
         mkdir -p ./firmware/map
         mkdir -p ./firmware/tasmota/other/
         mkdir -p ./firmware/tasmota32/other/
-        cp ./special_firmware/map/* ./firmware/map
-        mv ./special_firmware/firmware/tasmota32* ./firmware/tasmota32/other/
-        mv ./special_firmware/firmware/tasmota* ./firmware/tasmota/other/
+        cp ./special_firmware/*.map ./firmware/map
+        mv ./special_firmware/tasmota32* ./firmware/tasmota32/other/
+        mv ./special_firmware/tasmota* ./firmware/tasmota/other/
         rm -rf ./special_firmware
         rm tag_latest.txt 2> /dev/null || echo > /dev/null
     - name: Build Tag and commit message
