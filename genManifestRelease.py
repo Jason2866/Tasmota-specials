@@ -3,6 +3,7 @@
 from curses.ascii import isupper
 from platform import release
 import sys
+import os
 from os import listdir
 from os import mkdir
 from os import remove
@@ -10,18 +11,25 @@ from os import path
 import json
 import requests
 
-def convertJSON(infile, outfile, tag):
+def convertJSON(infile, outfile):
     with open(infile) as json_file:
         data = json.load(json_file)
         for build in data['builds']:
-            for path in build['parts']:
-                components = path['path'].split("/")
-                path['path'] = "https://github.com/Jason2866/Tasmota-specials/releases/download/" + tag + "/" + components[-1]
-        # print(data)
-        j = json.dumps(data,indent=4)
-        f = open(outfile,"w")
-        f.write(j)
-        f.close()
+            for part in build['parts']:
+                components = part['path'].split("/")
+                part['path'] = "https://github.com/Jason2866/Tasmota-specials/releases/download/" + tag + "/" + components[-1]
+                # Add firmware size
+                replace_path = "https://github.com/Jason2866/Tasmota-specials/releases/download/" + tag + "/" + components[-1]
+                firmware_path = part['path'].replace(replace_path, ".")
+                if os.path.exists(firmware_path):
+                    part['size'] = os.path.getsize(firmware_path)
+                else:
+                    part['size'] = None  # If the file doesn't exist, set size to None
+
+        # Write updated data to JSON
+        j = json.dumps(data, indent=4)
+        with open(outfile, "w") as f:
+            f.write(j)
 
 def firmwareVersion(tag):
     commit = tag.split(".")[2]
