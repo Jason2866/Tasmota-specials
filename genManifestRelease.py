@@ -11,7 +11,7 @@ from os import path
 import json
 import requests
 
-def convertJSON(infile, outfile):
+def convertJSON(infile, outfile, tag):
     with open(infile) as json_file:
         data = json.load(json_file)
         for build in data['builds']:
