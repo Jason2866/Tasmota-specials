@@ -3,24 +3,30 @@
 from curses.ascii import isupper
 from platform import release
 import sys
+import os
 from os import listdir
 from os import mkdir
 from os import remove
 from os import path
 import json
 
-def convertJSON(infile,outfile):
+def convertJSON(infile, outfile):
     with open(infile) as json_file:
         data = json.load(json_file)
         for build in data['builds']:
-            for path in build['parts']:
-                # print(path['path'])
-                path['path'] = path['path'].replace("..", "https://Jason2866.github.io/Tasmota-specials")
-        # print(data)
-        j = json.dumps(data,indent=4)
-        f = open(outfile,"w")
-        f.write(j)
-        f.close()
+            for part in build['parts']:
+                part['path'] = part['path'].replace("..", "https://Jason2866.github.io/Tasmota-specials")
+                # Add firmware size
+                firmware_path = part['path'].replace("https://Jason2866.github.io/Tasmota-specials", ".")
+                if os.path.exists(firmware_path):
+                    part['size'] = os.path.getsize(firmware_path)
+                else:
+                    part['size'] = None  # If the file doesn't exist, set size to None
+
+        # Write updated data to JSON
+        j = json.dumps(data, indent=4)
+        with open(outfile, "w") as f:
+            f.write(j)
 
 def getManifestEntry(manifest):
     entry = {}
