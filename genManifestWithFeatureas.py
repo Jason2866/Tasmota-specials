@@ -87,7 +87,7 @@ def convertJSON(infile, outfile):
                 else:
                     part['size'] = None  # If the file doesn't exist, set size to None
 
-           features = add_features_from_map(infile)
+            features = add_features_from_map(infile)
             # print(features)
             if 'features' not in data:
                 data['features'] = features
