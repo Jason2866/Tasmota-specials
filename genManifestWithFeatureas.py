@@ -52,9 +52,10 @@ def add_features_from_map(infile):
     print("Processing ",infile)
     file_name = infile.split('/')[1]
     file_name = file_name.split('.')[1]
+    print("file_name:", file_name)
     # We need a repo, which holds all the map.gz files too
     # This is perhaps not the final solution
-    url = ' https://github.com/arendst/Tasmota-firmware/raw/main/firmware/map/'+file_name+'.map.gz'
+    url = ' https://github.com/arendst/Tasmota-firmware/raw/firmware/'+file_name+'.map.gz'
     r = requests.get(url)
     if(r):
         # print("Found map for ",infile)
@@ -63,7 +64,7 @@ def add_features_from_map(infile):
     else:
         # Fallback to Jasons special builds
         # print("No map for: ",url, " , will try:")
-        url = ' https://github.com/Jason2866/Tasmota-specials/raw/firmware/firmware/map/'+file_name+'.map.gz'
+        url = ' https://github.com/Jason2866/Tasmota-specials/raw/firmware/'+file_name+'.map.gz'
         r = requests.get(url)
         # print(url)
         if(r):
