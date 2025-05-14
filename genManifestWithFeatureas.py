@@ -61,7 +61,6 @@ def add_features_from_map(infile):
     print("Processing ",infile)
     file_name = infile.split('/')[1]
     file_name = file_name.split('.')[1]
-    print("file_name:", file_name)
     # We need a repo, which holds all the map.gz files too
     # This is perhaps not the final solution
     if "tasmota32" in file_name:
@@ -77,16 +76,13 @@ def add_features_from_map(infile):
     else:
         # Fallback to Jasons special builds
         if "tasmota32" in file_name:
-        file_name = "tasmota32/other/" + file_name 
-    else:
-        file_name = "tasmota/other/" + file_name
-        # print("No map for: ",url, " , will try:")
-        url = ' https://github.com/Jason2866/Tasmota-specials/raw/firmware/'+file_name+'.map.gz'
-        r = requests.get(url)
-        # print(url)
-        if(r):
-            # print("On 2nd try found map for ",infile)
-            features = handle_map_gz(r.content)
+            map_path = './firmware/tasmota32/other/'+file_name+'.map.gz'
+        else:
+            map_path = './firmware/tasmota/other/'+file_name+'.map.gz'
+        if os.path.exists(map_path):
+            with open(map_path, "r") as map_file:
+                content = map_file.read()
+            features = handle_map_gz(content)
             return features
     print("Could not find map.gz for",infile)
     return {"Xdrv":[],"Xlgt":[],"Xnrg":[],"Xsns":[]}
