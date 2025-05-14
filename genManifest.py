@@ -10,6 +10,17 @@ from os import remove
 from os import path
 import json
 
+def filter_builds(data):
+    """
+    Removes non-existing MCU firmware variant from manifest, indicated by 'size' entry is None.
+    """
+    filtered_builds = []
+    for build in data['builds']:
+        if all(part['size'] is not None for part in build['parts']):
+            filtered_builds.append(build)
+    data['builds'] = filtered_builds
+    return data
+
 def convertJSON(infile, outfile):
     with open(infile) as json_file:
         data = json.load(json_file)
@@ -24,6 +35,7 @@ def convertJSON(infile, outfile):
                 else:
                     part['size'] = None  # If the file doesn't exist, set size to None
 
+        filter_builds(data)
         # Write updated data to JSON
         j = json.dumps(data, indent=4)
         with open(outfile, "w") as f:
