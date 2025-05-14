@@ -79,7 +79,7 @@ def add_features_from_map(infile):
         else:
             map_path = './firmware/tasmota/other/'+file_name+'.map.gz'
         if os.path.exists(map_path):
-            with open(map_path, "r") as map_file:
+            with open(map_path, "rb") as map_file:
                 content = map_file.read()
             features = handle_map_gz(content)
             return features
