@@ -12,6 +12,7 @@ import requests
 import gzip
 import re
 
+
 def filter_builds(data):
     """
     Removes non-existing MCU firmware variant from manifest, indicated by 'size' entry is None.
@@ -23,8 +24,10 @@ def filter_builds(data):
     data['builds'] = filtered_builds
     return data
 
-def handle_map_gz(data):
-    decompressed = gzip.decompress(data).decode()
+def handle_map_gz(map_path):
+    with open(map_path, "rb") as map_file:
+        content = map_file.read()
+    decompressed = gzip.decompress(content).decode()
 
     features = {"Xdrv":[],"Xlgt":[],"Xnrg":[],"Xsns":[]}
     for line in decompressed.splitlines():
@@ -58,32 +61,11 @@ def handle_map_gz(data):
 
 
 def add_features_from_map(infile):
-    print("Processing ",infile)
-    file_name = infile.split('/')[1]
-    file_name = file_name.split('.')[1]
-    # We need a repo, which holds all the map.gz files too
-    # This is perhaps not the final solution
-    if "tasmota32" in file_name:
-        url = ' https://github.com/arendst/Tasmota-firmware/raw/firmware/tasmota32/'+file_name+'.map.gz'
-    else:
-        url = ' https://github.com/arendst/Tasmota-firmware/raw/firmware/tasmota/'+file_name+'.map.gz'
-    r = requests.get(url)
-    if(r):
-        # print("Found map for ",infile)
-        features = handle_map_gz(r.content)
+    print("Processing:", infile)
+    if os.path.exists(infile):
+        features = handle_map_gz(infile)
         return features
-    else:
-        # Fallback to Jasons special builds
-        if "tasmota32" in file_name:
-            map_path = './firmware/tasmota32/other/'+file_name+'.map.gz'
-        else:
-            map_path = './firmware/tasmota/other/'+file_name+'.map.gz'
-        if os.path.exists(map_path):
-            with open(map_path, "rb") as map_file:
-                content = map_file.read()
-            features = handle_map_gz(content)
-            return features
-    print("Could not find map.gz for",infile)
+    print("Could not find mapfile:", infile)
     return {"Xdrv":[],"Xlgt":[],"Xnrg":[],"Xsns":[]}
 
 
@@ -95,15 +77,17 @@ def convertJSON(infile, outfile):
                 part['path'] = part['path'].replace("..", "https://Jason2866.github.io/Tasmota-specials")
                 # Add firmware size
                 firmware_path = part['path'].replace("https://Jason2866.github.io/Tasmota-specials", ".").replace(".factory", "")
+                map_path = firmware_path.replace(".bin", ".map.gz")
                 if os.path.exists(firmware_path):
                     part['size'] = os.path.getsize(firmware_path)
                 else:
                     part['size'] = None  # If the file doesn't exist, set size to None
 
-            features = add_features_from_map(infile)
-            # print(features)
-            if 'features' not in data:
-                data['features'] = features
+            if os.path.exists(firmware_path):
+                features = add_features_from_map(map_path)
+                # print(features)
+                if 'features' not in data:
+                    data['features'] = features
 
         filter_builds(data)
         # Write updated data to JSON
@@ -140,8 +124,8 @@ def main(args):
         #     remove(file)
     else:
         mkdir(path_manifests_ext)
-    
-    
+
+
     output = {}
 
     for file in files:
