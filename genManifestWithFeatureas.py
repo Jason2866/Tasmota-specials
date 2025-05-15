@@ -64,9 +64,9 @@ def add_features_from_map(infile):
     # We need a repo, which holds all the map.gz files too
     # This is perhaps not the final solution
     if "tasmota32" in file_name:
-        url = ' https://github.com/arendst/Tasmota-firmware/raw/firmware/tasmota32/'+file_name'.map.gz'
+        url = ' https://github.com/arendst/Tasmota-firmware/raw/firmware/tasmota32/'+file_name+'.map.gz'
     else:
-        url = ' https://github.com/arendst/Tasmota-firmware/raw/firmware/tasmota/'+file_name'.map.gz'
+        url = ' https://github.com/arendst/Tasmota-firmware/raw/firmware/tasmota/'+file_name+'.map.gz'
     r = requests.get(url)
     if(r):
         # print("Found map for ",infile)
