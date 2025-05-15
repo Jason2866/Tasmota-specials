@@ -8,7 +8,6 @@ from os import mkdir
 from os import remove
 from os import path
 import json
-import requests
 import gzip
 import re
 
