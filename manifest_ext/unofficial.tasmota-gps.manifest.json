@@ -1,0 +1,55 @@
+{
+    "name": "Tasmota GPS (english)",
+    "new_install_prompt_erase": true,
+    "funding_url": "https://paypal.me/tasmota",
+    "builds": [
+        {
+            "chipFamily": "ESP32",
+            "improv": true,
+            "parts": [
+                {
+                    "path": "https://Jason2866.github.io/Tasmota-specials/firmware/tasmota32/other/tasmota32-gps.factory.bin",
+                    "offset": 0,
+                    "size": 1284224
+                }
+            ]
+        },
+        {
+            "chipFamily": "ESP8266",
+            "improv": true,
+            "parts": [
+                {
+                    "path": "https://Jason2866.github.io/Tasmota-specials/firmware/tasmota/other/tasmota-gps.bin",
+                    "offset": 0,
+                    "size": 500560
+                }
+            ]
+        }
+    ],
+    "features": {
+        "Xdrv": [
+            1,
+            2,
+            4,
+            8,
+            9,
+            10,
+            12,
+            38,
+            50,
+            52,
+            62
+        ],
+        "Xlgt": [
+            8,
+            9,
+            10
+        ],
+        "Xnrg": [],
+        "Xsns": [
+            2,
+            12,
+            60
+        ]
+    }
+}

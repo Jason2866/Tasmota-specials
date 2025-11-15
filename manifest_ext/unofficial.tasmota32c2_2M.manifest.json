@@ -1,0 +1,59 @@
+{
+    "name": "Tasmota32-C2 2M OTA (english)",
+    "new_install_prompt_erase": true,
+    "funding_url": "https://paypal.me/tasmota",
+    "builds": [
+        {
+            "chipFamily": "ESP32-C2",
+            "improv": true,
+            "parts": [
+                {
+                    "path": "https://Jason2866.github.io/Tasmota-specials/firmware/tasmota32/other/tasmota32c2_2M.factory.bin",
+                    "offset": 0,
+                    "size": 1291648
+                }
+            ]
+        }
+    ],
+    "features": {
+        "Xdrv": [
+            1,
+            2,
+            4,
+            5,
+            8,
+            9,
+            10,
+            12,
+            16,
+            17,
+            24,
+            29,
+            38,
+            50,
+            52,
+            62
+        ],
+        "Xlgt": [
+            1
+        ],
+        "Xnrg": [],
+        "Xsns": [
+            1,
+            2,
+            5,
+            6,
+            8,
+            9,
+            12,
+            14,
+            15,
+            17,
+            18,
+            20,
+            22,
+            56,
+            63
+        ]
+    }
+}
