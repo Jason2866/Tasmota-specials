@@ -419,6 +419,38 @@
             window.dropArea = document.getElementById("drop-area");
             prepareDropZone();
             getLatestTag();
+            
+            // Baud rate selection
+            const baudRateSelect = document.getElementById('baudRate');
+            const installButton = document.querySelector('esp-web-install-button');
+            const speedInfo = document.getElementById('speedInfo');
+
+            const speedData = {
+              '': { speed: '~11 KB/s', time: '~4.5 minutes', label: '115200 Baud (Default)' },
+              '230400': { speed: '~22 KB/s', time: '~2.3 minutes', label: '230400 Baud' },
+              '460800': { speed: '~44 KB/s', time: '~70 seconds', label: '460800 Baud' },
+              '921600': { speed: '~88 KB/s', time: '~35 seconds', label: '921600 Baud' },
+              '1500000': { speed: '~143 KB/s', time: '~21 seconds', label: '1500000 Baud' },
+              '2000000': { speed: '~200 KB/s', time: '~15 seconds', label: '2000000 Baud' }
+            };
+
+            if (baudRateSelect && installButton && speedInfo) {
+              baudRateSelect.addEventListener('change', function() {
+                const selectedRate = this.value;
+                const data = speedData[selectedRate];
+                
+                // Update install button
+                if (selectedRate === '') {
+                  installButton.removeAttribute('baud-rate');
+                } else {
+                  installButton.setAttribute('baud-rate', selectedRate);
+                }
+                
+                // Update speed info
+                speedInfo.innerHTML = `Selected: <strong>${data.label}</strong> (${data.speed}, ${data.time} for 3 MB)`;
+              });
+            }
+            
             try{
                 const button = document.querySelector("esp-web-install-button");
                 button.overrides = {
@@ -476,7 +508,21 @@
         <label for="check3">All</label></p>
       </div>
       </br>
-      <esp-web-install-button id="inst" style='text-align:center'>
+      <div style="margin: 15px 0; padding: 12px; background: #4f4f4f; border-radius: 4px;">
+        <label for="baudRate" style="font-weight: 600; display: block; margin-bottom: 8px;">Flash Speed:</label>
+        <select id="baudRate" style="width: 100%; padding: 8px; border: 1px solid #666; border-radius: 4px; font-size: 14px; cursor: pointer; background: #dddddd; color: #000;">
+          <option value="">115200 Baud (Default)</option>
+          <option value="230400">230400 Baud</option>
+          <option value="460800">460800 Baud</option>
+          <option value="921600">921600 Baud</option>
+          <option value="1500000">1500000 Baud</option>
+          <option value="2000000" selected>2000000 Baud (Recommended)</option>
+        </select>
+        <div id="speedInfo" style="margin-top: 8px; font-size: 12px; color: #aaa;">
+          Selected: <strong>2000000 Baud</strong> (~200 KB/s, ~15 seconds for 3 MB)
+        </div>
+      </div>
+      <esp-web-install-button id="inst" style='text-align:center' baud-rate="2000000">
         <i slot="unsupported">
           Your browser does not support Web Serial.</br>Open this page in Google Chrome or</br>Microsoft Edge instead
           <span class="not-supported-i hidden">(but not on your iOS device)</span>.
