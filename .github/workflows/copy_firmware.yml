@@ -35,6 +35,8 @@ jobs:
   release_restore:
     needs: empty_branch
     runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.MASTER_ACCESS_TOKEN }}
     steps:
     - uses: actions/checkout@v4
       with:
@@ -77,7 +79,7 @@ jobs:
         rm tag_latest.txt 2> /dev/null || echo > /dev/null
     - name: Build Tag and commit message
       run: |
-        tas_com_tmp1=$(curl -s "https://api.github.com/repos/arendst/tasmota/commits/development" | jq -r '.sha')
+        tas_com_tmp1=$(gh api repos/arendst/tasmota/commits/development --jq '.sha')
         tas_com_tmp="Based on https://github.com/arendst/Tasmota/commit/${tas_com_tmp1}"
         tag_name_tmp="$(date -I).d.$tas_com_tmp1"
         rm release-info.txt 2> /dev/null || echo > /dev/null
@@ -168,10 +170,11 @@ jobs:
   start_workflow:
     needs: release_restore
     runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.MASTER_ACCESS_TOKEN }}
     steps:
     - name: Dispatch workflow in repo Tasmota/install
       run: |
-        curl -X POST https://api.github.com/repos/Tasmota/install/actions/workflows/devel_release_firmware.yml/dispatches \
-        -H 'Accept: application/vnd.github.everest-preview+json' \
-        -u ${{ secrets.MASTER_ACCESS_TOKEN }} \
-        --data '{"ref": "gh_actions"}'
+        gh api repos/Tasmota/install/actions/workflows/devel_release_firmware.yml/dispatches \
+          --method POST \
+          -f ref='gh_actions'
