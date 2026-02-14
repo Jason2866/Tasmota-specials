@@ -40,13 +40,16 @@
     </style>
     <script
       type="module"
-      src="https://unpkg.com/tasmota-esp-web-tools@11.1.6/dist/web/install-button.js?module"
+      src="https://unpkg.com/tasmota-esp-web-tools@11.1.7/dist/web/install-button.js?module"
     ></script>
     <!-- <script type="module">import * as Module from "./js/tasmota_gh_helper.js"</script> -->
     <script>
         // Use the CORS proxy function from ESP Web Tools if available
         // Falls back to local implementation if not loaded yet
         function corsProxyFetch(url, options) {
+          // Clean the URL - remove whitespace and newlines
+          url = url.trim();
+          
           if (window.espWebToolsCorsProxyFetch) {
             return window.espWebToolsCorsProxyFetch(url, options);
           }
