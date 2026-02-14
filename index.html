@@ -44,6 +44,32 @@
     ></script>
     <!-- <script type="module">import * as Module from "./js/tasmota_gh_helper.js"</script> -->
     <script>
+        // CORS Proxy helper function
+        const CORS_PROXY = "https://cors-proxy.espressif.tools";
+        
+        function corsProxyFetch(url, options) {
+          // Check if URL needs CORS proxy
+          try {
+            const urlObj = new URL(url);
+            const currentOrigin = window.location.origin;
+            
+            // Same origin or relative URLs don't need proxy
+            if (urlObj.origin === currentOrigin) {
+              return fetch(url, options);
+            }
+            
+            // Use proxy for cross-origin requests
+            const proxiedUrl = `${CORS_PROXY}/${url}`;
+            // Remove sensitive headers when using proxy
+            const safeOptions = options ? { ...options } : {};
+            delete safeOptions.headers;
+            delete safeOptions.credentials;
+            return fetch(proxiedUrl, safeOptions);
+          } catch {
+            // If URL parsing fails, it's relative - use direct fetch
+            return fetch(url, options);
+          }
+        }
 
         var releases = null;
         var date_filter = null;
@@ -268,37 +294,28 @@
             var el = document.createElement('p');
             el.innerHTML = "To access our GitHub releases page and directly flash firmware binaries<br>from there including older versions<br>you have to turn off CORS in your browser.<br>(i.e. with browser extension: CORS unblock)";
             sel.replaceWith(el);
-            fetch('https://raw.githubusercontent.com/Jason2866/Tasmota-specials/firmware/manifests.json')
+            corsProxyFetch('https://raw.githubusercontent.com/Jason2866/Tasmota-specials/firmware/manifests.json')
             .then(response => response.json())
             .then(data => makeVariantSelector(data));
         }
 
         function getLatestTag(){
-             fetch('https://raw.githubusercontent.com/Jason2866/Tasmota-specials/firmware/tag_latest.txt')
+             corsProxyFetch('https://raw.githubusercontent.com/Jason2866/Tasmota-specials/firmware/tag_latest.txt')
             .then(x => x.text())
             .then(t =>testCORS(t));
         }
 
         async function testCORS(t){
-          try{
-            const resp = await fetch('https://github.com/Jason2866/Tasmota-specials/releases/download/'+ t + '/manifests_release.json', {mode:"cors"
-            });
-            console.log(resp);
-          }
-          catch(error){
-            console.log("CORS is blocking");
-            useFallback();
-            return;
-          }
-          console.log("CORS is not blocking");
+          // With CORS proxy, we don't need to test - just use it directly
+          console.log("Using CORS proxy for all requests");
           initVariantSelector(t);
-          fetch('https://raw.githubusercontent.com/Jason2866/Tasmota-specials/firmware/tag.txt')
+          corsProxyFetch('https://raw.githubusercontent.com/Jason2866/Tasmota-specials/firmware/tag.txt')
           .then(x => x.text())
           .then(t => {makeReleaseSelector(t,"all"); makeDateSelector(t);})
         }
 
         function initVariantSelector(tag){
-            fetch('https://github.com/Jason2866/Tasmota-specials/releases/download/'+ tag + '/manifests_release.json')
+            corsProxyFetch('https://github.com/Jason2866/Tasmota-specials/releases/download/'+ tag + '/manifests_release.json')
             .then(response => response.json())
             .then(data => makeVariantSelector(data));
             getFirmwareVersion(tag);
@@ -347,7 +364,7 @@
         function getFirmwareVersion(tag){
             let commit = tag.split(".")[2];
             console.log("Commit:____________",commit);
-            fetch("https://raw.githubusercontent.com/arendst/Tasmota/"+commit+"/tasmota/include/tasmota_version.h").then(x=>x.text()).then(t=>printFirmwareVersion(t))
+            corsProxyFetch("https://raw.githubusercontent.com/arendst/Tasmota/"+commit+"/tasmota/include/tasmota_version.h").then(x=>x.text()).then(t=>printFirmwareVersion(t))
         }
 
         function printFirmwareVersion(text_data){
