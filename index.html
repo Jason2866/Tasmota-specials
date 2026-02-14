@@ -40,60 +40,21 @@
     </style>
     <script
       type="module"
-      src="https://unpkg.com/tasmota-esp-web-tools@11.1.7/dist/web/install-button.js?module"
+      src="https://unpkg.com/tasmota-esp-web-tools@11.1.8/dist/web/install-button.js?module"
     ></script>
     <!-- <script type="module">import * as Module from "./js/tasmota_gh_helper.js"</script> -->
     <script>
-        // Use the CORS proxy function from ESP Web Tools if available
-        // Falls back to local implementation if not loaded yet
-        function corsProxyFetch(url, options) {
-          // Clean the URL - remove whitespace and newlines (FIRST!)
+        // Wait for ESP Web Tools to load and expose the CORS proxy function
+        async function corsProxyFetch(url, options) {
+          // Clean the URL first
           url = url.trim();
           
-          if (window.espWebToolsCorsProxyFetch) {
-            return window.espWebToolsCorsProxyFetch(url, options);
+          // Wait for ESP Web Tools to be available
+          while (!window.espWebToolsCorsProxyFetch) {
+            await new Promise(resolve => setTimeout(resolve, 50));
           }
           
-          // Fallback implementation until ESP Web Tools loads
-          const CORS_PROXY = "https://cors-proxy.espressif.tools";
-          
-          try {
-            const urlObj = new URL(url);
-            const currentOrigin = window.location.origin;
-            
-            // Same origin doesn't need proxy
-            if (urlObj.origin === currentOrigin) {
-              return fetch(url, options);
-            }
-            
-            // GitHub releases don't support CORS, use proxy directly
-            if (url.includes('github.com') && url.includes('/releases/download/')) {
-              console.log(`Using CORS proxy directly for GitHub release: ${url}`);
-              const proxiedUrl = `${CORS_PROXY}/?url=${encodeURIComponent(url)}`;
-              const safeOptions = options ? { ...options } : {};
-              delete safeOptions.headers;
-              delete safeOptions.credentials;
-              return fetch(proxiedUrl, safeOptions);
-            }
-            
-            // Try direct fetch first for other cross-origin requests
-            return fetch(url, options).catch((directError) => {
-              // Direct fetch failed, try proxy as fallback
-              console.log(`Direct fetch failed for ${url}, trying CORS proxy...`);
-              const proxiedUrl = `${CORS_PROXY}/?url=${encodeURIComponent(url)}`;
-              const safeOptions = options ? { ...options } : {};
-              delete safeOptions.headers;
-              delete safeOptions.credentials;
-              return fetch(proxiedUrl, safeOptions).catch((proxyError) => {
-                // Both failed, throw original error
-                console.error(`Both direct and proxy fetch failed for ${url}`);
-                throw directError;
-              });
-            });
-          } catch {
-            // URL parsing failed, try direct fetch
-            return fetch(url, options);
-          }
+          return window.espWebToolsCorsProxyFetch(url, options);
         }
 
         var releases = null;
@@ -462,7 +423,18 @@
         window.addEventListener("load", function(event) {
             window.dropArea = document.getElementById("drop-area");
             prepareDropZone();
-            getLatestTag();
+            
+            // Wait for ESP Web Tools module to load before making any fetch calls
+            function initializeApp() {
+              if (window.espWebToolsCorsProxyFetch) {
+                console.log("ESP Web Tools loaded successfully");
+                getLatestTag();
+              } else {
+                console.log("Waiting for ESP Web Tools to load...");
+                setTimeout(initializeApp, 50);
+              }
+            }
+            initializeApp();
             
             // Baud rate selection
             const baudRateSelect = document.getElementById('baudRate');
