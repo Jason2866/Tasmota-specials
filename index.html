@@ -40,7 +40,7 @@
     </style>
     <script
       type="module"
-      src="https://unpkg.com/tasmota-esp-web-tools@11.1.4/dist/web/install-button.js?module"
+      src="https://unpkg.com/tasmota-esp-web-tools@11.1.5/dist/web/install-button.js?module"
     ></script>
     <!-- <script type="module">import * as Module from "./js/tasmota_gh_helper.js"</script> -->
     <script>
@@ -61,7 +61,8 @@
               return fetch(url, options);
             }
             
-            const proxiedUrl = `${CORS_PROXY}/${url}`;
+            // Use correct query parameter format for CORS proxy
+            const proxiedUrl = `${CORS_PROXY}/?url=${encodeURIComponent(url)}`;
             const safeOptions = options ? { ...options } : {};
             delete safeOptions.headers;
             delete safeOptions.credentials;
