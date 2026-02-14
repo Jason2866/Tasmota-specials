@@ -40,33 +40,33 @@
     </style>
     <script
       type="module"
-      src="https://unpkg.com/tasmota-esp-web-tools@11.1.3/dist/web/install-button.js?module"
+      src="https://unpkg.com/tasmota-esp-web-tools@11.1.4/dist/web/install-button.js?module"
     ></script>
     <!-- <script type="module">import * as Module from "./js/tasmota_gh_helper.js"</script> -->
     <script>
-        // CORS Proxy helper function
-        const CORS_PROXY = "https://cors-proxy.espressif.tools";
-        
+        // Use the CORS proxy function from ESP Web Tools if available
+        // Falls back to local implementation if not loaded yet
         function corsProxyFetch(url, options) {
-          // Check if URL needs CORS proxy
+          if (window.espWebToolsCorsProxyFetch) {
+            return window.espWebToolsCorsProxyFetch(url, options);
+          }
+          
+          // Fallback implementation until ESP Web Tools loads
+          const CORS_PROXY = "https://cors-proxy.espressif.tools";
           try {
             const urlObj = new URL(url);
             const currentOrigin = window.location.origin;
             
-            // Same origin or relative URLs don't need proxy
             if (urlObj.origin === currentOrigin) {
               return fetch(url, options);
             }
             
-            // Use proxy for cross-origin requests
             const proxiedUrl = `${CORS_PROXY}/${url}`;
-            // Remove sensitive headers when using proxy
             const safeOptions = options ? { ...options } : {};
             delete safeOptions.headers;
             delete safeOptions.credentials;
             return fetch(proxiedUrl, safeOptions);
           } catch {
-            // If URL parsing fails, it's relative - use direct fetch
             return fetch(url, options);
           }
         }
