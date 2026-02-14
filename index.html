@@ -40,7 +40,7 @@
     </style>
     <script
       type="module"
-      src="https://unpkg.com/tasmota-esp-web-tools@11.1.5/dist/web/install-button.js?module"
+      src="https://unpkg.com/tasmota-esp-web-tools@11.1.6/dist/web/install-button.js?module"
     ></script>
     <!-- <script type="module">import * as Module from "./js/tasmota_gh_helper.js"</script> -->
     <script>
@@ -53,21 +53,32 @@
           
           // Fallback implementation until ESP Web Tools loads
           const CORS_PROXY = "https://cors-proxy.espressif.tools";
+          
           try {
             const urlObj = new URL(url);
             const currentOrigin = window.location.origin;
             
+            // Same origin doesn't need proxy
             if (urlObj.origin === currentOrigin) {
               return fetch(url, options);
             }
             
-            // Use correct query parameter format for CORS proxy
-            const proxiedUrl = `${CORS_PROXY}/?url=${encodeURIComponent(url)}`;
-            const safeOptions = options ? { ...options } : {};
-            delete safeOptions.headers;
-            delete safeOptions.credentials;
-            return fetch(proxiedUrl, safeOptions);
+            // Try direct fetch first for cross-origin requests
+            return fetch(url, options).catch((directError) => {
+              // Direct fetch failed, try proxy as fallback
+              console.log(`Direct fetch failed for ${url}, trying CORS proxy...`);
+              const proxiedUrl = `${CORS_PROXY}/?url=${encodeURIComponent(url)}`;
+              const safeOptions = options ? { ...options } : {};
+              delete safeOptions.headers;
+              delete safeOptions.credentials;
+              return fetch(proxiedUrl, safeOptions).catch((proxyError) => {
+                // Both failed, throw original error
+                console.error(`Both direct and proxy fetch failed for ${url}`);
+                throw directError;
+              });
+            });
           } catch {
+            // URL parsing failed, try direct fetch
             return fetch(url, options);
           }
         }
