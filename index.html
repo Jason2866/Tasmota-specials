@@ -66,7 +66,17 @@
               return fetch(url, options);
             }
             
-            // Try direct fetch first for cross-origin requests
+            // GitHub releases don't support CORS, use proxy directly
+            if (url.includes('github.com') && url.includes('/releases/download/')) {
+              console.log(`Using CORS proxy directly for GitHub release: ${url}`);
+              const proxiedUrl = `${CORS_PROXY}/?url=${encodeURIComponent(url)}`;
+              const safeOptions = options ? { ...options } : {};
+              delete safeOptions.headers;
+              delete safeOptions.credentials;
+              return fetch(proxiedUrl, safeOptions);
+            }
+            
+            // Try direct fetch first for other cross-origin requests
             return fetch(url, options).catch((directError) => {
               // Direct fetch failed, try proxy as fallback
               console.log(`Direct fetch failed for ${url}, trying CORS proxy...`);
