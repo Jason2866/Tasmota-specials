@@ -47,7 +47,7 @@
         // Use the CORS proxy function from ESP Web Tools if available
         // Falls back to local implementation if not loaded yet
         function corsProxyFetch(url, options) {
-          // Clean the URL - remove whitespace and newlines
+          // Clean the URL - remove whitespace and newlines (FIRST!)
           url = url.trim();
           
           if (window.espWebToolsCorsProxyFetch) {
@@ -317,7 +317,7 @@
         function getLatestTag(){
              corsProxyFetch('https://raw.githubusercontent.com/Jason2866/Tasmota-specials/firmware/tag_latest.txt')
             .then(x => x.text())
-            .then(t =>testCORS(t));
+            .then(t => testCORS(t.trim()));
         }
 
         async function testCORS(t){
@@ -330,6 +330,8 @@
         }
 
         function initVariantSelector(tag){
+            // Clean the tag - remove whitespace and newlines
+            tag = tag.trim();
             corsProxyFetch('https://github.com/Jason2866/Tasmota-specials/releases/download/'+ tag + '/manifests_release.json')
             .then(response => response.json())
             .then(data => makeVariantSelector(data));
