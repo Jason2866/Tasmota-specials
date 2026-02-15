@@ -44,12 +44,9 @@
     ></script>
     <!-- <script type="module">import * as Module from "./js/tasmota_gh_helper.js"</script> -->
     <script>
-        // Wait for ESP Web Tools to load and expose the CORS proxy function
         async function corsProxyFetch(url, options) {
-          // Clean the URL first
           url = url.trim();
           
-          // Wait for ESP Web Tools to be available
           while (!window.espWebToolsCorsProxyFetch) {
             await new Promise(resolve => setTimeout(resolve, 50));
           }
@@ -59,7 +56,6 @@
 
         var releases = null;
         var date_filter = null;
-        var build_filter = ["d","r"];
         var local_file = null
         var virtual_manifest = {"name": "","version": "","new_install_prompt_erase": true,"builds": [
           { "chipFamily": "ESP32","parts": [{ "path": "", "offset": 0 }]},
@@ -95,48 +91,34 @@
             return false;
         }
 
-        function BuildTypeNotSelected(type){
-          if(build_filter.includes(type)){
-            return false;
-          }
-          return true;
-        }
-
         function makeReleaseSelector(data){
             let sel=document.querySelector("#pick-release-selector");
             while(sel.childElementCount!=0){
               sel.removeChild(sel.childNodes[0]);
             }
-            let lines = data.split("\n").reverse();
+            let lines = data.split("\n").filter(line => line.length >= 10);
             console.log(data);
-            var duplicates = [];
-            for (opt_group of lines){
-                if (opt_group.length < 10) continue;
-                if(duplicates.includes(opt_group)){
-                  continue;
-                }
-                duplicates.push(opt_group);
+            
+            var uniqueLines = [...new Set(lines)];
+            uniqueLines.sort((a, b) => {
+              const dateA = a.split(".")[0];
+              const dateB = b.split(".")[0];
+              return dateB.localeCompare(dateA);
+            });
+            
+            for (opt_group of uniqueLines){
                 var og=document.createElement('option');
                 const tag_data = opt_group.split(".");
                 if(DateIsNotSelected(tag_data[0])){
                   continue;
                 }
-                if(BuildTypeNotSelected(tag_data[1])){
-                  continue;
-                }
                 og.label = tag_data[0] + "  (commit:" + tag_data[2].substring(0,8) + "...)";
                 og.value = opt_group;
 
-                var build = "Pre-release:\n"
-                if(tag_data=="r"){
-                  build = "Release:\n"
-                }
-                og.title = build;
-                og.title += "Build date: " + tag_data[0] + "\n";
+                og.title = "Build date: " + tag_data[0] + "\n";
                 og.title += "Commit: " + tag_data[2] + "\n";
 
                 sel.appendChild(og);
-                // console.log(opt_group,opt_group.length,data[opt_group]);
             }
             sel.addEventListener("change", () => {
                initVariantSelector(sel.value);
@@ -248,25 +230,7 @@
           makeYearSelector();
           makeMonthSelector();
           makeDaySelector();
-          let radio = document.getElementsByClassName("build_type_select");
-          console.log(radio);
-          for(el of radio){
-            console.log(el);
-            el.addEventListener("click", () => {
-              let btn = document.querySelector('input[name="build_type"]:checked')  
-              build_filter = [btn.value];
-              if(btn.value == "a"){
-                build_filter = ["r","d"];
-              }
-              makeReleaseSelector(releases);
-            });
-          }
-
           makeReleaseSelector(data);
-        }
-
-        function filterByYear(year){
-            makeDateSelector(releases);
         }
 
         function useFallback(){
@@ -292,16 +256,21 @@
         }
 
         async function testCORS(t){
-          // With CORS proxy, we don't need to test - just use it directly
           console.log("Using CORS proxy for all requests");
           initVariantSelector(t);
+          
           corsProxyFetch('https://raw.githubusercontent.com/Jason2866/Tasmota-specials/firmware/tag.txt')
-          .then(x => x.text())
-          .then(t => {makeReleaseSelector(t,"all"); makeDateSelector(t);})
+            .then(x => x.text())
+            .then(tags => {
+              makeReleaseSelector(tags);
+              makeDateSelector(tags);
+            })
+            .catch(error => {
+              console.error("Error loading tags:", error);
+            });
         }
 
         function initVariantSelector(tag){
-            // Clean the tag - remove whitespace and newlines
             tag = tag.trim();
             corsProxyFetch('https://github.com/Jason2866/Tasmota-specials/releases/download/'+ tag + '/manifests_release.json')
             .then(response => response.json())
@@ -327,7 +296,6 @@
                 console.log(opt_group,data[opt_group]);
                 let firmware_label = document.querySelector("#firmware-version");
                 for (fw of data[opt_group]){
-                    // console.log(data[opt_group][fw]);
                     var opt=document.createElement('option');
                     opt.label = fw['name'];
                     let version = fw['version'];
@@ -407,8 +375,8 @@
         }
 
         function prepareDropZone(){
-          ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => { 
-                          dropArea.addEventListener(eventName, preventDefaults, false);   
+          ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                          dropArea.addEventListener(eventName, preventDefaults, false);
                           document.body.addEventListener(eventName, preventDefaults, false);
                         });
           ['dragenter', 'dragover'].forEach(eventName => {
@@ -424,7 +392,6 @@
             window.dropArea = document.getElementById("drop-area");
             prepareDropZone();
             
-            // Wait for ESP Web Tools module to load before making any fetch calls
             function initializeApp() {
               if (window.espWebToolsCorsProxyFetch) {
                 console.log("ESP Web Tools loaded successfully");
@@ -436,7 +403,6 @@
             }
             initializeApp();
             
-            // Baud rate selection
             const baudRateSelect = document.getElementById('baudRate');
             const installButton = document.querySelector('esp-web-install-button');
 
@@ -444,7 +410,6 @@
               baudRateSelect.addEventListener('change', function() {
                 const selectedRate = this.value;
                 
-                // Update install button
                 if (selectedRate === '') {
                   installButton.removeAttribute('baud-rate');
                 } else {
@@ -464,7 +429,6 @@
                 };
                 console.log(button.shadowRoot.firstChild.name);
                 if(button.shadowRoot.firstChild.name == 'activate'){
-                    //success: add the select picker and some info
                     const selectEl = document.querySelector("#pick-variant-selector");
                     button.manifest = "https://Jason2866.github.io/Tasmota-specials/manifest_ext/unofficial.tasmota-allsensors.manifest.json";
                     selectEl.addEventListener("change", () => {
@@ -501,13 +465,6 @@
         <p class = "needs_cors">Filter by date:</p>
         <span><select class = "date_pick needs_cors" id="pick-year-selector"></select><select class = "date_pick needs_cors" id="pick-month-selector"></select><select class = "date_pick needs_cors" id="pick-day-selector"></select></span>
         <p>
-        <p class = "needs_cors"><br>Filter by type:<br>
-        <input type="radio" name="build_type" value="r" id="check1" class="build_type_select">
-        <label for="check1">Release</label>
-        <input type="radio" name="build_type" value="d" id="check2" class="build_type_select">
-        <label for="check2">Development</label>
-        <input type="radio" name="build_type" value="a" id="check3" class="build_type_select" checked>
-        <label for="check3">All</label></p>
       </div>
       </br>
       <p>Flash Speed:</p>
