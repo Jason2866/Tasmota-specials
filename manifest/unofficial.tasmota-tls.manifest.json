@@ -1,0 +1,12 @@
+{
+  "name": "Tasmota TLS (english)",
+  "new_install_prompt_erase": true,
+  "funding_url": "https://paypal.me/tasmota",
+  "builds": [
+    {
+      "chipFamily": "ESP8266",
+      "improv": true,
+      "parts": [{ "path": "../firmware/tasmota/other/tasmota-tls.bin", "offset": 0 }]
+    }
+  ]
+}
