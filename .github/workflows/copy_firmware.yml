@@ -85,8 +85,8 @@ jobs:
         tas_com_tmp1=$(echo "$RUN_JSON" | jq -r '.sha')
         BUILD_DATE=$(echo "$RUN_JSON" | jq -r '.date')
         if [ -z "$tas_com_tmp1" ] || [ "$tas_com_tmp1" = "null" ]; then
-          tas_com_tmp1=$(gh api repos/arendst/tasmota/commits/development --jq '.sha')
-          BUILD_DATE=$(date -I)
+          echo "Could not determine commit SHA from latest successful Build_special_firmware.yml run, aborting." >&2
+          exit 1
         fi
         tas_com_tmp="Based on https://github.com/arendst/Tasmota/commit/${tas_com_tmp1}"
         tag_name_tmp="${BUILD_DATE}.d.$tas_com_tmp1"
