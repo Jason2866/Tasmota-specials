@@ -80,12 +80,12 @@ jobs:
     - name: Build Tag and commit message
       run: |
         RUN_JSON=$(gh api \
-          "repos/Jason2866/Tasmota-build/actions/workflows/Build_special_firmware.yml/runs?status=success&per_page=1" \
+          "repos/arendst/tasmota/actions/workflows/Tasmota_build_devel.yml/runs?branch=development&status=success&per_page=1" \
           --jq '.workflow_runs[0] | {sha: .head_sha, date: (.created_at | .[0:10])}')
         tas_com_tmp1=$(echo "$RUN_JSON" | jq -r '.sha')
         BUILD_DATE=$(echo "$RUN_JSON" | jq -r '.date')
         if [ -z "$tas_com_tmp1" ] || [ "$tas_com_tmp1" = "null" ]; then
-          echo "Could not determine commit SHA from latest successful Build_special_firmware.yml run, aborting." >&2
+          echo "Could not determine commit SHA from latest successful Tasmota_build_devel.yml run, aborting." >&2
           exit 1
         fi
         tas_com_tmp="Based on https://github.com/arendst/Tasmota/commit/${tas_com_tmp1}"
