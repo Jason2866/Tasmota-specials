@@ -79,9 +79,17 @@ jobs:
         rm tag_latest.txt 2> /dev/null || echo > /dev/null
     - name: Build Tag and commit message
       run: |
-        tas_com_tmp1=$(gh api repos/arendst/tasmota/commits/development --jq '.sha')
+        RUN_JSON=$(gh api \
+          "repos/Jason2866/Tasmota-build/actions/workflows/Build_special_firmware.yml/runs?status=success&per_page=1" \
+          --jq '.workflow_runs[0] | {sha: .head_sha, date: (.created_at | .[0:10])}')
+        tas_com_tmp1=$(echo "$RUN_JSON" | jq -r '.sha')
+        BUILD_DATE=$(echo "$RUN_JSON" | jq -r '.date')
+        if [ -z "$tas_com_tmp1" ] || [ "$tas_com_tmp1" = "null" ]; then
+          tas_com_tmp1=$(gh api repos/arendst/tasmota/commits/development --jq '.sha')
+          BUILD_DATE=$(date -I)
+        fi
         tas_com_tmp="Based on https://github.com/arendst/Tasmota/commit/${tas_com_tmp1}"
-        tag_name_tmp="$(date -I).d.$tas_com_tmp1"
+        tag_name_tmp="${BUILD_DATE}.d.$tas_com_tmp1"
         rm release-info.txt 2> /dev/null || echo > /dev/null
         echo "$tas_com_tmp" >> release-info.txt
         echo "$tag_name_tmp" >> tag_latest.txt
