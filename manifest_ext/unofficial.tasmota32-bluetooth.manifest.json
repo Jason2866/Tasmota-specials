@@ -1,0 +1,80 @@
+{
+    "name": "Tasmota32 BT for C3, C6 and S3",
+    "new_install_prompt_erase": true,
+    "funding_url": "https://paypal.me/tasmota",
+    "builds": [
+        {
+            "chipFamily": "ESP32-C2",
+            "improv": true,
+            "parts": [
+                {
+                    "path": "https://Jason2866.github.io/Tasmota-specials/firmware/tasmota32/other/tasmota32c2-bluetooth.factory.bin",
+                    "offset": 0,
+                    "size": 1099648
+                }
+            ]
+        },
+        {
+            "chipFamily": "ESP32-C3",
+            "improv": true,
+            "parts": [
+                {
+                    "path": "https://Jason2866.github.io/Tasmota-specials/firmware/tasmota32/other/tasmota32c3-bluetooth.factory.bin",
+                    "offset": 0,
+                    "size": 1806528
+                }
+            ]
+        },
+        {
+            "chipFamily": "ESP32-C5",
+            "improv": true,
+            "parts": [
+                {
+                    "path": "https://Jason2866.github.io/Tasmota-specials/firmware/tasmota32/other/tasmota32c5-bluetooth.factory.bin",
+                    "offset": 0,
+                    "size": 2031600
+                }
+            ]
+        },
+        {
+            "chipFamily": "ESP32-C6",
+            "improv": true,
+            "parts": [
+                {
+                    "path": "https://Jason2866.github.io/Tasmota-specials/firmware/tasmota32/other/tasmota32c6-bluetooth.factory.bin",
+                    "offset": 0,
+                    "size": 2037920
+                }
+            ]
+        },
+        {
+            "chipFamily": "ESP32-S3",
+            "improv": true,
+            "parts": [
+                {
+                    "path": "https://Jason2866.github.io/Tasmota-specials/firmware/tasmota32/other/tasmota32s3-bluetooth.factory.bin",
+                    "offset": 0,
+                    "size": 1737008
+                }
+            ]
+        }
+    ],
+    "features": {
+        "Xdrv": [
+            1,
+            2,
+            4,
+            10,
+            16,
+            24,
+            50,
+            79,
+            85
+        ],
+        "Xlgt": [],
+        "Xnrg": [],
+        "Xsns": [
+            62
+        ]
+    }
+}
