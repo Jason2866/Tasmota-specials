@@ -1,0 +1,167 @@
+{
+    "unofficial": [
+        {
+            "path": "https://github.com/Jason2866/Tasmota-specials/releases/download/2023-03-12.d.0bc48d16c22f3c92c80b65808c2c755b3cd985e1/unofficial.tasmota-allsensors.manifest.json",
+            "name": "Tasmota Allsensors (english)",
+            "chipFamilies": [
+                "ESP32",
+                "ESP8266"
+            ]
+        },
+        {
+            "path": "https://github.com/Jason2866/Tasmota-specials/releases/download/2023-03-12.d.0bc48d16c22f3c92c80b65808c2c755b3cd985e1/unofficial.tasmota-battery.manifest.json",
+            "name": "Tasmota Battery (english)",
+            "chipFamilies": [
+                "ESP32",
+                "ESP8266"
+            ]
+        },
+        {
+            "path": "https://github.com/Jason2866/Tasmota-specials/releases/download/2023-03-12.d.0bc48d16c22f3c92c80b65808c2c755b3cd985e1/unofficial.tasmota-fullrules.manifest.json",
+            "name": "Tasmota Fullrules (english)",
+            "chipFamilies": [
+                "ESP32",
+                "ESP8266"
+            ]
+        },
+        {
+            "path": "https://github.com/Jason2866/Tasmota-specials/releases/download/2023-03-12.d.0bc48d16c22f3c92c80b65808c2c755b3cd985e1/unofficial.tasmota-gps.manifest.json",
+            "name": "Tasmota GPS (english)",
+            "chipFamilies": [
+                "ESP32",
+                "ESP8266"
+            ]
+        },
+        {
+            "path": "https://github.com/Jason2866/Tasmota-specials/releases/download/2023-03-12.d.0bc48d16c22f3c92c80b65808c2c755b3cd985e1/unofficial.tasmota-mega.manifest.json",
+            "name": "Tasmota Mega (english)",
+            "chipFamilies": [
+                "ESP32",
+                "ESP8266"
+            ]
+        },
+        {
+            "path": "https://github.com/Jason2866/Tasmota-specials/releases/download/2023-03-12.d.0bc48d16c22f3c92c80b65808c2c755b3cd985e1/unofficial.tasmota-platinum.manifest.json",
+            "name": "Tasmota Platinum (english)",
+            "chipFamilies": [
+                "ESP32",
+                "ESP8266"
+            ]
+        },
+        {
+            "path": "https://github.com/Jason2866/Tasmota-specials/releases/download/2023-03-12.d.0bc48d16c22f3c92c80b65808c2c755b3cd985e1/unofficial.tasmota-rangeextender.manifest.json",
+            "name": "Tasmota Rangeextender (english)",
+            "chipFamilies": [
+                "ESP32",
+                "ESP8266"
+            ]
+        },
+        {
+            "path": "https://github.com/Jason2866/Tasmota-specials/releases/download/2023-03-12.d.0bc48d16c22f3c92c80b65808c2c755b3cd985e1/unofficial.tasmota-scripting.manifest.json",
+            "name": "Tasmota Scripting (english)",
+            "chipFamilies": [
+                "ESP32",
+                "ESP8266"
+            ]
+        },
+        {
+            "path": "https://github.com/Jason2866/Tasmota-specials/releases/download/2023-03-12.d.0bc48d16c22f3c92c80b65808c2c755b3cd985e1/unofficial.tasmota-tls.manifest.json",
+            "name": "Tasmota TLS (english)",
+            "chipFamilies": [
+                "ESP8266"
+            ]
+        },
+        {
+            "path": "https://github.com/Jason2866/Tasmota-specials/releases/download/2023-03-12.d.0bc48d16c22f3c92c80b65808c2c755b3cd985e1/unofficial.tasmota-teleinfo.manifest.json",
+            "name": "Tasmota Teleinfo (english)",
+            "chipFamilies": [
+                "ESP32",
+                "ESP8266",
+                "ESP32-C3",
+                "ESP32-S2"
+            ]
+        },
+        {
+            "path": "https://github.com/Jason2866/Tasmota-specials/releases/download/2023-03-12.d.0bc48d16c22f3c92c80b65808c2c755b3cd985e1/unofficial.tasmota-thermostat.manifest.json",
+            "name": "Tasmota Thermostat (english)",
+            "chipFamilies": [
+                "ESP32",
+                "ESP8266"
+            ]
+        },
+        {
+            "path": "https://github.com/Jason2866/Tasmota-specials/releases/download/2023-03-12.d.0bc48d16c22f3c92c80b65808c2c755b3cd985e1/unofficial.tasmota-titanium.manifest.json",
+            "name": "Tasmota Titanium (english)",
+            "chipFamilies": [
+                "ESP32",
+                "ESP8266"
+            ]
+        },
+        {
+            "path": "https://github.com/Jason2866/Tasmota-specials/releases/download/2023-03-12.d.0bc48d16c22f3c92c80b65808c2c755b3cd985e1/unofficial.tasmota32-zigbee.manifest.json",
+            "name": "Tasmota Zigbee (english)",
+            "chipFamilies": [
+                "ESP32"
+            ]
+        },
+        {
+            "path": "https://github.com/Jason2866/Tasmota-specials/releases/download/2023-03-12.d.0bc48d16c22f3c92c80b65808c2c755b3cd985e1/unofficial.tasmota32-mi32-homebridge.manifest.json",
+            "name": "Tasmota32 MI Homebridge (english)",
+            "chipFamilies": [
+                "ESP32",
+                "ESP32-C3",
+                "ESP32-S3"
+            ]
+        },
+        {
+            "path": "https://github.com/Jason2866/Tasmota-specials/releases/download/2023-03-12.d.0bc48d16c22f3c92c80b65808c2c755b3cd985e1/unofficial.tasmota32solo1-bluetooth.manifest.json",
+            "name": "Tasmota32 Solo1 Bluetooth (english)",
+            "chipFamilies": [
+                "ESP32"
+            ]
+        },
+        {
+            "path": "https://github.com/Jason2866/Tasmota-specials/releases/download/2023-03-12.d.0bc48d16c22f3c92c80b65808c2c755b3cd985e1/unofficial.tasmota32solo1-thermostat.manifest.json",
+            "name": "Tasmota32 Solo1 Thermostat (english)",
+            "chipFamilies": [
+                "ESP32"
+            ]
+        },
+        {
+            "path": "https://github.com/Jason2866/Tasmota-specials/releases/download/2023-03-12.d.0bc48d16c22f3c92c80b65808c2c755b3cd985e1/unofficial.tasmota32-zigbeebridge.manifest.json",
+            "name": "Tasmota32 ZigbeeBridge (english)",
+            "chipFamilies": [
+                "ESP32"
+            ]
+        },
+        {
+            "path": "https://github.com/Jason2866/Tasmota-specials/releases/download/2023-03-12.d.0bc48d16c22f3c92c80b65808c2c755b3cd985e1/unofficial.tasmota32c3_2M.manifest.json",
+            "name": "Tasmota32-C3 2M (english)",
+            "chipFamilies": [
+                "ESP32-C3"
+            ]
+        },
+        {
+            "path": "https://github.com/Jason2866/Tasmota-specials/releases/download/2023-03-12.d.0bc48d16c22f3c92c80b65808c2c755b3cd985e1/unofficial.tasmota32-bluetooth.manifest.json",
+            "name": "Tasmota32-C3 S3 Bluetooth (english)",
+            "chipFamilies": [
+                "ESP32-C3",
+                "ESP32-S3"
+            ]
+        },
+        {
+            "path": "https://github.com/Jason2866/Tasmota-specials/releases/download/2023-03-12.d.0bc48d16c22f3c92c80b65808c2c755b3cd985e1/unofficial.tasmota32s3cdc-qio_opi.manifest.json",
+            "name": "Tasmota32-S3 (QIO Flash/OPI PSRAM)",
+            "chipFamilies": [
+                "ESP32-S3"
+            ]
+        },
+        {
+            "path": "https://github.com/Jason2866/Tasmota-specials/releases/download/2023-03-12.d.0bc48d16c22f3c92c80b65808c2c755b3cd985e1/unofficial.tasmota32s3cdc-box.manifest.json",
+            "name": "Tasmota32-S3 BOX (english)",
+            "chipFamilies": [
+                "ESP32-S3"
+            ]
+        }
+    ]
+}
