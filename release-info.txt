@@ -1,0 +1,1 @@
+Based on https://github.com/arendst/Tasmota/commit/ccf8ff854a07b5bdc707d83fda068a4c41fe9874
