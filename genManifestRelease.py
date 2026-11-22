@@ -28,10 +28,9 @@ def convertJSON(infile, outfile, tag):
         for build in data['builds']:
             for part in build['parts']:
                 components = part['path'].split("/")
+                firmware_path = part['path'].replace("..", ".").replace(".factory", "")
                 part['path'] = "https://github.com/Jason2866/Tasmota-specials/releases/download/" + tag + "/" + components[-1]
                 # Add firmware size
-                replace_path = "https://github.com/Jason2866/Tasmota-specials/releases/download/" + tag + "/" + components[-1]
-                firmware_path = part['path'].replace(replace_path, ".").replace(".factory", "")
                 if os.path.exists(firmware_path):
                     part['size'] = os.path.getsize(firmware_path)
                 else:
@@ -48,7 +47,7 @@ def firmwareVersion(tag):
     url = "https://raw.githubusercontent.com/arendst/Tasmota/"+commit+"/tasmota/include/tasmota_version.h"
     response = requests.get(url)
     for line in response.text.split("\n"):
-        if "const uint32_t VERSION =" in line:
+        if "const uint32_t" in line and "VERSION" in line:
             return line.split("//")[1].strip()
 
 def getManifestEntry(manifest, tag):
